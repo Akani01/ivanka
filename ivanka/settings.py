@@ -78,7 +78,8 @@ DEBUG = config(
 
 ALLOWED_HOSTS = [
 
- 
+    'ivanka-production.up.railway.app',
+
     '127.0.0.1',
 
     'localhost',
@@ -102,7 +103,8 @@ ALLOWED_HOSTS = [
 CSRF_TRUSTED_ORIGINS = [
 
    
-    'https://property-production-61c8.up.railway.app',
+    'https://ivanka-production.up.railway.app',
+    
 
     'http://127.0.0.1:8000',
 
@@ -124,7 +126,8 @@ CSRF_TRUSTED_ORIGINS = [
 
 CORS_ALLOWED_ORIGINS = [
 
-
+    'https://ivanka-production.up.railway.app',
+     
     'http://127.0.0.1:8000',
 
     'http://localhost:8000',
