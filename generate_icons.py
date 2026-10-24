@@ -1,67 +1,96 @@
 import os
-from PIL import Image, ImageDraw
+import shutil
+from PIL import Image, ImageDraw, ImageFont
+
+# ── Where to write icons ──
+OUTPUT_DIRS = [
+    'store/static/store',          # ◀ NEW — matches what the error asks for
+    'hiring/static/hiring/icons',  # keep for the hiring app / existing references
+]
+
+# ── Ivanka brand colours (matches the template CSS) ──
+BRAND_BG   = '#0A0A0A'   # --ink
+BRAND_FG   = '#FFFFFF'
+MASK_BG    = '#0A0A0A'   # maskable: same ink, full bleed
+MASK_FG    = '#FFFFFF'
+
+SIZES = [72, 96, 128, 144, 152, 192, 384, 512]
+
+
+def _font(size):
+    candidates = [
+        '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf',
+        '/System/Library/Fonts/Supplemental/Arial Bold.ttf',
+        'C:\\Windows\\Fonts\\arialbd.ttf',
+    ]
+    for path in candidates:
+        if os.path.exists(path):
+            return ImageFont.truetype(path, size)
+    return ImageFont.load_default()
+
+
+def _draw_icon(size, bg, fg, maskable=False):
+    img  = Image.new('RGB', (size, size), color=bg)
+    draw = ImageDraw.Draw(img)
+
+    # Maskable icons need extra safe-zone padding (40% of size = safe area)
+    pad = int(size * 0.20) if maskable else int(size * 0.08)
+
+    # Rounded square inner mark (matches the .iv-brand-mark in the template)
+    radius = max(4, size // 8)
+    draw.rounded_rectangle(
+        [(pad, pad), (size - pad, size - pad)],
+        radius=radius,
+        fill=fg if not maskable else '#FFFFFF',
+    )
+
+    # "I" letter on top of the mark — brand initial
+    text = 'I'
+    font = _font(int(size * 0.42))
+    bbox = draw.textbbox((0, 0), text, font=font)
+    tw, th = bbox[2] - bbox[0], bbox[3] - bbox[1]
+    x = (size - tw) // 2 - bbox[0]
+    y = (size - th) // 2 - bbox[1]
+    draw.text((x, y), text, fill=bg, font=font)
+
+    return img
+
 
 def generate_icons():
-    """Generate simple PWA icons"""
-    sizes = [72, 96, 128, 144, 152, 192, 384, 512]
-    output_dir = 'hiring/static/hiring/icons'
-    
-    os.makedirs(output_dir, exist_ok=True)
-    
-    for size in sizes:
-        # Create a red square with "T" logo
-        img = Image.new('RGB', (size, size), color='#c62828')
-        draw = ImageDraw.Draw(img)
-        
-        # Draw border
-        border = size // 20
-        draw.rectangle(
-            [(border, border), (size - border, size - border)],
-            outline='white',
-            width=border
+    for out_dir in OUTPUT_DIRS:
+        os.makedirs(out_dir, exist_ok=True)
+
+        for size in SIZES:
+            # Any-purpose icon
+            _draw_icon(size, BRAND_BG, BRAND_FG, maskable=False).save(
+                os.path.join(out_dir, f'icon-{size}.png'), 'PNG'
+            )
+            print(f'✅ {out_dir}/icon-{size}.png')
+
+            # Maskable icon (for the `purpose: maskable` entries in settings)
+            _draw_icon(size, MASK_BG, MASK_FG, maskable=True).save(
+                os.path.join(out_dir, f'icon-{size}-maskable.png'), 'PNG'
+            )
+            print(f'✅ {out_dir}/icon-{size}-maskable.png')
+
+        # Badge + shortcut icons (small, reused)
+        _draw_icon(72, BRAND_BG, BRAND_FG).save(
+            os.path.join(out_dir, 'icon-72x72.png'), 'PNG'
         )
-        
-        # Add "T" text
-        text = 'T'
-        font_size = size // 2
-        # Use default font
-        try:
-            from PIL import ImageFont
-            font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf', font_size)
-        except:
-            font = ImageFont.load_default()
-        
-        # Center text
-        bbox = draw.textbbox((0, 0), text, font=font)
-        text_width = bbox[2] - bbox[0]
-        text_height = bbox[3] - bbox[1]
-        x = (size - text_width) // 2
-        y = (size - text_height) // 2
-        
-        draw.text((x, y), text, fill='white', font=font)
-        
-        # Save
-        output_path = os.path.join(output_dir, f'icon-{size}.png')
-        img.save(output_path, 'PNG')
-        print(f'✅ Generated: {output_path}')
-    
-    # Also create badge icon (72x72)
-    badge_path = os.path.join(output_dir, 'icon-72x72.png')
-    if not os.path.exists(badge_path):
-        # Copy the 72px icon
-        import shutil
-        shutil.copy(os.path.join(output_dir, 'icon-72.png'), badge_path)
-        print(f'✅ Created badge: {badge_path}')
-    
-    print('\n🎉 All icons generated!')
+        for name in ('shortcut-shop', 'shortcut-cart', 'shortcut-orders', 'shortcut-jobs'):
+            _draw_icon(96, BRAND_BG, BRAND_FG).save(
+                os.path.join(out_dir, f'{name}.png'), 'PNG'
+            )
+        print(f'✅ badge + shortcuts in {out_dir}')
+
+    print('\n🎉 All icons generated.')
+
 
 if __name__ == '__main__':
     try:
         from PIL import Image, ImageDraw, ImageFont
     except ImportError:
-        print('📦 Installing Pillow...')
         import subprocess
         subprocess.check_call(['pip', 'install', 'Pillow'])
         from PIL import Image, ImageDraw, ImageFont
-    
     generate_icons()
