@@ -1,0 +1,932 @@
+<!-- education/templates/education/business_application_detail.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Detail - OppoGlobe Education</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* ===== SAME STYLES AS business_applications.html ===== */
+        :root {
+            --primary: #e8458a;
+            --primary-light: #fce4ec;
+            --primary-dark: #c62878;
+            --secondary: #4a6cf7;
+            --dark: #1a1a2e;
+            --gray: #6c757d;
+            --light-gray: #f5f6fa;
+            --border: #e9ecef;
+            --shadow: 0 2px 12px rgba(0,0,0,0.06);
+            --shadow-hover: 0 8px 30px rgba(0,0,0,0.10);
+            --radius: 14px;
+            --radius-sm: 8px;
+            --transition: all 0.3s ease;
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #f0f2f5;
+            font-family: var(--font-body);
+            padding-top: 70px;
+            padding-bottom: 80px;
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        button { cursor: pointer; border: none; background: none; }
+        img { max-width: 100%; }
+
+        /* ===== HEADER (SAME AS ABOVE) ===== */
+        .header-area {
+            background: #ffffff;
+            border-bottom: 1px solid var(--border);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            height: 64px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        }
+
+        .main-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+            padding: 0 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        @media (min-width: 768px) {
+            .main-nav { padding: 0 32px; }
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .logo img {
+            max-height: 36px;
+            width: auto;
+            object-fit: contain;
+        }
+        .logo-text {
+            font-family: var(--font-display);
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-left: 8px;
+        }
+        .logo-text span { color: var(--primary); }
+
+        .nav-icons {
+            display: flex;
+            list-style: none;
+            gap: 4px;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+        @media (min-width: 576px) {
+            .nav-icons { gap: 8px; }
+        }
+
+        .nav-icons a {
+            font-size: 17px;
+            color: #555;
+            transition: var(--transition);
+            padding: 6px 8px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 36px;
+            height: 36px;
+            text-decoration: none;
+        }
+        @media (min-width: 576px) {
+            .nav-icons a {
+                min-width: 40px;
+                height: 40px;
+                font-size: 19px;
+                padding: 6px 10px;
+            }
+        }
+        .nav-icons a:hover {
+            color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .profile-avatar-small {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+        @media (min-width: 576px) {
+            .profile-avatar-small { width: 36px; height: 36px; font-size: 14px; }
+        }
+        .profile-avatar-small:hover { transform: scale(1.05); }
+
+        .profile-dropdown { position: relative; }
+        .profile-menu {
+            position: absolute;
+            top: 42px;
+            right: 0;
+            width: 220px;
+            background: white;
+            border-radius: var(--radius-sm);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+            padding: 6px 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: var(--transition);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        .profile-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .profile-menu a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            color: #444;
+            font-size: 13px;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+        .profile-menu a:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+        .profile-menu a i { width: 18px; color: var(--gray); font-size: 14px; }
+        .profile-divider { height: 1px; background: var(--border); margin: 4px 12px; }
+
+        .three-dot-menu { position: relative; }
+        .three-dot-menu .dot-btn {
+            font-size: 20px;
+            color: #555;
+            padding: 6px 8px;
+            border-radius: 8px;
+            transition: var(--transition);
+            background: none;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 36px;
+            height: 36px;
+        }
+        @media (min-width: 576px) {
+            .three-dot-menu .dot-btn { min-width: 40px; height: 40px; font-size: 22px; }
+        }
+        .three-dot-menu .dot-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .menu-content {
+            position: absolute;
+            right: 0;
+            top: 42px;
+            background: #fff;
+            width: 200px;
+            padding: 6px 0;
+            border-radius: var(--radius-sm);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: var(--transition);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        .menu-content.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .menu-content a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            color: #444;
+            font-size: 13px;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+        .menu-content a:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+        .menu-content a i { width: 18px; color: var(--gray); font-size: 14px; }
+
+        /* ===== DESKTOP SIDEBAR ===== */
+        .desktop-sidebar {
+            width: 220px;
+            background: white;
+            height: calc(100vh - 64px);
+            position: fixed;
+            top: 64px;
+            left: 0;
+            padding: 16px 12px;
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            z-index: 100;
+        }
+        @media (max-width: 991px) {
+            .desktop-sidebar { display: none; }
+        }
+
+        .desktop-sidebar .sidebar-section { margin-bottom: 16px; }
+        .desktop-sidebar .sidebar-title {
+            font-family: var(--font-display);
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 0 4px;
+            margin-bottom: 6px;
+        }
+        .desktop-sidebar a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            color: #555;
+            text-decoration: none;
+            border-radius: var(--radius-sm);
+            font-weight: 500;
+            font-size: 13px;
+            transition: var(--transition);
+            margin-bottom: 2px;
+        }
+        .desktop-sidebar a:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+        .desktop-sidebar a.active {
+            background: var(--primary);
+            color: white;
+        }
+        .desktop-sidebar a.active i { color: white; }
+        .desktop-sidebar a i { width: 20px; color: var(--gray); font-size: 16px; }
+        .desktop-sidebar a.active i { color: white; }
+        .desktop-sidebar hr { margin: 8px 0; border-color: var(--border); }
+
+        @media (min-width: 992px) {
+            body { padding-left: 240px !important; }
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+        @media (min-width: 768px) {
+            .main-container { padding: 0 24px; }
+        }
+
+        .page-header {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        @media (min-width: 576px) {
+            .page-header {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+
+        .page-header h1 {
+            font-family: var(--font-display);
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        @media (min-width: 768px) {
+            .page-header h1 { font-size: 26px; }
+        }
+        .page-header h1 i { color: var(--primary); }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-back {
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            background: white;
+            color: var(--dark);
+            font-size: 13px;
+            font-weight: 500;
+            transition: var(--transition);
+            border: 1px solid var(--border);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+        }
+        .btn-back:hover { background: var(--light-gray); }
+
+        /* ===== DETAIL CARD ===== */
+        .detail-card {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            padding: 20px 24px;
+            margin-bottom: 20px;
+        }
+        .detail-card .card-title {
+            font-family: var(--font-display);
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        .detail-card .detail-row {
+            display: flex;
+            padding: 6px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .detail-card .detail-row:last-child {
+            border-bottom: none;
+        }
+        .detail-card .detail-label {
+            font-weight: 600;
+            width: 140px;
+            flex-shrink: 0;
+            color: var(--gray);
+            font-size: 13px;
+        }
+        .detail-card .detail-value {
+            font-size: 13px;
+            color: var(--dark);
+            word-break: break-word;
+        }
+        .detail-card .detail-value .badge-status {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        .badge-status.draft { background: #e9ecef; color: #6c757d; }
+        .badge-status.submitted { background: #cce5ff; color: #0d6efd; }
+        .badge-status.under_review { background: #fff3cd; color: #b8860b; }
+        .badge-status.shortlisted { background: #d1e7dd; color: #198754; }
+        .badge-status.interview { background: #f8d7da; color: #dc3545; }
+        .badge-status.accepted { background: #198754; color: #fff; }
+        .badge-status.rejected { background: #dc3545; color: #fff; }
+        .badge-status.withdrawn { background: #6c757d; color: #fff; }
+
+        .detail-card .motivation-box {
+            background: var(--light-gray);
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            border-left: 3px solid var(--primary);
+            margin-top: 6px;
+            white-space: pre-wrap;
+            font-size: 13px;
+        }
+
+        .action-form {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 2px solid var(--border);
+        }
+        .action-form .form-label {
+            font-weight: 600;
+            font-size: 13px;
+        }
+        .action-form .form-control,
+        .action-form .form-select {
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            font-size: 13px;
+            padding: 6px 12px;
+            min-height: 38px;
+        }
+        .action-form .form-control:focus,
+        .action-form .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(232, 69, 138, 0.08);
+        }
+        .btn-save {
+            padding: 8px 24px;
+            border-radius: var(--radius-sm);
+            background: var(--dark);
+            color: white;
+            font-weight: 600;
+            font-size: 13px;
+            border: none;
+            transition: var(--transition);
+        }
+        .btn-save:hover {
+            background: #2d2d4a;
+            color: white;
+        }
+
+        .btn-outline-primary-custom {
+            padding: 8px 20px;
+            border-radius: var(--radius-sm);
+            background: transparent;
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 13px;
+            border: 1px solid var(--primary);
+            transition: var(--transition);
+        }
+        .btn-outline-primary-custom:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .mobile-bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 56px;
+            background: white;
+            border-top: 1px solid var(--border);
+            justify-content: space-around;
+            align-items: center;
+            z-index: 999;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        @media (max-width: 991px) {
+            .mobile-bottom-nav {
+                display: flex !important;
+            }
+            body { padding-bottom: 66px; }
+        }
+
+        .mobile-bottom-nav a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1px;
+            font-size: 9px;
+            color: var(--gray);
+            padding: 4px 6px;
+            transition: var(--transition);
+            text-decoration: none;
+            flex: 1;
+            text-align: center;
+        }
+        .mobile-bottom-nav a i {
+            font-size: 17px;
+            display: block;
+        }
+        .mobile-bottom-nav a.active {
+            color: var(--primary);
+        }
+        .mobile-bottom-nav a:hover {
+            color: var(--primary);
+        }
+
+        .toast-container {
+            position: fixed;
+            top: 80px;
+            right: 16px;
+            z-index: 9999;
+            max-width: calc(100vw - 32px);
+        }
+        @media (min-width: 576px) {
+            .toast-container { max-width: 400px; }
+        }
+        .toast-item {
+            padding: 10px 16px;
+            border-radius: var(--radius-sm);
+            color: white;
+            font-size: 13px;
+            animation: slideIn 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        .toast-item.success { background: #28a745; }
+        .toast-item.error { background: #dc3545; }
+        .toast-item.info { background: #17a2b8; }
+        .toast-item.warning { background: #ffc107; color: var(--dark); }
+        .toast-item .close-toast {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.7);
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .toast-item .close-toast:hover { color: white; }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(60px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @media (max-width: 575px) {
+            .page-header h1 { font-size: 18px; }
+            .detail-card { padding: 16px; }
+            .detail-card .detail-label { width: 100%; margin-bottom: 2px; }
+            .detail-card .detail-row { flex-wrap: wrap; }
+        }
+        @media (max-width: 360px) {
+            .page-header h1 { font-size: 15px; }
+        }
+
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: var(--light-gray); }
+        ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #aaa; }
+    </style>
+</head>
+<body>
+
+    <!-- ===== TOP NAVBAR (same as above) ===== -->
+    <header class="header-area">
+        <div class="main-nav">
+            <a href="/" class="logo">
+                <img src="/static/images/logo.png" alt="OppoGlobe" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\'logo-text\'>Oppo<span>Globe</span></span>'">
+            </a>
+            <ul class="nav-icons">
+                <li><a href="/" title="Home"><i class="fas fa-home"></i></a></li>
+                <li><a href="/#job-listings" title="Browse Jobs"><i class="fas fa-search"></i></a></li>
+                {% if user.is_authenticated %}
+                <li><a href="/dashboard" title="Dashboard"><i class="fas fa-th-large"></i></a></li>
+                <li><a href="/messaging/" title="Messages"><i class="fas fa-comment-dots"></i></a></li>
+                <li class="profile-dropdown">
+                    <div class="profile-avatar-small" onclick="toggleProfileDropdown()">
+                        {{ user.username|first|upper }}
+                    </div>
+                    <div class="profile-menu" id="profileMenu">
+                        <a href="/profile/"><i class="fas fa-user"></i> Profile</a>
+                        {% if user.user_type == 'applicant' %}
+                        <a href="/applications/"><i class="fas fa-file-alt"></i> Applications</a>
+                        <a href="/profile/education/"><i class="fas fa-graduation-cap"></i> Education</a>
+                        {% else %}
+                        <a href="/admin-portal/jobs/"><i class="fas fa-briefcase"></i> Manage Jobs</a>
+                        <a href="/admin-portal/applications/"><i class="fas fa-users"></i> Applications</a>
+                        {% endif %}
+                        <div class="profile-divider"></div>
+                        <a href="/api/alerts/"><i class="fas fa-bell"></i> Alerts</a>
+                        <a href="/preferences/"><i class="fas fa-cog"></i> Preferences</a>
+                        <div class="profile-divider"></div>
+                        <a href="/logout/"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                </li>
+                <li class="three-dot-menu">
+                    <button class="dot-btn" onclick="toggleThreeDotMenu()">
+                        <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+                    <div class="menu-content" id="threeDotMenu">
+                        {% if user.user_type == 'applicant' %}
+                        <a href="/profile/skills/"><i class="fas fa-cogs"></i> Skills</a>
+                        <a href="/profile/employment/"><i class="fas fa-briefcase"></i> Employment</a>
+                        <a href="/profile/education/"><i class="fas fa-graduation-cap"></i> Education</a>
+                        <a href="/profile/documents/"><i class="fas fa-file-upload"></i> Documents</a>
+                        {% else %}
+                        <a href="/admin-portal/jobs/"><i class="fas fa-briefcase"></i> Jobs</a>
+                        <a href="/admin-portal/applications/"><i class="fas fa-users"></i> Applications</a>
+                        <a href="/admin-portal/analytics/"><i class="fas fa-chart-bar"></i> Analytics</a>
+                        {% endif %}
+                    </div>
+                </li>
+                {% else %}
+                <li><a href="#" onclick="showLogin()" title="Login"><i class="fas fa-sign-in-alt"></i></a></li>
+                <li><a href="#" onclick="showSignup()" title="Sign Up"><i class="fas fa-user-plus"></i></a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </header>
+
+    <!-- ===== DESKTOP SIDEBAR ===== -->
+    <div class="desktop-sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-title">Profile</div>
+            <a href="/profile/"><i class="fas fa-user"></i> My Profile</a>
+            <a href="/applications/"><i class="fas fa-file-alt"></i> Applications</a>
+        </div>
+        <hr>
+        <div class="sidebar-section">
+            <div class="sidebar-title">Education</div>
+            <a href="/api/education/"><i class="fas fa-graduation-cap"></i> Education Hub</a>
+            <a href="/api/education/business/applications/" class="active"><i class="fas fa-users"></i> Business Applications</a>
+        </div>
+        <hr>
+        <div class="sidebar-section">
+            <div class="sidebar-title">Quick Links</div>
+            <a href="/profile/skills/"><i class="fas fa-cogs"></i> Skills</a>
+            <a href="/profile/employment/"><i class="fas fa-briefcase"></i> Employment</a>
+            <a href="/profile/documents/"><i class="fas fa-file-upload"></i> Documents</a>
+        </div>
+    </div>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="main-container">
+
+        <div class="page-header">
+            <h1>
+                <i class="fas fa-file-alt"></i>
+                Application Detail
+                <span class="badge bg-secondary" style="font-size:14px;font-weight:500;background:var(--gray) !important;">
+                    #{{ application.id }}
+                </span>
+            </h1>
+            <div class="header-actions">
+                <a href="{{ back_url }}" class="btn-back">
+                    <i class="fas fa-arrow-left"></i> Back to List
+                </a>
+            </div>
+        </div>
+
+        <!-- Application Details -->
+        <div class="detail-card">
+            <div class="card-title">
+                <i class="fas fa-info-circle me-2" style="color:var(--primary);"></i>
+                {{ type_display }} — {{ institution_name }}
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Applicant</span>
+                <span class="detail-value">
+                    {{ application.full_name|default:application.applicant.get_full_name|default:application.applicant.username }}
+                </span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Email</span>
+                <span class="detail-value">{{ application.email|default:application.applicant.email }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Status</span>
+                <span class="detail-value">
+                    <span class="badge-status {{ application.status }}">{{ application.get_status_display }}</span>
+                </span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Submitted</span>
+                <span class="detail-value">{{ application.submitted_at|date:"F d, Y H:i" }}</span>
+            </div>
+            {% if application.phone_number %}
+            <div class="detail-row">
+                <span class="detail-label">Phone</span>
+                <span class="detail-value">{{ application.phone_number }}</span>
+            </div>
+            {% endif %}
+            {% if application.date_of_birth %}
+            <div class="detail-row">
+                <span class="detail-label">Date of Birth</span>
+                <span class="detail-value">{{ application.date_of_birth|date:"F d, Y" }}</span>
+            </div>
+            {% endif %}
+            {% if application.gender %}
+            <div class="detail-row">
+                <span class="detail-label">Gender</span>
+                <span class="detail-value">{{ application.get_gender_display }}</span>
+            </div>
+            {% endif %}
+
+            <!-- Motivation / Additional Info -->
+            <div class="detail-row" style="flex-wrap:wrap;">
+                <span class="detail-label">Motivation</span>
+                <div class="detail-value motivation-box">
+                    {{ application.motivation|default:"No motivation provided." }}
+                </div>
+            </div>
+
+            <!-- Extra fields for each type -->
+            {% if app_type == 'bursary' %}
+                <div class="detail-row">
+                    <span class="detail-label">Current Institution</span>
+                    <span class="detail-value">{{ application.current_institution|default:"N/A" }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Year of Study</span>
+                    <span class="detail-value">{{ application.year_of_study|default:"N/A" }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Field of Study</span>
+                    <span class="detail-value">{{ application.field_of_study|default:"N/A" }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Academic Average</span>
+                    <span class="detail-value">{{ application.academic_average|default:"N/A" }}</span>
+                </div>
+            {% elif app_type == 'university' %}
+                <div class="detail-row">
+                    <span class="detail-label">Program of Interest</span>
+                    <span class="detail-value">{{ application.program_of_interest|default:"N/A" }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Preferred Start Date</span>
+                    <span class="detail-value">{{ application.preferred_start_date|default:"N/A" }}</span>
+                </div>
+            {% elif app_type == 'school' %}
+                <div class="detail-row">
+                    <span class="detail-label">Previous School</span>
+                    <span class="detail-value">{{ application.previous_school|default:"N/A" }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Grade Applying For</span>
+                    <span class="detail-value">{{ application.grade_applying_for|default:"N/A" }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Parent/Guardian</span>
+                    <span class="detail-value">{{ application.parent_guardian_name|default:"N/A" }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Parent Contact</span>
+                    <span class="detail-value">{{ application.parent_guardian_contact|default:"N/A" }}</span>
+                </div>
+            {% endif %}
+
+            <!-- Admin Notes Display -->
+            <div class="detail-row" style="flex-wrap:wrap; margin-top:8px; border-top:2px solid var(--border); padding-top:12px;">
+                <span class="detail-label">Admin Notes</span>
+                <div class="detail-value" style="width:100%;">
+                    {% if application.admin_notes %}
+                        <div style="background:#f8f9fa; padding:10px; border-radius:var(--radius-sm); white-space:pre-wrap; font-size:13px;">
+                            {{ application.admin_notes }}
+                        </div>
+                    {% else %}
+                        <span style="color:var(--gray);">No notes added yet.</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- ===== STATUS UPDATE FORM ===== -->
+            <div class="action-form">
+                <h6 style="font-family:var(--font-display); font-weight:600; font-size:15px; margin-bottom:12px;">
+                    <i class="fas fa-sync-alt me-2" style="color:var(--primary);"></i>Update Status
+                </h6>
+                <form method="post" action="">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="update_status">
+                    <div class="row g-2 align-items-end">
+                        <div class="col-md-4">
+                            <label class="form-label">New Status</label>
+                            <select name="status" class="form-select">
+                                {% for value, label in status_choices %}
+                                <option value="{{ value }}" {% if application.status == value %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn-save w-100">
+                                <i class="fas fa-check me-1"></i> Update
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- ===== NOTES UPDATE FORM ===== -->
+            <div class="action-form">
+                <h6 style="font-family:var(--font-display); font-weight:600; font-size:15px; margin-bottom:12px;">
+                    <i class="fas fa-sticky-note me-2" style="color:var(--primary);"></i>Edit Admin Notes
+                </h6>
+                <form method="post" action="">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="save_notes">
+                    <div class="row g-2 align-items-end">
+                        <div class="col-md-8">
+                            <label class="form-label">Notes (visible to applicant)</label>
+                            <textarea name="admin_notes" class="form-control" rows="3" placeholder="Add internal notes or feedback for the applicant...">{{ application.admin_notes|default:'' }}</textarea>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn-save w-100">
+                                <i class="fas fa-save me-1"></i> Save Notes
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+
+        <!-- ===== APPLICANT PROFILE QUICK LINK ===== -->
+        <div class="detail-card" style="background:var(--light-gray); border:1px dashed var(--border);">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="fas fa-user-circle" style="font-size:24px;color:var(--primary);"></i>
+                    <span style="font-weight:600; margin-left:8px;">Applicant Profile</span>
+                    <span style="font-size:13px;color:var(--gray); margin-left:12px;">
+                        {{ application.full_name|default:application.applicant.get_full_name|default:application.applicant.username }}
+                    </span>
+                </div>
+                <a href="/profile/{{ application.applicant.id }}/" class="btn-outline-primary-custom" target="_blank">
+                    <i class="fas fa-external-link-alt me-1"></i> View Full Profile
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ===== MOBILE BOTTOM NAV ===== -->
+    <div class="mobile-bottom-nav">
+        <a href="/"><i class="fas fa-home"></i>Home</a>
+        <a href="/dashboard"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
+        <a href="/api/education/" class="active"><i class="fas fa-graduation-cap"></i>Edu</a>
+        <a href="/profile/"><i class="fas fa-user"></i>Profile</a>
+    </div>
+
+    <!-- ===== TOAST CONTAINER ===== -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleProfileDropdown() {
+            document.getElementById("profileMenu").classList.toggle("show");
+        }
+        function toggleThreeDotMenu() {
+            document.getElementById("threeDotMenu").classList.toggle("show");
+        }
+
+        document.addEventListener("click", function(e) {
+            const profileMenu = document.getElementById("profileMenu");
+            const avatar = document.querySelector(".profile-avatar-small");
+            if (avatar && profileMenu && !avatar.contains(e.target) && !profileMenu.contains(e.target)) {
+                profileMenu.classList.remove("show");
+            }
+            const threeDotMenu = document.getElementById("threeDotMenu");
+            const dotBtn = document.querySelector(".three-dot-menu .dot-btn");
+            if (dotBtn && threeDotMenu && !dotBtn.contains(e.target) && !threeDotMenu.contains(e.target)) {
+                threeDotMenu.classList.remove("show");
+            }
+        });
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast-item ${type}`;
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                info: 'fa-info-circle',
+                warning: 'fa-exclamation-triangle'
+            };
+            toast.innerHTML = `
+                <i class="fas ${icons[type] || icons.info}"></i>
+                ${message}
+                <button class="close-toast" onclick="this.parentElement.remove()">&times;</button>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 5000);
+        }
+
+        function showLogin() {
+            showToast('Please login to continue', 'info');
+            window.location.href = '/login/';
+        }
+
+        function showSignup() {
+            showToast('Create an account to get started', 'info');
+            window.location.href = '/signup/';
+        }
+    </script>
+
+
+  <script src="/static/hiring/js/notifications-global.js" defer></script>
+</body>
+</html>

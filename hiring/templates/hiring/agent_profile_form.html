@@ -1,0 +1,585 @@
+<!-- hiring/templates/hiring/agent_profile_form.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{% if is_edit %}Edit{% else %}Create{% endif %} Agent Profile - OppoGlobe</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --primary-dark: #1557b0;
+            --primary-light: #e8f0fe;
+            --secondary: #34a853;
+            --accent: #ea4335;
+            --dark: #202124;
+            --gray: #5f6368;
+            --light-gray: #f1f3f4;
+            --border: #dadce0;
+            --shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #f8f9fa;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            padding-top: 72px;
+            padding-bottom: 40px;
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 16px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        @media (min-width: 768px) {
+            .header { padding: 0 24px; height: 64px; }
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--primary);
+        }
+
+        @media (min-width: 768px) {
+            .header-brand { font-size: 20px; gap: 10px; }
+        }
+
+        .header-brand img { height: 28px; }
+        @media (min-width: 768px) {
+            .header-brand img { height: 36px; }
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 12px;
+            color: white;
+            background: linear-gradient(135deg, var(--primary), #4285f4);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        @media (min-width: 768px) {
+            .avatar { width: 36px; height: 36px; font-size: 14px; }
+        }
+
+        .form-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 12px;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        @media (min-width: 768px) {
+            .form-card { padding: 30px; }
+        }
+
+        .form-card .card-title {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+
+        .form-label {
+            font-weight: 500;
+            font-size: 13px;
+            color: var(--gray);
+        }
+
+        .form-control, .form-select {
+            font-size: 14px;
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(26,115,232,0.15);
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--dark);
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--primary-light);
+            margin-bottom: 16px;
+            margin-top: 24px;
+        }
+        .section-title:first-of-type {
+            margin-top: 0;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            border: none;
+            padding: 10px 24px;
+            border-radius: var(--radius-sm);
+            font-weight: 500;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: var(--light-gray);
+            border: none;
+            color: var(--dark);
+            padding: 10px 24px;
+            border-radius: var(--radius-sm);
+            font-weight: 500;
+        }
+        .btn-secondary:hover {
+            background: #e8eaed;
+        }
+
+        .help-text {
+            font-size: 11px;
+            color: var(--gray);
+            margin-top: 4px;
+        }
+
+        .current-image {
+            max-width: 100px;
+            max-height: 100px;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+            object-fit: cover;
+        }
+
+        .toast-container {
+            position: fixed;
+            top: 72px;
+            right: 12px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-width: calc(100vw - 24px);
+        }
+
+        .toast-item {
+            padding: 10px 16px;
+            border-radius: var(--radius-sm);
+            color: white;
+            font-size: 13px;
+            animation: slideIn 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: auto;
+            width: 100%;
+            box-shadow: var(--shadow-hover);
+        }
+
+        .toast-item.success { background: var(--secondary); }
+        .toast-item.error { background: var(--accent); }
+        .toast-item.info { background: var(--primary); }
+        .toast-item.warning { background: var(--warning); color: var(--dark); }
+
+        .toast-item .close-toast {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.7);
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(60px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @media (max-width: 768px) {
+            .form-card { padding: 16px; }
+            .form-card .card-title { font-size: 18px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header class="header">
+        <a href="/" class="header-brand">
+            <img src="/static/images/logo.png" alt="OppoGlobe" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\'font-weight:700;color:#191919;font-size:20px;\'>OppoGlobe</span>'">
+            <span>OppoGlobe</span>
+        </a>
+        <div class="header-actions">
+            <div class="avatar">
+                {{ user.username|first|upper }}
+            </div>
+        </div>
+    </header>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="form-container">
+        <div class="form-card">
+            <h2 class="card-title">
+                <i class="fas fa-user-tie text-primary me-2"></i>
+                {% if is_edit %}Edit Agent Profile{% else %}Create Agent Profile{% endif %}
+            </h2>
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <!-- Basic Information -->
+                <div class="section-title">Basic Information</div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Display Name <span class="text-danger">*</span></label>
+                        <input type="text" name="display_name" class="form-control" value="{{ form.display_name|default:'' }}" placeholder="Your professional name" required>
+                        <div class="help-text">This name will be shown to clients</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Agency Name</label>
+                        <input type="text" name="agency_name" class="form-control" value="{{ form.agency_name|default:'' }}" placeholder="Your agency/company">
+                    </div>
+                </div>
+
+                <div class="row g-3 mt-2">
+                    <div class="col-md-6">
+                        <label class="form-label">Agent Type <span class="text-danger">*</span></label>
+                        <select name="agent_type" class="form-select" id="agentTypeSelect" required>
+                            <option value="independent" {% if form.agent_type == 'independent' %}selected{% endif %}>Independent Agent</option>
+                            <option value="agency" {% if form.agent_type == 'agency' %}selected{% endif %}>Agency Agent</option>
+                            <option value="broker" {% if form.agent_type == 'broker' %}selected{% endif %}>Broker</option>
+                            <option value="property_manager" {% if form.agent_type == 'property_manager' %}selected{% endif %}>Property Manager</option>
+                            <option value="developer" {% if form.agent_type == 'developer' %}selected{% endif %}>Developer</option>
+                            <option value="consultant" {% if form.agent_type == 'consultant' %}selected{% endif %}>Real Estate Consultant</option>
+                            <option value="commercial" {% if form.agent_type == 'commercial' %}selected{% endif %}>Commercial Agent</option>
+                            <option value="residential" {% if form.agent_type == 'residential' %}selected{% endif %}>Residential Agent</option>
+                            <option value="student_housing" {% if form.agent_type == 'student_housing' %}selected{% endif %}>Student Housing Specialist</option>
+                            <option value="luxury" {% if form.agent_type == 'luxury' %}selected{% endif %}>Luxury Property Specialist</option>
+                            <option value="international" {% if form.agent_type == 'international' %}selected{% endif %}>International Property Specialist</option>
+                            <option value="corporate" {% if form.agent_type == 'corporate' %}selected{% endif %}>Corporate Real Estate</option>
+                            <option value="investment" {% if form.agent_type == 'investment' %}selected{% endif %}>Investment Property Specialist</option>
+                            <option value="custom" {% if form.agent_type == 'custom' %}selected{% endif %}>Custom</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6" id="customAgentTypeDiv" style="{% if form.agent_type != 'custom' %}display:none;{% endif %}">
+                        <label class="form-label">Custom Agent Type</label>
+                        <input type="text" name="custom_agent_type" class="form-control" value="{{ form.custom_agent_type|default:'' }}" placeholder="e.g., Senior Property Advisor">
+                        <div class="help-text">Specify your agent type if you selected "Custom" above</div>
+                    </div>
+                </div>
+
+                <!-- Contact Details -->
+                <div class="section-title">Contact Details</div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fas fa-phone text-success me-1"></i> Primary Phone <span class="text-danger">*</span></label>
+                        <input type="text" name="phone_primary" class="form-control" value="{{ form.phone_primary|default:'' }}" placeholder="0821234567 or +27721234567" required>
+                        <div class="help-text">Accepts any format: 0821234567, +27123456789</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fas fa-phone text-muted me-1"></i> Secondary Phone</label>
+                        <input type="text" name="phone_secondary" class="form-control" value="{{ form.phone_secondary|default:'' }}" placeholder="Optional backup number">
+                    </div>
+                </div>
+
+                <div class="row g-3 mt-2">
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fas fa-envelope text-primary me-1"></i> Primary Email</label>
+                        <input type="email" name="email_primary" class="form-control" value="{{ form.email_primary|default:'' }}" placeholder="you@example.com">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fas fa-envelope text-muted me-1"></i> Secondary Email</label>
+                        <input type="email" name="email_secondary" class="form-control" value="{{ form.email_secondary|default:'' }}" placeholder="backup@example.com">
+                    </div>
+                </div>
+
+                <div class="row g-3 mt-2">
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fas fa-globe text-info me-1"></i> Website</label>
+                        <input type="text" name="website" class="form-control" value="{{ form.website|default:'' }}" placeholder="example.com or https://example.com">
+                        <div class="help-text">Accepts any format: example.com, www.example.com, https://example.com</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fas fa-map-marker-alt text-danger me-1"></i> City</label>
+                        <input type="text" name="city" class="form-control" value="{{ form.city|default:'' }}" placeholder="e.g., Johannesburg, New York, London">
+                    </div>
+                </div>
+
+                <!-- Specializations -->
+                <div class="section-title">Specializations</div>
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <label class="form-label">Select Specializations</label>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="specializations" value="residential" id="spec_residential" {% if 'residential' in form.specializations %}checked{% endif %}>
+                                    <label class="form-check-label" for="spec_residential">Residential Sales</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="specializations" value="commercial" id="spec_commercial" {% if 'commercial' in form.specializations %}checked{% endif %}>
+                                    <label class="form-check-label" for="spec_commercial">Commercial Sales</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="specializations" value="luxury" id="spec_luxury" {% if 'luxury' in form.specializations %}checked{% endif %}>
+                                    <label class="form-check-label" for="spec_luxury">Luxury Homes</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="specializations" value="rentals" id="spec_rentals" {% if 'rentals' in form.specializations %}checked{% endif %}>
+                                    <label class="form-check-label" for="spec_rentals">Rentals & Leasing</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="specializations" value="property_management" id="spec_property_management" {% if 'property_management' in form.specializations %}checked{% endif %}>
+                                    <label class="form-check-label" for="spec_property_management">Property Management</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="specializations" value="investment" id="spec_investment" {% if 'investment' in form.specializations %}checked{% endif %}>
+                                    <label class="form-check-label" for="spec_investment">Investment Properties</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="specializations" value="development" id="spec_development" {% if 'development' in form.specializations %}checked{% endif %}>
+                                    <label class="form-check-label" for="spec_development">New Developments</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="specializations" value="land" id="spec_land" {% if 'land' in form.specializations %}checked{% endif %}>
+                                    <label class="form-check-label" for="spec_land">Land & Farms</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="specializations" value="international" id="spec_international" {% if 'international' in form.specializations %}checked{% endif %}>
+                                    <label class="form-check-label" for="spec_international">International Real Estate</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="specializations" value="custom" id="spec_custom" {% if 'custom' in form.specializations %}checked{% endif %}>
+                                    <label class="form-check-label" for="spec_custom"><strong>Custom</strong></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12" id="customSpecDiv" style="{% if 'custom' not in form.specializations %}display:none;{% endif %}">
+                        <label class="form-label">Custom Specializations</label>
+                        <input type="text" name="custom_specializations" class="form-control" value="{{ form.custom_specializations|default:'' }}" placeholder="e.g., Eco-Friendly Homes, Waterfront Properties, Student Accommodation">
+                        <div class="help-text">Enter your custom specializations separated by commas</div>
+                    </div>
+                </div>
+
+                <!-- Social Media -->
+                <div class="section-title">Social Media & Contact</div>
+                <p class="help-text"><i class="fas fa-info-circle me-1"></i> You can enter URLs in any format: username, @username, www.example.com, or full URL</p>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fab fa-whatsapp text-success me-1"></i> WhatsApp</label>
+                        <input type="text" name="whatsapp_number" class="form-control" value="{{ form.whatsapp_number|default:'' }}" placeholder="0821234567 or +27721234567">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fab fa-telegram text-primary me-1"></i> Telegram</label>
+                        <input type="text" name="telegram_username" class="form-control" value="{{ form.telegram_username|default:'' }}" placeholder="@username or just username">
+                    </div>
+                </div>
+
+                <div class="row g-3 mt-2">
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fab fa-facebook text-primary me-1"></i> Facebook</label>
+                        <input type="text" name="facebook_url" class="form-control" value="{{ form.facebook_url|default:'' }}" placeholder="facebook.com/yourpage or @username">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fab fa-instagram text-danger me-1"></i> Instagram</label>
+                        <input type="text" name="instagram_url" class="form-control" value="{{ form.instagram_url|default:'' }}" placeholder="instagram.com/yourprofile or @username">
+                    </div>
+                </div>
+
+                <div class="row g-3 mt-2">
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fab fa-linkedin text-primary me-1"></i> LinkedIn</label>
+                        <input type="text" name="linkedin_url" class="form-control" value="{{ form.linkedin_url|default:'' }}" placeholder="linkedin.com/in/yourprofile">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fab fa-twitter me-1"></i> Twitter/X</label>
+                        <input type="text" name="twitter_url" class="form-control" value="{{ form.twitter_url|default:'' }}" placeholder="twitter.com/yourprofile or @username">
+                    </div>
+                </div>
+
+                <div class="row g-3 mt-2">
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fab fa-youtube text-danger me-1"></i> YouTube</label>
+                        <input type="text" name="youtube_url" class="form-control" value="{{ form.youtube_url|default:'' }}" placeholder="youtube.com/@yourchannel">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fab fa-tiktok me-1"></i> TikTok</label>
+                        <input type="text" name="tiktok_url" class="form-control" value="{{ form.tiktok_url|default:'' }}" placeholder="tiktok.com/@yourprofile or @username">
+                    </div>
+                </div>
+
+                <div class="row g-3 mt-2">
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fas fa-building me-1"></i> Property24</label>
+                        <input type="text" name="property24_url" class="form-control" value="{{ form.property24_url|default:'' }}" placeholder="property24.com/profile/yourprofile">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fas fa-home me-1"></i> PrivateProperty</label>
+                        <input type="text" name="privateproperty_url" class="form-control" value="{{ form.privateproperty_url|default:'' }}" placeholder="privateproperty.co.za/yourprofile">
+                    </div>
+                </div>
+
+                <!-- Profile Image -->
+                <div class="section-title">Profile Image</div>
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <label class="form-label">Profile Picture</label>
+                        <input type="file" name="profile_image" class="form-control" accept="image/*">
+                        <div class="help-text">Upload a professional profile picture (JPG, PNG, WebP)</div>
+                        {% if agent and agent.profile_image %}
+                        <div class="mt-2">
+                            <img src="{{ agent.profile_image.url }}" alt="Current profile" class="current-image">
+                            <span class="ms-2 text-muted small">Current image</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Submit Buttons -->
+                <div class="mt-4 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i> {% if is_edit %}Update{% else %}Create{% endif %} Agent Profile
+                    </button>
+                    {% if property_id %}
+                    <a href="/properties/{{ property_id }}/" class="btn btn-secondary">
+                        <i class="fas fa-times me-2"></i> Cancel
+                    </a>
+                    {% else %}
+                    <a href="/properties/manage/" class="btn btn-secondary">
+                        <i class="fas fa-times me-2"></i> Cancel
+                    </a>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===== TOAST CONTAINER ===== -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Custom Agent Type toggle
+            const agentTypeSelect = document.getElementById('agentTypeSelect');
+            const customAgentTypeDiv = document.getElementById('customAgentTypeDiv');
+
+            if (agentTypeSelect) {
+                agentTypeSelect.addEventListener('change', function() {
+                    if (this.value === 'custom') {
+                        customAgentTypeDiv.style.display = 'block';
+                    } else {
+                        customAgentTypeDiv.style.display = 'none';
+                    }
+                });
+            }
+
+            // Custom Specializations toggle
+            const customSpecCheckbox = document.getElementById('spec_custom');
+            const customSpecDiv = document.getElementById('customSpecDiv');
+
+            if (customSpecCheckbox) {
+                customSpecCheckbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        customSpecDiv.style.display = 'block';
+                    } else {
+                        customSpecDiv.style.display = 'none';
+                    }
+                });
+            }
+
+            // Toast function
+            function showToast(message, type = 'success') {
+                const container = document.getElementById('toastContainer');
+                const toast = document.createElement('div');
+                toast.className = `toast-item ${type}`;
+                const icons = {
+                    success: 'fa-check-circle',
+                    error: 'fa-exclamation-circle',
+                    info: 'fa-info-circle',
+                    warning: 'fa-exclamation-triangle'
+                };
+                toast.innerHTML = `
+                    <i class="fas ${icons[type] || icons.info}"></i>
+                    ${message}
+                    <button class="close-toast" onclick="this.parentElement.remove()">&times;</button>
+                `;
+                container.appendChild(toast);
+                setTimeout(() => toast.remove(), 5000);
+            }
+
+            // Check for messages from Django
+            {% if messages %}
+                {% for message in messages %}
+                    showToast('{{ message }}', '{{ message.tags }}');
+                {% endfor %}
+            {% endif %}
+        });
+    </script>
+
+  <script src="/static/hiring/js/notifications-global.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,1134 @@
+<!-- education/templates/education/application_detail.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Details - Education Hub | OppoGlobe</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #e8458a;
+            --primary-light: #fce4ec;
+            --primary-dark: #c62878;
+            --dark: #1a1a2e;
+            --gray: #6c757d;
+            --light-gray: #f5f6fa;
+            --border: #e9ecef;
+            --shadow: 0 2px 12px rgba(0,0,0,0.06);
+            --shadow-hover: 0 8px 30px rgba(0,0,0,0.10);
+            --radius: 14px;
+            --radius-sm: 8px;
+            --transition: all 0.3s ease;
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --info: #17a2b8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #f0f2f5;
+            font-family: var(--font-body);
+            padding-top: 70px;
+            padding-bottom: 80px;
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        button { cursor: pointer; border: none; background: none; }
+        img { max-width: 100%; }
+
+        /* ===== TOP NAVBAR ===== */
+        .header-area {
+            background: #ffffff;
+            border-bottom: 1px solid var(--border);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            height: 64px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        }
+
+        .main-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+            padding: 0 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        @media (min-width: 768px) {
+            .main-nav { padding: 0 32px; }
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .logo-text {
+            font-family: var(--font-display);
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-left: 8px;
+        }
+
+        .logo-text span {
+            color: var(--primary);
+        }
+
+        .nav-icons {
+            display: flex;
+            list-style: none;
+            gap: 4px;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        @media (min-width: 576px) {
+            .nav-icons { gap: 8px; }
+        }
+
+        .nav-icons a {
+            font-size: 17px;
+            color: #555;
+            transition: var(--transition);
+            padding: 6px 8px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 36px;
+            height: 36px;
+            text-decoration: none;
+        }
+
+        @media (min-width: 576px) {
+            .nav-icons a {
+                min-width: 40px;
+                height: 40px;
+                font-size: 19px;
+                padding: 6px 10px;
+            }
+        }
+
+        .nav-icons a:hover {
+            color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .profile-dropdown { position: relative; }
+
+        .profile-avatar-small {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+
+        @media (min-width: 576px) {
+            .profile-avatar-small {
+                width: 36px;
+                height: 36px;
+                font-size: 14px;
+            }
+        }
+
+        .profile-avatar-small:hover {
+            transform: scale(1.05);
+        }
+
+        .profile-menu {
+            position: absolute;
+            top: 42px;
+            right: 0;
+            width: 220px;
+            background: white;
+            border-radius: var(--radius-sm);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+            padding: 6px 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: var(--transition);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+
+        .profile-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .profile-menu a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            color: #444;
+            font-size: 13px;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .profile-menu a:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .profile-menu a i {
+            width: 18px;
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        .profile-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 4px 12px;
+        }
+
+        .three-dot-menu { position: relative; }
+
+        .three-dot-menu .dot-btn {
+            font-size: 20px;
+            color: #555;
+            padding: 6px 8px;
+            border-radius: 8px;
+            transition: var(--transition);
+            background: none;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 36px;
+            height: 36px;
+        }
+
+        @media (min-width: 576px) {
+            .three-dot-menu .dot-btn {
+                min-width: 40px;
+                height: 40px;
+                font-size: 22px;
+            }
+        }
+
+        .three-dot-menu .dot-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .menu-content {
+            position: absolute;
+            right: 0;
+            top: 42px;
+            background: #fff;
+            width: 200px;
+            padding: 6px 0;
+            border-radius: var(--radius-sm);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: var(--transition);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+
+        .menu-content.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .menu-content a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            color: #444;
+            font-size: 13px;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .menu-content a:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .menu-content a i {
+            width: 18px;
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .desktop-sidebar {
+            width: 220px;
+            background: white;
+            height: calc(100vh - 64px);
+            position: fixed;
+            top: 64px;
+            left: 0;
+            padding: 16px 12px;
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        @media (max-width: 991px) {
+            .desktop-sidebar { display: none; }
+        }
+
+        .desktop-sidebar .sidebar-section { margin-bottom: 16px; }
+
+        .desktop-sidebar .sidebar-title {
+            font-family: var(--font-display);
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 0 4px;
+            margin-bottom: 6px;
+        }
+
+        .desktop-sidebar a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            color: #555;
+            text-decoration: none;
+            border-radius: var(--radius-sm);
+            font-weight: 500;
+            font-size: 13px;
+            transition: var(--transition);
+            margin-bottom: 2px;
+        }
+
+        .desktop-sidebar a:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .desktop-sidebar a.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .desktop-sidebar a.active i {
+            color: white;
+        }
+
+        .desktop-sidebar a i {
+            width: 20px;
+            color: var(--gray);
+            font-size: 16px;
+        }
+
+        .desktop-sidebar hr {
+            margin: 8px 0;
+            border-color: var(--border);
+        }
+
+        @media (min-width: 992px) {
+            body {
+                padding-left: 240px !important;
+            }
+        }
+
+        /* ===== MAIN CONTAINER ===== */
+        .detail-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px 16px 40px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            margin-bottom: 16px;
+            padding: 8px 16px;
+            background: white;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid var(--border);
+        }
+
+        .back-link:hover {
+            transform: translateX(-4px);
+            box-shadow: var(--shadow-hover);
+            color: var(--primary);
+        }
+
+        .detail-header {
+            background: white;
+            border-radius: var(--radius) var(--radius) 0 0;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            border-bottom: none;
+        }
+
+        .detail-header h1 {
+            font-family: var(--font-display);
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .detail-header h1 i {
+            color: var(--primary);
+        }
+
+        .detail-header .status-badge {
+            padding: 6px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .status-draft { background: var(--light-gray); color: var(--gray); }
+        .status-submitted { background: #cce5ff; color: #004085; }
+        .status-reviewing { background: #fff3cd; color: #856404; }
+        .status-shortlisted { background: #d4edda; color: #155724; }
+        .status-interview { background: #cce5ff; color: #004085; }
+        .status-accepted { background: #d4edda; color: #155724; }
+        .status-rejected { background: #f8d7da; color: #721c24; }
+        .status-withdrawn { background: #e2e3e5; color: #383d41; }
+
+        .detail-card {
+            background: white;
+            border-radius: 0 0 var(--radius) var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            border-top: none;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px 30px;
+        }
+
+        .info-item {
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.04);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .info-item .label {
+            color: var(--gray);
+            font-weight: 500;
+            font-size: 13px;
+        }
+
+        .info-item .value {
+            font-weight: 500;
+            font-size: 13px;
+            text-align: right;
+            max-width: 60%;
+            word-break: break-word;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 16px;
+            font-weight: 600;
+            margin: 20px 0 12px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--dark);
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        .section-title:first-of-type {
+            margin-top: 0;
+        }
+
+        .file-list-detail {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .file-item-detail {
+            background: var(--light-gray);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .file-item-detail a {
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .file-item-detail a:hover {
+            text-decoration: underline;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .btn-primary-action {
+            padding: 10px 24px;
+            border-radius: var(--radius-sm);
+            background: var(--dark);
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            border: none;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary-action:hover {
+            background: #2d2d4a;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-success-action {
+            padding: 10px 24px;
+            border-radius: var(--radius-sm);
+            background: var(--success);
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            border: none;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-success-action:hover {
+            background: #218838;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger-action {
+            padding: 10px 24px;
+            border-radius: var(--radius-sm);
+            background: var(--danger);
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            border: none;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-danger-action:hover {
+            background: #c82333;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline-action {
+            padding: 10px 24px;
+            border-radius: var(--radius-sm);
+            background: transparent;
+            color: var(--dark);
+            font-weight: 600;
+            font-size: 14px;
+            border: 2px solid var(--border);
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-outline-action:hover {
+            border-color: var(--dark);
+            background: var(--light-gray);
+        }
+
+        .status-update-form {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            background: var(--light-gray);
+            padding: 14px 18px;
+            border-radius: var(--radius-sm);
+            margin-top: 10px;
+        }
+
+        .status-update-form select {
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            font-size: 13px;
+            background: white;
+            min-width: 150px;
+        }
+
+        /* ===== MOBILE BOTTOM NAV ===== */
+        .mobile-bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 56px;
+            background: white;
+            border-top: 1px solid var(--border);
+            justify-content: space-around;
+            align-items: center;
+            z-index: 999;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        @media (max-width: 991px) {
+            .mobile-bottom-nav {
+                display: flex !important;
+            }
+            body { padding-bottom: 66px; }
+        }
+
+        .mobile-bottom-nav a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1px;
+            font-size: 9px;
+            color: var(--gray);
+            padding: 4px 6px;
+            transition: var(--transition);
+            text-decoration: none;
+            flex: 1;
+            text-align: center;
+        }
+
+        .mobile-bottom-nav a i {
+            font-size: 17px;
+            display: block;
+        }
+
+        .mobile-bottom-nav a.active {
+            color: var(--primary);
+        }
+
+        .mobile-bottom-nav a:hover {
+            color: var(--primary);
+        }
+
+        /* ===== TOAST ===== */
+        .toast-container {
+            position: fixed;
+            top: 80px;
+            right: 16px;
+            z-index: 9999;
+            max-width: calc(100vw - 32px);
+        }
+
+        @media (min-width: 576px) {
+            .toast-container { max-width: 400px; }
+        }
+
+        .toast-item {
+            padding: 10px 16px;
+            border-radius: var(--radius-sm);
+            color: white;
+            font-size: 13px;
+            animation: slideIn 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .toast-item.success { background: #28a745; }
+        .toast-item.error { background: #dc3545; }
+        .toast-item.info { background: #17a2b8; }
+        .toast-item.warning { background: #ffc107; color: var(--dark); }
+
+        .toast-item .close-toast {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.7);
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .toast-item .close-toast:hover { color: white; }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(60px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @media (max-width: 576px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            .detail-header {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 16px;
+            }
+            .detail-header h1 { font-size: 18px; }
+            .detail-card { padding: 16px; }
+            .action-buttons { flex-direction: column; }
+            .action-buttons .btn { width: 100%; justify-content: center; }
+            .status-update-form { flex-direction: column; align-items: stretch; }
+            .status-update-form select { width: 100%; }
+        }
+
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: var(--light-gray); }
+        ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #aaa; }
+    </style>
+</head>
+<body>
+
+    <!-- ===== TOP NAVBAR ===== -->
+    <header class="header-area">
+        <div class="main-nav">
+            <a href="/" class="logo">
+                <span class="logo-text">Oppo<span>Globe</span></span>
+            </a>
+
+            <ul class="nav-icons">
+                <li><a href="/" title="Home"><i class="fas fa-home"></i></a></li>
+                <li><a href="/education/" title="Education Hub"><i class="fas fa-graduation-cap"></i></a></li>
+
+                {% if user.is_authenticated %}
+                <li><a href="/dashboard" title="Dashboard"><i class="fas fa-th-large"></i></a></li>
+                <li><a href="/messaging/" title="Messages"><i class="fas fa-comment-dots"></i></a></li>
+
+                <li class="profile-dropdown">
+                    <div class="profile-avatar-small" onclick="toggleProfileDropdown()">
+                        {{ user.username|first|upper }}
+                    </div>
+                    <div class="profile-menu" id="profileMenu">
+                        <a href="/profile/"><i class="fas fa-user"></i> Profile</a>
+                        <a href="/education/my-applications/"><i class="fas fa-file-alt"></i> Applications</a>
+                        <div class="profile-divider"></div>
+                        <a href="/logout/"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                </li>
+
+                <li class="three-dot-menu">
+                    <button class="dot-btn" onclick="toggleThreeDotMenu()">
+                        <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+                    <div class="menu-content" id="threeDotMenu">
+                        <a href="/profile/skills/"><i class="fas fa-cogs"></i> Skills</a>
+                        <a href="/profile/employment/"><i class="fas fa-briefcase"></i> Employment</a>
+                        <a href="/profile/education/"><i class="fas fa-graduation-cap"></i> Education</a>
+                        <a href="/profile/documents/"><i class="fas fa-file-upload"></i> Documents</a>
+                    </div>
+                </li>
+
+                {% else %}
+                <li><a href="#" onclick="showLogin()" title="Login"><i class="fas fa-sign-in-alt"></i></a></li>
+                <li><a href="#" onclick="showSignup()" title="Sign Up"><i class="fas fa-user-plus"></i></a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </header>
+
+    <!-- ===== DESKTOP SIDEBAR ===== -->
+    <div class="desktop-sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-title">Profile</div>
+            <a href="/profile/"><i class="fas fa-user"></i> My Profile</a>
+            <a href="/education/my-applications/" class="active"><i class="fas fa-file-alt"></i> Applications</a>
+        </div>
+        <hr>
+        <div class="sidebar-section">
+            <div class="sidebar-title">Education</div>
+            <a href="/education/"><i class="fas fa-graduation-cap"></i> Education Hub</a>
+            <a href="/education/apply/"><i class="fas fa-pen"></i> Apply Now</a>
+        </div>
+        <hr>
+        <div class="sidebar-section">
+            <div class="sidebar-title">Quick Links</div>
+            <a href="/profile/skills/"><i class="fas fa-cogs"></i> Skills</a>
+            <a href="/profile/employment/"><i class="fas fa-briefcase"></i> Employment</a>
+            <a href="/profile/documents/"><i class="fas fa-file-upload"></i> Documents</a>
+        </div>
+    </div>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="detail-container">
+
+        <a href="{% url 'education_my_applications' %}" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to My Applications
+        </a>
+
+        <div class="detail-header">
+            <h1>
+                <i class="fas fa-{% if type == 'bursary' %}hand-holding-heart{% elif type == 'university' %}university{% else %}school{% endif %}"></i>
+                {{ application.title|default:"Application" }}
+            </h1>
+            <span class="status-badge status-{{ application.status }}">
+                {{ application.get_status_display }}
+            </span>
+        </div>
+
+        <div class="detail-card">
+            <!-- Personal Information -->
+            <h4 class="section-title"><i class="fas fa-user"></i> Personal Information</h4>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="label">Full Names</span>
+                    <span class="value">{{ application.full_names|default:"Not provided" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Email</span>
+                    <span class="value">{{ application.email|default:"Not provided" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Phone</span>
+                    <span class="value">{{ application.phone|default:"Not provided" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">ID Number</span>
+                    <span class="value">{{ application.id_number|default:"Not provided" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Date of Birth</span>
+                    <span class="value">{{ application.birth_date|date:"Y-m-d"|default:"Not provided" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Province</span>
+                    <span class="value">{{ application.province|default:"Not provided" }}</span>
+                </div>
+                <div class="info-item" style="grid-column:1/-1;">
+                    <span class="label">Address</span>
+                    <span class="value">{{ application.address|default:"Not provided" }}</span>
+                </div>
+            </div>
+
+            <!-- Academic Information -->
+            <h4 class="section-title"><i class="fas fa-graduation-cap"></i> Academic Information</h4>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="label">Faculty</span>
+                    <span class="value">{{ application.faculty|default:"Not provided" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Course</span>
+                    <span class="value">{{ application.course|default:"Not provided" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">First Choice</span>
+                    <span class="value">{{ application.first_choice|default:"Not provided" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Second Choice</span>
+                    <span class="value">{{ application.second_choice|default:"Not provided" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Academic Year</span>
+                    <span class="value">{{ application.academic_year|default:"Not provided" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Current Institution</span>
+                    <span class="value">{{ application.current_institution|default:"Not provided" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Grade 11 Final</span>
+                    <span class="value">{{ application.grade_11_final|default:"Not provided" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Grade 11 June</span>
+                    <span class="value">{{ application.grade_11_june|default:"Not provided" }}</span>
+                </div>
+                <div class="info-item" style="grid-column:1/-1;">
+                    <span class="label">Grade 12 Midyear</span>
+                    <span class="value">{{ application.grade_12_midyear|default:"Not provided" }}</span>
+                </div>
+                <div class="info-item" style="grid-column:1/-1;">
+                    <span class="label">Motivation</span>
+                    <span class="value">{{ application.motivation|default:"Not provided"|truncatewords:30 }}</span>
+                </div>
+            </div>
+
+            <!-- Guardian Information -->
+            <h4 class="section-title"><i class="fas fa-users"></i> Guardian Information</h4>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="label">Guardian Name</span>
+                    <span class="value">{{ application.guardian_full_names|default:"Not provided" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Relationship</span>
+                    <span class="value">{{ application.guardian_relationship|default:"Not provided" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Guardian Phone</span>
+                    <span class="value">{{ application.guardian_phone|default:"Not provided" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Guardian Email</span>
+                    <span class="value">{{ application.guardian_email|default:"Not provided" }}</span>
+                </div>
+                <div class="info-item" style="grid-column:1/-1;">
+                    <span class="label">Guardian Address</span>
+                    <span class="value">{{ application.guardian_address|default:"Not provided" }}</span>
+                </div>
+            </div>
+
+            <!-- Documents -->
+            <h4 class="section-title"><i class="fas fa-file-upload"></i> Uploaded Documents</h4>
+            <div class="file-list-detail">
+                {% if application.cv %}
+                <span class="file-item-detail"><i class="fas fa-file-pdf"></i> <a href="{{ application.cv.url }}" target="_blank">CV</a></span>
+                {% endif %}
+                {% if application.academic_transcript %}
+                <span class="file-item-detail"><i class="fas fa-file-pdf"></i> <a href="{{ application.academic_transcript.url }}" target="_blank">Transcript</a></span>
+                {% endif %}
+                {% if application.id_document %}
+                <span class="file-item-detail"><i class="fas fa-id-card"></i> <a href="{{ application.id_document.url }}" target="_blank">ID Document</a></span>
+                {% endif %}
+                {% if application.guardian_id %}
+                <span class="file-item-detail"><i class="fas fa-id-card"></i> <a href="{{ application.guardian_id.url }}" target="_blank">Guardian ID</a></span>
+                {% endif %}
+                {% if application.grade_11_final_file %}
+                <span class="file-item-detail"><i class="fas fa-file-pdf"></i> <a href="{{ application.grade_11_final_file.url }}" target="_blank">Grade 11 Final</a></span>
+                {% endif %}
+                {% if application.grade_11_june_file %}
+                <span class="file-item-detail"><i class="fas fa-file-pdf"></i> <a href="{{ application.grade_11_june_file.url }}" target="_blank">Grade 11 June</a></span>
+                {% endif %}
+                {% if application.grade_12_midyear_file %}
+                <span class="file-item-detail"><i class="fas fa-file-pdf"></i> <a href="{{ application.grade_12_midyear_file.url }}" target="_blank">Grade 12 Midyear</a></span>
+                {% endif %}
+                {% if application.additional_documents %}
+                <span class="file-item-detail"><i class="fas fa-folder-open"></i> <a href="{{ application.additional_documents.url }}" target="_blank">Additional Documents</a></span>
+                {% endif %}
+                {% if not application.cv and not application.academic_transcript and not application.id_document %}
+                <span class="text-muted">No documents uploaded yet</span>
+                {% endif %}
+            </div>
+
+            <!-- Notes -->
+            {% if application.additional_notes %}
+            <h4 class="section-title"><i class="fas fa-sticky-note"></i> Additional Notes</h4>
+            <p style="color:var(--gray);font-size:14px;">{{ application.additional_notes }}</p>
+            {% endif %}
+
+            <!-- Application Meta -->
+            <h4 class="section-title"><i class="fas fa-info-circle"></i> Application Details</h4>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="label">Created</span>
+                    <span class="value">{{ application.created_at|date:"Y-m-d H:i" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Last Updated</span>
+                    <span class="value">{{ application.updated_at|date:"Y-m-d H:i" }}</span>
+                </div>
+                {% if application.submission_date %}
+                <div class="info-item">
+                    <span class="label">Submitted</span>
+                    <span class="value">{{ application.submission_date|date:"Y-m-d H:i" }}</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Actions -->
+            <div class="action-buttons">
+                {% if application.status == 'draft' %}
+                <form method="POST" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" name="action" value="submit" class="btn-success-action">
+                        <i class="fas fa-paper-plane"></i> Submit Application
+                    </button>
+                </form>
+                <a href="{% url 'education_apply_bursary' %}" class="btn-primary-action">
+                    <i class="fas fa-edit"></i> Edit Draft
+                </a>
+                <form method="POST" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" name="action" value="withdraw" class="btn-danger-action" onclick="return confirm('Are you sure you want to withdraw this draft?')">
+                        <i class="fas fa-trash-alt"></i> Delete Draft
+                    </button>
+                </form>
+                {% elif application.status == 'submitted' or application.status == 'reviewing' %}
+                <form method="POST" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" name="action" value="withdraw" class="btn-danger-action" onclick="return confirm('Are you sure you want to withdraw this application?')">
+                        <i class="fas fa-times"></i> Withdraw Application
+                    </button>
+                </form>
+                {% endif %}
+
+                <!-- Admin/Status Update -->
+                {% if user.is_superuser or user.user_type == 'admin' %}
+                <form method="POST" class="status-update-form">
+                    {% csrf_token %}
+                    <label style="font-weight:600;font-size:13px;margin:0;">Update Status:</label>
+                    <select name="status">
+                        {% for status_code, status_label in status_choices %}
+                        <option value="{{ status_code }}" {% if application.status == status_code %}selected{% endif %}>
+                            {{ status_label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" name="action" value="update_status" class="btn-primary-action" style="padding:6px 20px;font-size:13px;">
+                        <i class="fas fa-save"></i> Update
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MOBILE BOTTOM NAV ===== -->
+    <div class="mobile-bottom-nav">
+        <a href="/"><i class="fas fa-home"></i>Home</a>
+        <a href="/dashboard"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
+        <a href="/education/" class="active"><i class="fas fa-graduation-cap"></i>Edu</a>
+        <a href="/profile/"><i class="fas fa-user"></i>Profile</a>
+    </div>
+
+    <!-- ===== TOAST CONTAINER ===== -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ============================================================
+        // TOGGLE FUNCTIONS
+        // ============================================================
+        function toggleProfileDropdown() {
+            document.getElementById("profileMenu").classList.toggle("show");
+        }
+
+        function toggleThreeDotMenu() {
+            document.getElementById("threeDotMenu").classList.toggle("show");
+        }
+
+        document.addEventListener("click", function(e) {
+            const profileMenu = document.getElementById("profileMenu");
+            const avatar = document.querySelector(".profile-avatar-small");
+            if (avatar && profileMenu && !avatar.contains(e.target) && !profileMenu.contains(e.target)) {
+                profileMenu.classList.remove("show");
+            }
+
+            const threeDotMenu = document.getElementById("threeDotMenu");
+            const dotBtn = document.querySelector(".three-dot-menu .dot-btn");
+            if (dotBtn && threeDotMenu && !dotBtn.contains(e.target) && !threeDotMenu.contains(e.target)) {
+                threeDotMenu.classList.remove("show");
+            }
+        });
+
+        // ============================================================
+        // TOAST
+        // ============================================================
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast-item ${type}`;
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                info: 'fa-info-circle',
+                warning: 'fa-exclamation-triangle'
+            };
+            toast.innerHTML = `
+                <i class="fas ${icons[type] || icons.info}"></i>
+                ${message}
+                <button class="close-toast" onclick="this.parentElement.remove()">&times;</button>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 5000);
+        }
+
+        // ============================================================
+        // LOGIN/SIGNUP FUNCTIONS
+        // ============================================================
+        function showLogin() {
+            showToast('Please login to continue', 'info');
+            window.location.href = '/login/';
+        }
+
+        function showSignup() {
+            showToast('Create an account to get started', 'info');
+            window.location.href = '/signup/';
+        }
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Application detail page loaded');
+        });
+    </script>
+
+  <script src="/static/hiring/js/notifications-global.js" defer></script>
+</body>
+</html>

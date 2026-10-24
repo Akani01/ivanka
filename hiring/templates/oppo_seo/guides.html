@@ -1,0 +1,3 @@
+{% extends 'oppo_seo/base.html' %}
+{% block content %}<h1>Education guides for South African learners</h1><p class="lead">Make a clear plan for applications, study funding and exam preparation.</p><p>Each guide explains a task you can work through, what to check before acting and where to find official information. You do not need an account to read them. They do not provide admission or funding decisions.</p>
+{% for guide in guides %}<article class="guide-card"><h2><a href="{% url 'oppo_seo:guide' guide.slug %}">{{ guide.title }}</a></h2><p>{{ guide.summary }}</p><a href="{% url 'oppo_seo:guide' guide.slug %}">Read the full guide</a></article>{% endfor %}{% endblock %}

@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Navigation Styles */
+        .header-area {
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+        }
+        .main-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 0;
+        }
+        .logo img {
+            max-height: 40px;
+        }
+
+        /* Top Right Navigation */
+        .nav-icons {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-icons a {
+            font-size: 20px;
+            color: #555;
+            transition: 0.2s;
+            text-decoration: none;
+        }
+
+        .nav-icons a:hover {
+            color: #ff589e;
+            transform: translateY(-2px);
+        }
+
+        /* Profile Dropdown */
+        .profile-dropdown {
+            position: relative;
+        }
+
+        .profile-avatar-small {
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, #ff589e 0%, #ff136f 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .profile-menu {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            width: 220px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            padding: 10px 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.25s ease;
+            z-index: 1000;
+        }
+
+        .profile-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0px);
+        }
+
+        .profile-menu a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            color: #444;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .profile-menu a:hover {
+            background: #f5f7fa;
+            color: #ff589e;
+        }
+
+        .profile-divider {
+            height: 1px;
+            background: #eee;
+            margin: 8px 0;
+        }
+
+        /* Three Dot Menu Styles */
+        .three-dot-menu {
+            position: relative;
+            display: inline-block;
+        }
+
+        .three-dot-menu i {
+            font-size: 20px;
+            color: #555;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .three-dot-menu i:hover {
+            background-color: rgba(255, 88, 158, 0.1);
+            color: #ff589e;
+        }
+
+        .three-dot-menu .menu-content {
+            position: absolute;
+            top: 45px;
+            right: 0;
+            width: 200px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            padding: 10px 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.25s ease;
+            z-index: 1000;
+        }
+
+        .three-dot-menu .menu-content.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0px);
+        }
+
+        .three-dot-menu .menu-content a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            color: #444;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+
+        .three-dot-menu .menu-content a:hover {
+            background: rgba(255, 88, 158, 0.1);
+            color: #ff589e;
+        }
+
+        /* Body padding adjustments */
+        body {
+            padding-top: 80px;
+            background-color: #f8f9fa;
+        }
+
+        /* Job Form Styles */
+        .job-form-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin-bottom: 100px;
+        }
+        .form-section {
+            border-left: 4px solid #007bff;
+            padding-left: 15px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #eaeaea;
+        }
+        .form-section h5 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #dee2e6;
+        }
+        .required::after {
+            content: " *";
+            color: red;
+        }
+        .btn-save {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            padding: 12px 40px;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+        .btn-cancel {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 12px 40px;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+        .btn-save:hover, .btn-cancel:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Company logo upload */
+        .logo-preview-container {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .logo-preview {
+            width: 120px;
+            height: 120px;
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: white;
+        }
+        .logo-preview img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        .logo-upload-info {
+            flex: 1;
+        }
+        .current-logo-info {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        /* Mobile Bottom Navbar */
+        .mobile-bottom-nav {
+            display: none;
+        }
+
+        @media (max-width: 991px) {
+            .mobile-bottom-nav {
+                display: flex;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 65px;
+                background: white;
+                border-top: 1px solid #ddd;
+                justify-content: space-around;
+                align-items: center;
+                z-index: 9999;
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+            .mobile-bottom-nav a {
+                text-align: center;
+                color: #333;
+                font-size: 14px;
+                text-decoration: none;
+                flex: 1;
+                padding: 10px 5px;
+            }
+            .mobile-bottom-nav i {
+                font-size: 20px;
+                display: block;
+                margin-bottom: 3px;
+            }
+            .mobile-bottom-nav a.active {
+                color: #ff589e;
+            }
+            
+            body {
+                padding-bottom: 80px;
+            }
+            
+            .logo-preview-container {
+                flex-direction: column;
+            }
+            .logo-preview {
+                align-self: center;
+            }
+        }
+
+        /* Toast notifications */
+        .toast-container {
+            z-index: 9999;
+        }
+
+        /* Company badge for business users */
+        .company-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(255, 88, 158, 0.1);
+            color: #ff589e;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-left: 10px;
+        }
+
+        /* Loading spinner */
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+        }
+        
+        /* Requirements sections */
+        .requirements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 15px;
+        }
+        .requirement-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #eaeaea;
+        }
+    </style>
+</head>
+<body>
+    {% load api_utils %}
+    {% api_js_functions %}
+    <!-- Top Navigation -->
+    <header class="header-area">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <nav class="main-nav">
+                        <a href="/" class="logo">
+                            <img src="/static/images/logo.png" alt="JobPortal" style="max-height: 40px;">
+                        </a>
+
+                        <!-- Top Right Icons -->
+                        <ul class="nav-icons">
+                            <li>
+                                <a href="/" title="Home">
+                                    <i class="fas fa-home"></i>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="/#job-listings" title="Browse Jobs">
+                                    <i class="fas fa-search"></i>
+                                </a>
+                            </li>
+
+                            {% if user.is_authenticated %}
+                            <li>
+                                <a href="/dashboard" title="Dashboard">
+                                    <i class="fas fa-th-large"></i>
+                                </a>
+                            </li>
+
+                            <!-- Profile Dropdown Icon -->
+                            <li class="profile-dropdown">
+                                <div class="profile-avatar-small" onclick="toggleProfileDropdown()">
+                                    {{ user.username|first|upper }}
+                                </div>
+
+                                <div class="profile-menu" id="profileMenu">
+                                    <a href="/profile/"><i class="fas fa-user"></i> Profile</a>
+                                    <a href="/applications/"><i class="fas fa-file-alt"></i> Applications</a>
+                                    <div class="profile-divider"></div>
+
+                                    <a href="/api/alerts/"><i class="fas fa-bell"></i> Alerts</a>
+                                    <a href="/preferences/"><i class="fas fa-cog"></i> Preferences</a>
+
+                                    <div class="profile-divider"></div>
+
+                                    <a href="/logout/"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                                </div>
+                            </li>
+                            <li>
+                              <a href="/messaging/">
+                                <i class="fas fa-comment-dots"></i>
+                              </a>
+                            </li>  
+                            <li>
+                                <div class="three-dot-menu">
+                                    <i class="fas fa-ellipsis-v" onclick="toggleThreeDotMenu()"></i>
+                                    <div class="menu-content" id="threeDotMenu">
+                                        <a href="/profile/skills/"><i class="fas fa-cogs"></i> Skills</a>
+                                        <a href="/profile/employment/"><i class="fas fa-briefcase"></i> Employment</a>
+                                        <a href="/profile/education/"><i class="fas fa-graduation-cap"></i> Education</a>
+                                        <a href="/profile/documents/"><i class="fas fa-file-upload"></i> Documents</a>
+                                    </div>
+                                </div>
+                            </li>
+
+                            {% else %}
+                            <li>
+                                <a href="#" onclick="showLogin()" title="Login">
+                                    <i class="fas fa-sign-in-alt"></i>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="#" onclick="showSignup()" title="Sign Up">
+                                    <i class="fas fa-user-plus"></i>
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="job-form-container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2>
+                        <i class="fas fa-edit me-2"></i>
+                        {% if is_edit %}Edit Job{% else %}Create New Job{% endif %}
+                        {% if user_business_profile %}
+                        <span class="company-badge">{{ user_business_profile.company_name }}</span>
+                        {% endif %}
+                    </h2>
+                    <p class="text-muted mb-0">
+                        {% if is_edit %}
+                        Update the job listing details
+                        {% else %}
+                        Create a new job listing
+                        {% endif %}
+                    </p>
+                </div>
+                <a href="/admin-portal/jobs/" class="btn btn-cancel">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Jobs
+                </a>
+            </div>
+
+            <!-- Company Info for Business Users -->
+            {% if user_business_profile %}
+            <div class="alert alert-info mb-4">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-building me-3 fa-2x"></i>
+                    <div>
+                        <strong>Company Information:</strong>
+                        <div class="small">You are managing jobs for <strong>{{ user_business_profile.company_name }}</strong></div>
+                        <div class="small mt-1">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Company name and logo will be automatically set from your business profile
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <form id="jobEditForm" enctype="multipart/form-data">
+                <!-- Basic Information -->
+                <div class="form-section">
+                    <h5><i class="fas fa-info-circle me-2"></i>Basic Information</h5>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <label class="form-label required">Job Title</label>
+                                <input type="text" class="form-control" name="title" 
+                                       value="{{ job_data.title|default:'' }}" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Status</label>
+                                <select class="form-select" name="status">
+                                    <option value="draft" {% if job_data.status == 'draft' or not job_data %}selected{% endif %}>Draft</option>
+                                    <option value="published" {% if job_data.status == 'published' %}selected{% endif %}>Published</option>
+                                    <option value="closed" {% if job_data.status == 'closed' %}selected{% endif %}>Closed</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Company Name</label>
+                                {% if user.is_superuser %}
+                                <input type="text" class="form-control" name="company_name" 
+                                       value="{{ job_data.company_name|default:'Benta Group' }}">
+                                {% else %}
+                                <input type="text" class="form-control" 
+                                       value="{{ user_business_profile.company_name|default:'Company not set' }}" 
+                                       readonly disabled>
+                                <input type="hidden" name="company_name" value="{{ user_business_profile.company_name|default:'' }}">
+                                <small class="text-muted">Company name is managed through your business profile</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label required">Location</label>
+                                <input type="text" class="form-control" name="location" 
+                                       value="{{ job_data.location|default:'' }}" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Company Logo Upload -->
+                    <div class="mb-3">
+                        <label class="form-label">Company Logo</label>
+                        {% if user.is_superuser %}
+                        <div class="logo-preview-container">
+                            <div class="logo-preview" id="logoPreview">
+                                {% if job_data.company_logo %}
+                                <img id="currentLogoImg" src="{{ job_data.company_logo }}" alt="Current Logo">
+                                {% else %}
+                                <i class="fas fa-building fa-2x text-muted"></i>
+                                {% endif %}
+                            </div>
+                            <div class="logo-upload-info">
+                                <input type="file" class="form-control mb-2" name="company_logo" 
+                                       accept="image/*" onchange="previewLogo(event)">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="remove_logo" id="removeLogo">
+                                    <label class="form-check-label text-muted" for="removeLogo">
+                                        Remove current logo
+                                    </label>
+                                </div>
+                                {% if user_business_profile and user_business_profile.company_logo %}
+                                <div class="current-logo-info">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Business profile logo available. When no logo is selected, the business profile logo will be used.
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-light">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Company logo is managed through your business profile. 
+                            {% if user_business_profile and user_business_profile.company_logo %}
+                            <a href="{{ user_business_profile.company_logo }}" target="_blank" class="ms-1">View current logo</a>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Job Details -->
+                <div class="form-section">
+                    <h5><i class="fas fa-briefcase me-2"></i>Job Details</h5>
+                    <div class="mb-3">
+                        <label class="form-label required">Position Summary</label>
+                        <textarea class="form-control" name="position_summary" rows="3" required>{{ job_data.position_summary|default:'' }}</textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label required">Job Description</label>
+                        <textarea class="form-control" name="job_description" rows="5" required>{{ job_data.job_description|default:'' }}</textarea>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Contract Type</label>
+                                <input type="text" class="form-control" name="contract_type" 
+                                       value="{{ job_data.contract_type|default:'' }}" placeholder="e.g., Full-time, Part-time, Contract">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Industry</label>
+                                <input type="text" class="form-control" name="industry" 
+                                       value="{{ job_data.industry|default:'' }}" placeholder="e.g., Technology, Healthcare, Finance">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Job Category</label>
+                                <input type="text" class="form-control" name="job_category" 
+                                       value="{{ job_data.job_category|default:'' }}" placeholder="e.g., Software Development, Marketing, Sales">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Employment Type</label>
+                                <select class="form-select" name="employment_type">
+                                    <option value="full_time" {% if job_data.employment_type == 'full_time' or not job_data.employment_type %}selected{% endif %}>Full Time</option>
+                                    <option value="part_time" {% if job_data.employment_type == 'part_time' %}selected{% endif %}>Part Time</option>
+                                    <option value="contract" {% if job_data.employment_type == 'contract' %}selected{% endif %}>Contract</option>
+                                    <option value="internship" {% if job_data.employment_type == 'internship' %}selected{% endif %}>Internship</option>
+                                    <option value="temporary" {% if job_data.employment_type == 'temporary' %}selected{% endif %}>Temporary</option>
+                                    <option value="volunteer" {% if job_data.employment_type == 'volunteer' %}selected{% endif %}>Volunteer</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Experience Level</label>
+                                <select class="form-select" name="experience_level">
+                                    <option value="entry" {% if job_data.experience_level == 'entry' or not job_data.experience_level %}selected{% endif %}>Entry Level</option>
+                                    <option value="mid_level" {% if job_data.experience_level == 'mid_level' %}selected{% endif %}>Mid Level</option>
+                                    <option value="senior" {% if job_data.experience_level == 'senior' %}selected{% endif %}>Senior Level</option>
+                                    <option value="executive" {% if job_data.experience_level == 'executive' %}selected{% endif %}>Executive</option>
+                                    <option value="director" {% if job_data.experience_level == 'director' %}selected{% endif %}>Director</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Company Description</label>
+                        <textarea class="form-control" name="company_description" rows="3">{{ job_data.company_description|default:'' }}</textarea>
+                    </div>
+                </div>
+
+                <!-- Requirements -->
+                <div class="form-section">
+                    <h5><i class="fas fa-list-check me-2"></i>Requirements</h5>
+                    
+                    <div class="requirements-grid">
+                        <div class="requirement-item">
+                            <label class="form-label">Experience Requirements</label>
+                            <textarea class="form-control" name="experience_requirements" rows="4">{{ job_data.experience_requirements|default:'' }}</textarea>
+                        </div>
+                        
+                        <div class="requirement-item">
+                            <label class="form-label">Education Requirements</label>
+                            <textarea class="form-control" name="education_requirements" rows="4">{{ job_data.education_requirements|default:'' }}</textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="requirements-grid">
+                        <div class="requirement-item">
+                            <label class="form-label">Skills Requirements</label>
+                            <textarea class="form-control" name="skills_requirements" rows="4">{{ job_data.skills_requirements|default:'' }}</textarea>
+                        </div>
+                        
+                        <div class="requirement-item">
+                            <label class="form-label">Knowledge Requirements</label>
+                            <textarea class="form-control" name="knowledge_requirements" rows="4">{{ job_data.knowledge_requirements|default:'' }}</textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="requirements-grid">
+                        <div class="requirement-item">
+                            <label class="form-label">Competencies Requirements</label>
+                            <textarea class="form-control" name="competencies_requirements" rows="4">{{ job_data.competencies_requirements|default:'' }}</textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="ee_position" 
+                                   id="ee_position" {% if job_data.ee_position or not job_data %}checked{% endif %}>
+                            <label class="form-check-label" for="ee_position">
+                                This is an Employment Equity (EE) position
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Information -->
+                <div class="form-section">
+                    <h5><i class="fas fa-calendar-alt me-2"></i>Dates and Additional Information</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label required">Apply By Date</label>
+                                <input type="date" class="form-control" name="apply_by" 
+                                       value="{{ job_data.apply_by|default:'' }}" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Listing Reference</label>
+                                <input type="text" class="form-control" name="listing_reference" 
+                                       value="{{ job_data.listing_reference|default:'' }}" readonly>
+                                <small class="text-muted">Auto-generated reference</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Include Benefits and Requirements if they exist in your model -->
+                    {% if job_data.requirements or job_data.benefits %}
+                    <div class="row">
+                        {% if job_data.requirements %}
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Requirements</label>
+                                <textarea class="form-control" name="requirements" rows="3">{{ job_data.requirements|default:'' }}</textarea>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if job_data.benefits %}
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Benefits</label>
+                                <textarea class="form-control" name="benefits" rows="3">{{ job_data.benefits|default:'' }}</textarea>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Hidden fields -->
+                    {% if job_data.id %}
+                    <input type="hidden" name="job_id" value="{{ job_data.id }}">
+                    {% endif %}
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-between mt-5 pt-4 border-top">
+                    <button type="button" class="btn btn-cancel" onclick="window.history.back()">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </button>
+                    <button type="submit" class="btn btn-save" id="submitBtn">
+                        <i class="fas fa-save me-2"></i>
+                        {% if is_edit %}Update Job{% else %}Create Job{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <div class="mobile-bottom-nav">
+        <a href="/"><i class="fas fa-home"></i>Home</a>
+        <a href="/admin-portal/"><i class="fas fa-crown"></i>Admin</a>
+        <a href="/admin-portal/jobs/"><i class="fas fa-briefcase"></i>Jobs</a>
+        {% if user.is_superuser %}
+        <a href="/admin/hiring/customuser/" target="_blank"><i class="fas fa-users"></i>Users</a>
+        {% endif %}
+        <a href="/admin-portal/export/" target="_blank"><i class="fas fa-download"></i>Export</a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ===== GLOBAL VARIABLES =====
+        const isEdit = {% if is_edit %}true{% else %}false{% endif %};
+        const currentUserIsSuperuser = {{ user.is_superuser|yesno:"true,false" }};
+
+        // ===== NAVIGATION FUNCTIONS =====
+        function toggleProfileDropdown() {
+            document.getElementById("profileMenu").classList.toggle("show");
+        }
+
+        function toggleThreeDotMenu() {
+            document.getElementById("threeDotMenu").classList.toggle("show");
+        }
+
+        // Close dropdowns on click outside
+        document.addEventListener("click", function(e) {
+            const profileMenu = document.getElementById("profileMenu");
+            const profileAvatar = document.querySelector(".profile-avatar-small");
+            const threeDotMenu = document.getElementById("threeDotMenu");
+            const threeDotIcon = document.querySelector(".three-dot-menu i");
+
+            // Close profile dropdown
+            if (profileAvatar && profileMenu && !profileAvatar.contains(e.target) && !profileMenu.contains(e.target)) {
+                profileMenu.classList.remove("show");
+            }
+
+            // Close three-dot menu
+            if (threeDotIcon && threeDotMenu && !threeDotIcon.contains(e.target) && !threeDotMenu.contains(e.target)) {
+                threeDotMenu.classList.remove("show");
+            }
+        });
+
+        // ===== LOGO PREVIEW =====
+        function previewLogo(event) {
+            const preview = document.getElementById('logoPreview');
+            const file = event.target.files[0];
+            const removeCheckbox = document.getElementById('removeLogo');
+            
+            if (removeCheckbox) {
+                removeCheckbox.checked = false;
+            }
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.innerHTML = `<img src="${e.target.result}" alt="Logo Preview" style="max-width: 100%; max-height: 100%; object-fit: contain;">`;
+                }
+                reader.readAsDataURL(file);
+            } else {
+                // Show current logo or default icon
+                const currentLogo = document.getElementById('currentLogoImg');
+                if (currentLogo) {
+                    preview.innerHTML = `<img src="${currentLogo.src}" alt="Current Logo" style="max-width: 100%; max-height: 100%; object-fit: contain;">`;
+                } else {
+                    preview.innerHTML = '<i class="fas fa-building fa-2x text-muted"></i>';
+                }
+            }
+        }
+
+        // ===== FORM SUBMISSION =====
+        document.getElementById('jobEditForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            handleJobFormSubmit();
+        });
+
+        async function handleJobFormSubmit() {
+            const form = document.getElementById('jobEditForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.innerHTML;
+            
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<div class="spinner-border spinner-border-sm me-2"></div> Saving...';
+            
+            try {
+                const formData = new FormData(form);
+                
+                // Check if logo removal is requested
+                const removeLogo = document.getElementById('removeLogo');
+                if (removeLogo && removeLogo.checked) {
+                    formData.set('company_logo', '');
+                }
+                
+                // Determine URL and method
+                const jobId = formData.get('job_id');
+                const url = jobId ? `/api/admin/jobs/${jobId}/` : '/api/admin/jobs/';
+                const method = jobId ? 'PUT' : 'POST';
+                
+                console.log('Submitting job:', { jobId, url, method });
+                
+                // Make the API call
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'X-CSRFToken': getCSRFToken(),
+                        // Don't set Content-Type for FormData, let browser set it
+                    },
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('Success', data.message || 'Job saved successfully', 'success');
+                    
+                    // Redirect to job list after delay
+                    setTimeout(() => {
+                        window.location.href = '/admin-portal/jobs/';
+                    }, 1500);
+                } else {
+                    let errorMessage = 'Failed to save job';
+                    if (data.errors) {
+                        // Handle serializer errors
+                        const errors = [];
+                        for (const [field, messages] of Object.entries(data.errors)) {
+                            errors.push(`${field}: ${Array.isArray(messages) ? messages.join(', ') : messages}`);
+                        }
+                        errorMessage = errors.join('; ');
+                    } else if (data.error) {
+                        errorMessage = data.error;
+                    }
+                    showToast('Error', errorMessage, 'error');
+                    
+                    // Re-enable button
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                }
+            } catch (error) {
+                console.error('Error saving job:', error);
+                showToast('Error', 'Failed to save job. Please try again.', 'error');
+                
+                // Re-enable button
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        }
+
+        // ===== UTILITY FUNCTIONS =====
+        function showToast(title, message, type = 'info') {
+            // Create toast container if it doesn't exist
+            let toastContainer = document.getElementById('toastContainer');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.id = 'toastContainer';
+                toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
+                toastContainer.style.zIndex = '9999';
+                document.body.appendChild(toastContainer);
+            }
+            
+            const toastId = 'toast-' + Date.now();
+            const bgColor = type === 'success' ? 'bg-success' : type === 'error' ? 'bg-danger' : 'bg-info';
+            
+            const toastHTML = `
+                <div id="${toastId}" class="toast align-items-center text-white ${bgColor} border-0" role="alert">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <strong>${title}</strong><br>${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            `;
+            
+            toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+            
+            const toastElement = document.getElementById(toastId);
+            const toast = new bootstrap.Toast(toastElement, { delay: 5000 });
+            toast.show();
+            
+            // Remove toast from DOM after it's hidden
+            toastElement.addEventListener('hidden.bs.toast', function () {
+                toastElement.remove();
+            });
+        }
+
+        function getCSRFToken() {
+            const name = 'csrftoken';
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function showLogin() {
+            window.location.href = '/?showLogin=true';
+        }
+
+        function showSignup() {
+            window.location.href = '/?showSignup=true';
+        }
+
+        // ===== INITIALIZATION =====
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Job edit page loaded');
+            console.log('Is edit mode:', isEdit);
+            console.log('Is superuser:', currentUserIsSuperuser);
+            
+            // Set default apply_by date to 30 days from now if not set
+            const applyByInput = document.querySelector('input[name="apply_by"]');
+            if (applyByInput && !applyByInput.value && !isEdit) {
+                const today = new Date();
+                const nextMonth = new Date(today);
+                nextMonth.setDate(today.getDate() + 30);
+                applyByInput.value = nextMonth.toISOString().split('T')[0];
+            }
+            
+            // Auto-generate listing reference if not set
+            const listingRefInput = document.querySelector('input[name="listing_reference"]');
+            if (listingRefInput && !listingRefInput.value && !isEdit) {
+                const timestamp = Date.now();
+                const randomNum = Math.floor(Math.random() * 1000);
+                listingRefInput.value = `JOB-${timestamp}-${randomNum}`;
+            }
+        });
+    </script>
+
+  <script src="/static/hiring/js/notifications-global.js" defer></script>
+</body>
+</html>

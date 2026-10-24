@@ -1,0 +1,597 @@
+{% load admin_tags %}
+
+{% if user|has_admin_access %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Applications - JobPortal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Top Navbar */
+        .header-area {
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+        }
+        .main-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 0;
+        }
+        .logo img {
+            max-height: 40px;
+        }
+
+        /* Desktop Sidebar */
+        .desktop-sidebar {
+            width: 250px;
+            background: white;
+            height: calc(100vh - 80px);
+            position: fixed;
+            top: 80px;
+            left: 0;
+            padding: 20px;
+            border-right: 1px solid #eee;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+            overflow-y: auto;
+        }
+
+        .desktop-sidebar a {
+            display: block;
+            padding: 12px 10px;
+            color: #333;
+            text-decoration: none;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .desktop-sidebar a:hover,
+        .desktop-sidebar a.active {
+            background-color: rgba(255, 88, 158, 0.1);
+            color: #ff589e;
+        }
+
+        /* Hide sidebar on mobile */
+        @media (max-width: 991px) {
+            .desktop-sidebar {
+                display: none;
+            }
+        }
+
+        /* Push page content right on desktop */
+        @media (min-width: 992px) {
+            body {
+                padding-left: 270px !important;
+            }
+        }
+
+        /* Mobile Bottom Navbar */
+        .mobile-bottom-nav {
+            display: none;
+        }
+
+        @media (max-width: 991px) {
+            .mobile-bottom-nav {
+                display: flex;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 65px;
+                background: white;
+                border-top: 1px solid #ddd;
+                justify-content: space-around;
+                align-items: center;
+                z-index: 9999;
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+            .mobile-bottom-nav a {
+                text-align: center;
+                color: #333;
+                font-size: 14px;
+                text-decoration: none;
+                flex: 1;
+                padding: 10px 5px;
+            }
+            .mobile-bottom-nav i {
+                font-size: 20px;
+                display: block;
+                margin-bottom: 3px;
+            }
+            .mobile-bottom-nav a.active {
+                color: #ff589e;
+            }
+        }
+
+        /* Body padding adjustments */
+        body {
+            padding-top: 80px;
+            background-color: #f8f9fa;
+            padding-bottom: 80px;
+        }
+
+        /* Top Right Navigation */
+        .nav-icons {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-icons a {
+            font-size: 20px;
+            color: #555;
+            transition: 0.2s;
+            text-decoration: none;
+        }
+
+        .nav-icons a:hover {
+            color: #ff589e;
+            transform: translateY(-2px);
+        }
+
+        /* Profile Dropdown */
+        .profile-dropdown {
+            position: relative;
+        }
+
+        .profile-avatar-small {
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, #ff589e 0%, #ff136f 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .profile-menu {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            width: 220px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            padding: 10px 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.25s ease;
+            z-index: 1000;
+        }
+
+        .profile-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0px);
+        }
+
+        .profile-menu a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            color: #444;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .profile-menu a:hover {
+            background: #f5f7fa;
+            color: #ff589e;
+        }
+
+        .profile-divider {
+            height: 1px;
+            background: #eee;
+            margin: 8px 0;
+        }
+
+        /* Three Dot Menu Styles */
+        .three-dot-menu {
+            position: relative;
+            display: inline-block;
+        }
+
+        .three-dot-menu i {
+            font-size: 20px;
+            color: #555;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .three-dot-menu i:hover {
+            background-color: rgba(255, 88, 158, 0.1);
+            color: #ff589e;
+        }
+
+        .three-dot-menu .menu-content {
+            position: absolute;
+            top: 45px;
+            right: 0;
+            width: 200px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            padding: 10px 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.25s ease;
+            z-index: 1000;
+        }
+
+        .three-dot-menu .menu-content.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0px);
+        }
+
+        .three-dot-menu .menu-content a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            color: #444;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+
+        .three-dot-menu .menu-content a:hover {
+            background: rgba(255, 88, 158, 0.1);
+            color: #ff589e;
+        }
+
+        .three-dot-menu .menu-content a.active {
+            background: rgba(255, 88, 158, 0.1);
+            color: #ff589e;
+            font-weight: 500;
+        }
+
+        .three-dot-menu .menu-content a i {
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Applications Page Styles */
+        .application-card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+        .application-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+        .status-badge {
+            font-size: 0.8rem;
+            padding: 6px 12px;
+            border-radius: 20px;
+        }
+    </style>
+</head>
+<body>
+    {% load api_utils %}
+    {% api_js_functions %}
+    <!-- Top Navigation -->
+    <header class="header-area">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <nav class="main-nav">
+                        <a href="/" class="logo">
+                            <img src="/static/images/logo.png" alt="JobPortal" style="max-height: 40px;">
+                        </a>
+
+                        <!-- Top Right Icons -->
+                        <ul class="nav-icons">
+                            <li>
+                                <a href="/" title="Home">
+                                    <i class="fas fa-home"></i>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="/#job-listings" title="Browse Jobs">
+                                    <i class="fas fa-search"></i>
+                                </a>
+                            </li>
+
+                            {% if user.is_authenticated %}
+                            <li>
+                                <a href="/dashboard" title="Dashboard">
+                                    <i class="fas fa-th-large"></i>
+                                </a>
+                            </li>
+
+                            <!-- Profile Dropdown Icon -->
+                            <li class="profile-dropdown">
+                                <div class="profile-avatar-small" onclick="toggleProfileDropdown()">
+                                    {{ user.username|first|upper }}
+                                </div>
+
+                                <div class="profile-menu" id="profileMenu">
+                                    <a href="/profile/"><i class="fas fa-user"></i> Profile</a>
+                                    <a href="/applications/"><i class="fas fa-file-alt"></i> Applications</a>
+                                    <div class="profile-divider"></div>
+
+                                    <a href="/api/alerts/"><i class="fas fa-bell"></i> Alerts</a>
+                                    <a href="/preferences/"><i class="fas fa-cog"></i> Preferences</a>
+
+                                    <div class="profile-divider"></div>
+
+                                    <a href="/logout/"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                                </div>
+                            </li>
+                            <li>
+                              <a href="/messaging/">
+                                <i class="fas fa-comment-dots"></i>
+                              </a>
+                            </li>  
+                            <li>
+                                <div class="three-dot-menu">
+                                    <i class="fas fa-ellipsis-v" onclick="toggleThreeDotMenu()"></i>
+                                    <div class="menu-content" id="threeDotMenu">
+                                        <a href="/profile/skills/"><i class="fas fa-cogs"></i> Skills</a>
+                                        <a href="/profile/employment/"><i class="fas fa-briefcase"></i> Employment</a>
+                                        <a href="/profile/education/"><i class="fas fa-graduation-cap"></i> Education</a>
+                                        <a href="/profile/documents/"><i class="fas fa-file-upload"></i> Documents</a>
+                                    </div>
+                                </div>
+                            </li>
+
+                            {% else %}
+                            <li>
+                                <a href="#" onclick="showLogin()" title="Login">
+                                    <i class="fas fa-sign-in-alt"></i>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="#" onclick="showSignup()" title="Sign Up">
+                                    <i class="fas fa-user-plus"></i>
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Desktop Sidebar -->
+    <div class="desktop-sidebar">
+        {% if user.is_superuser %}
+            <a href="/admin-portal/"><i class="fas fa-crown"></i> Admin Portal</a>
+            <a href="/admin/" target="_blank"><i class="fas fa-cog"></i> Django Admin</a>
+        {% else %}
+            <a href="/profile/"><i class="fas fa-user"></i> My Profile</a>
+            <a href="/applications/" class="active"><i class="fas fa-file-alt"></i> Applications</a>
+            <a href="/profile/skills/"><i class="fas fa-cogs"></i> Skills</a>
+            <a href="/profile/employment/"><i class="fas fa-briefcase"></i> Employment</a>
+            <a href="/profile/education/"><i class="fas fa-graduation-cap"></i> Education</a>
+            <a href="/profile/documents/"><i class="fas fa-file-upload"></i> Documents</a>
+        {% endif %}
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1><i class="fas fa-file-alt me-2 text-primary"></i>My Applications</h1>
+                    {% if not user.is_superuser %}
+                    <a href="/#job-listings" class="btn btn-primary">
+                        <i class="fas fa-search me-2"></i>Browse Jobs
+                    </a>
+                    {% endif %}
+                </div>
+                
+                <div id="applicationsContainer">
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading applications...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Navbar -->
+    <div class="mobile-bottom-nav">
+        <a href="/"><i class="fas fa-home"></i>Home</a>
+        <a href="/dashboard"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
+        <a href="/applications/" class="active"><i class="fas fa-file-alt"></i>Jobs</a>
+        <a href="/profile/"><i class="fas fa-user"></i>Profile</a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Navigation functions
+        function toggleProfileDropdown() {
+            document.getElementById("profileMenu").classList.toggle("show");
+        }
+
+        function toggleThreeDotMenu() {
+            document.getElementById("threeDotMenu").classList.toggle("show");
+        }
+
+        // Close dropdowns on click outside
+        document.addEventListener("click", function(e) {
+            const profileMenu = document.getElementById("profileMenu");
+            const profileAvatar = document.querySelector(".profile-avatar-small");
+            const threeDotMenu = document.getElementById("threeDotMenu");
+            const threeDotIcon = document.querySelector(".three-dot-menu i");
+
+            // Close profile dropdown
+            if (profileAvatar && profileMenu && !profileAvatar.contains(e.target) && !profileMenu.contains(e.target)) {
+                profileMenu.classList.remove("show");
+            }
+
+            // Close three-dot menu
+            if (threeDotIcon && threeDotMenu && !threeDotIcon.contains(e.target) && !threeDotMenu.contains(e.target)) {
+                threeDotMenu.classList.remove("show");
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadApplications();
+        });
+
+        function loadApplications() {
+            fetch('/api/applications/')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Applications API Response:', data); // Debug log
+                    const container = document.getElementById('applicationsContainer');
+                    
+                    if (data.success && data.applications && data.applications.length > 0) {
+                        container.innerHTML = data.applications.map(app => {
+                            // Safely access nested properties
+                            const jobListing = app.job_listing || {};
+                            const title = jobListing.title || 'Job Title Not Available';
+                            const company = jobListing.company_name || 'Company Not Available';
+                            const location = jobListing.location || 'Location not specified';
+                            const applyBy = jobListing.apply_by ? new Date(jobListing.apply_by).toLocaleDateString() : null;
+                            const jobRef = jobListing.listing_reference || '';
+                            
+                            return `
+                                <div class="card application-card">
+                                    <div class="card-body">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-8">
+                                                <h5 class="card-title mb-1">${escapeHtml(title)}</h5>
+                                                <h6 class="card-subtitle mb-2 text-muted">${escapeHtml(company)}</h6>
+                                                <div class="d-flex flex-wrap gap-3">
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-map-marker-alt me-1"></i>
+                                                        ${escapeHtml(location)}
+                                                    </small>
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-calendar me-1"></i>
+                                                        Applied: ${new Date(app.applied_date).toLocaleDateString()}
+                                                    </small>
+                                                    ${applyBy ? `
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-clock me-1"></i>
+                                                        Deadline: ${applyBy}
+                                                    </small>
+                                                    ` : ''}
+                                                </div>
+                                                ${app.cover_letter ? `
+                                                <div class="mt-2">
+                                                    <small class="text-muted"><strong>Cover Letter:</strong> ${escapeHtml(app.cover_letter.substring(0, 100))}${app.cover_letter.length > 100 ? '...' : ''}</small>
+                                                </div>
+                                                ` : ''}
+                                            </div>
+                                            <div class="col-md-4 text-md-end">
+                                                <span class="status-badge badge bg-${getStatusBadgeColor(app.status)}">${formatStatus(app.status)}</span>
+                                                <div class="mt-2">
+                                                    <small class="text-muted d-block">Ref: ${app.reference_number || 'N/A'}</small>
+                                                    ${jobRef ? `
+                                                    <small class="text-muted">Job Ref: ${jobRef}</small>
+                                                    ` : ''}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('');
+                    } else {
+                        container.innerHTML = `
+                            <div class="text-center py-5">
+                                <i class="fas fa-file-alt fa-3x text-muted mb-3"></i>
+                                <h3>No Applications Yet</h3>
+                                <p class="text-muted">You haven't applied for any jobs yet.</p>
+                                {% if not user.is_superuser %}
+                                <a href="/#job-listings" class="btn btn-primary">Browse Jobs</a>
+                                {% endif %}
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading applications:', error);
+                    document.getElementById('applicationsContainer').innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Error loading applications. Please try again.
+                            <button onclick="loadApplications()" class="btn btn-sm btn-outline-danger ms-2">Retry</button>
+                        </div>
+                    `;
+                });
+        }
+
+        function getStatusBadgeColor(status) {
+            const colors = {
+                'submitted': 'primary',
+                'under_review': 'info',
+                'shortlisted': 'warning',
+                'interview': 'success',
+                'successful': 'success',
+                'unsuccessful': 'danger'
+            };
+            return colors[status] || 'secondary';
+        }
+
+        function formatStatus(status) {
+            const statusMap = {
+                'submitted': 'Submitted',
+                'under_review': 'Under Review',
+                'shortlisted': 'Shortlisted',
+                'interview': 'Interview',
+                'successful': 'Successful',
+                'unsuccessful': 'Unsuccessful'
+            };
+            return statusMap[status] || status;
+        }
+
+        function showLogin() {
+            window.location.href = '/?showLogin=true';
+        }
+
+        function showSignup() {
+            window.location.href = '/?showSignup=true';
+        }
+
+        // Utility function to escape HTML
+        function escapeHtml(unsafe) {
+            if (unsafe === null || unsafe === undefined) return '';
+            return unsafe
+                .toString()
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+
+  <script src="/static/hiring/js/notifications-global.js" defer></script>
+</body>
+</html>
+{% endif %}

@@ -1,0 +1,1003 @@
+<!-- education/templates/education/business_applications.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Applications - OppoGlobe Education</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #e8458a;
+            --primary-light: #fce4ec;
+            --primary-dark: #c62878;
+            --secondary: #4a6cf7;
+            --dark: #1a1a2e;
+            --gray: #6c757d;
+            --light-gray: #f5f6fa;
+            --border: #e9ecef;
+            --shadow: 0 2px 12px rgba(0,0,0,0.06);
+            --shadow-hover: 0 8px 30px rgba(0,0,0,0.10);
+            --radius: 14px;
+            --radius-sm: 8px;
+            --transition: all 0.3s ease;
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #f0f2f5;
+            font-family: var(--font-body);
+            padding-top: 70px;
+            padding-bottom: 80px;
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        button { cursor: pointer; border: none; background: none; }
+        img { max-width: 100%; }
+
+        /* ===== HEADER ===== */
+        .header-area {
+            background: #ffffff;
+            border-bottom: 1px solid var(--border);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            height: 64px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        }
+
+        .main-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+            padding: 0 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        @media (min-width: 768px) {
+            .main-nav { padding: 0 32px; }
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .logo img {
+            max-height: 36px;
+            width: auto;
+            object-fit: contain;
+        }
+        .logo-text {
+            font-family: var(--font-display);
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-left: 8px;
+        }
+        .logo-text span { color: var(--primary); }
+
+        .nav-icons {
+            display: flex;
+            list-style: none;
+            gap: 4px;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+        @media (min-width: 576px) {
+            .nav-icons { gap: 8px; }
+        }
+
+        .nav-icons a {
+            font-size: 17px;
+            color: #555;
+            transition: var(--transition);
+            padding: 6px 8px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 36px;
+            height: 36px;
+            text-decoration: none;
+        }
+        @media (min-width: 576px) {
+            .nav-icons a {
+                min-width: 40px;
+                height: 40px;
+                font-size: 19px;
+                padding: 6px 10px;
+            }
+        }
+        .nav-icons a:hover {
+            color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .profile-avatar-small {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+        @media (min-width: 576px) {
+            .profile-avatar-small { width: 36px; height: 36px; font-size: 14px; }
+        }
+        .profile-avatar-small:hover { transform: scale(1.05); }
+
+        .profile-dropdown { position: relative; }
+        .profile-menu {
+            position: absolute;
+            top: 42px;
+            right: 0;
+            width: 220px;
+            background: white;
+            border-radius: var(--radius-sm);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+            padding: 6px 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: var(--transition);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        .profile-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .profile-menu a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            color: #444;
+            font-size: 13px;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+        .profile-menu a:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+        .profile-menu a i { width: 18px; color: var(--gray); font-size: 14px; }
+        .profile-divider { height: 1px; background: var(--border); margin: 4px 12px; }
+
+        .three-dot-menu { position: relative; }
+        .three-dot-menu .dot-btn {
+            font-size: 20px;
+            color: #555;
+            padding: 6px 8px;
+            border-radius: 8px;
+            transition: var(--transition);
+            background: none;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 36px;
+            height: 36px;
+        }
+        @media (min-width: 576px) {
+            .three-dot-menu .dot-btn { min-width: 40px; height: 40px; font-size: 22px; }
+        }
+        .three-dot-menu .dot-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .menu-content {
+            position: absolute;
+            right: 0;
+            top: 42px;
+            background: #fff;
+            width: 200px;
+            padding: 6px 0;
+            border-radius: var(--radius-sm);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: var(--transition);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        .menu-content.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .menu-content a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            color: #444;
+            font-size: 13px;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+        .menu-content a:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+        .menu-content a i { width: 18px; color: var(--gray); font-size: 14px; }
+
+        /* ===== DESKTOP SIDEBAR ===== */
+        .desktop-sidebar {
+            width: 220px;
+            background: white;
+            height: calc(100vh - 64px);
+            position: fixed;
+            top: 64px;
+            left: 0;
+            padding: 16px 12px;
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            z-index: 100;
+        }
+        @media (max-width: 991px) {
+            .desktop-sidebar { display: none; }
+        }
+
+        .desktop-sidebar .sidebar-section { margin-bottom: 16px; }
+        .desktop-sidebar .sidebar-title {
+            font-family: var(--font-display);
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 0 4px;
+            margin-bottom: 6px;
+        }
+        .desktop-sidebar a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            color: #555;
+            text-decoration: none;
+            border-radius: var(--radius-sm);
+            font-weight: 500;
+            font-size: 13px;
+            transition: var(--transition);
+            margin-bottom: 2px;
+        }
+        .desktop-sidebar a:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+        .desktop-sidebar a.active {
+            background: var(--primary);
+            color: white;
+        }
+        .desktop-sidebar a.active i { color: white; }
+        .desktop-sidebar a i { width: 20px; color: var(--gray); font-size: 16px; }
+        .desktop-sidebar a.active i { color: white; }
+        .desktop-sidebar hr { margin: 8px 0; border-color: var(--border); }
+
+        @media (min-width: 992px) {
+            body { padding-left: 240px !important; }
+        }
+
+        /* ===== MAIN CONTAINER ===== */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+        @media (min-width: 768px) {
+            .main-container { padding: 0 24px; }
+        }
+
+        .page-header {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        @media (min-width: 576px) {
+            .page-header {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+
+        .page-header h1 {
+            font-family: var(--font-display);
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        @media (min-width: 768px) {
+            .page-header h1 { font-size: 26px; }
+        }
+        .page-header h1 i { color: var(--primary); }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-back {
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            background: white;
+            color: var(--dark);
+            font-size: 13px;
+            font-weight: 500;
+            transition: var(--transition);
+            border: 1px solid var(--border);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+        }
+        .btn-back:hover { background: var(--light-gray); }
+
+        .btn-primary-custom {
+            padding: 8px 20px;
+            border-radius: var(--radius-sm);
+            background: var(--dark);
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            transition: var(--transition);
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+        }
+        .btn-primary-custom:hover {
+            background: #2d2d4a;
+            color: white;
+        }
+
+        /* ===== FILTER SECTION ===== */
+        .filter-section {
+            background: white;
+            padding: 16px 18px;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
+        .filter-section .form-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+        .filter-section .form-control,
+        .filter-section .form-select {
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            font-size: 13px;
+            padding: 6px 12px;
+            min-height: 38px;
+            transition: var(--transition);
+            background: white;
+            width: 100%;
+            appearance: auto;
+        }
+        .filter-section .form-control:focus,
+        .filter-section .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(232, 69, 138, 0.08);
+        }
+        .btn-filter {
+            padding: 6px 16px;
+            border-radius: var(--radius-sm);
+            background: var(--dark);
+            color: white;
+            font-weight: 600;
+            font-size: 13px;
+            border: none;
+            width: 100%;
+            min-height: 38px;
+            transition: var(--transition);
+        }
+        .btn-filter:hover {
+            background: #2d2d4a;
+            color: white;
+        }
+
+        /* ===== TABLE ===== */
+        .table-responsive-custom {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            padding: 0;
+        }
+        .table-responsive-custom table {
+            margin-bottom: 0;
+            font-size: 13px;
+        }
+        .table-responsive-custom thead {
+            background: var(--light-gray);
+            border-bottom: 2px solid var(--border);
+        }
+        .table-responsive-custom th {
+            font-weight: 600;
+            color: var(--dark);
+            padding: 12px 14px;
+            white-space: nowrap;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .table-responsive-custom td {
+            padding: 10px 14px;
+            vertical-align: middle;
+            border-bottom: 1px solid var(--border);
+        }
+        .table-responsive-custom tr:last-child td {
+            border-bottom: none;
+        }
+        .table-responsive-custom tr:hover {
+            background: rgba(232, 69, 138, 0.02);
+        }
+
+        .badge-status {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        .badge-status.draft { background: #e9ecef; color: #6c757d; }
+        .badge-status.submitted { background: #cce5ff; color: #0d6efd; }
+        .badge-status.under_review { background: #fff3cd; color: #b8860b; }
+        .badge-status.shortlisted { background: #d1e7dd; color: #198754; }
+        .badge-status.interview { background: #f8d7da; color: #dc3545; }
+        .badge-status.accepted { background: #198754; color: #fff; }
+        .badge-status.rejected { background: #dc3545; color: #fff; }
+        .badge-status.withdrawn { background: #6c757d; color: #fff; }
+
+        .type-badge {
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 12px;
+            background: var(--primary-light);
+            color: var(--primary-dark);
+        }
+
+        .btn-sm-custom {
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 500;
+            border: 1px solid var(--border);
+            background: white;
+            color: var(--dark);
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .btn-sm-custom:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .pagination-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: white;
+            border-top: 1px solid var(--border);
+            border-radius: 0 0 var(--radius) var(--radius);
+        }
+        .pagination-container .pagination {
+            margin: 0;
+        }
+        .pagination-container .page-link {
+            color: var(--dark);
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+        .pagination-container .page-item.active .page-link {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+        .pagination-container .page-link:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            background: white;
+            border-radius: var(--radius);
+            border: 2px dashed var(--border);
+        }
+        .empty-state i {
+            font-size: 48px;
+            color: #ccc;
+            display: block;
+            margin-bottom: 12px;
+        }
+        .empty-state h3 {
+            font-size: 18px;
+            color: var(--gray);
+        }
+        .empty-state p {
+            color: #999;
+            font-size: 14px;
+        }
+
+        /* ===== MOBILE BOTTOM NAV ===== */
+        .mobile-bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 56px;
+            background: white;
+            border-top: 1px solid var(--border);
+            justify-content: space-around;
+            align-items: center;
+            z-index: 999;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        @media (max-width: 991px) {
+            .mobile-bottom-nav {
+                display: flex !important;
+            }
+            body { padding-bottom: 66px; }
+        }
+
+        .mobile-bottom-nav a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1px;
+            font-size: 9px;
+            color: var(--gray);
+            padding: 4px 6px;
+            transition: var(--transition);
+            text-decoration: none;
+            flex: 1;
+            text-align: center;
+        }
+        .mobile-bottom-nav a i {
+            font-size: 17px;
+            display: block;
+        }
+        .mobile-bottom-nav a.active {
+            color: var(--primary);
+        }
+        .mobile-bottom-nav a:hover {
+            color: var(--primary);
+        }
+
+        /* ===== TOAST ===== */
+        .toast-container {
+            position: fixed;
+            top: 80px;
+            right: 16px;
+            z-index: 9999;
+            max-width: calc(100vw - 32px);
+        }
+        @media (min-width: 576px) {
+            .toast-container { max-width: 400px; }
+        }
+        .toast-item {
+            padding: 10px 16px;
+            border-radius: var(--radius-sm);
+            color: white;
+            font-size: 13px;
+            animation: slideIn 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        .toast-item.success { background: #28a745; }
+        .toast-item.error { background: #dc3545; }
+        .toast-item.info { background: #17a2b8; }
+        .toast-item.warning { background: #ffc107; color: var(--dark); }
+        .toast-item .close-toast {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.7);
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .toast-item .close-toast:hover { color: white; }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(60px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @media (max-width: 575px) {
+            .page-header h1 { font-size: 18px; }
+            .table-responsive-custom table { font-size: 12px; }
+            .table-responsive-custom th, .table-responsive-custom td { padding: 6px 8px; }
+            .badge-status { font-size: 9px; padding: 2px 6px; }
+        }
+        @media (max-width: 360px) {
+            .page-header h1 { font-size: 15px; }
+        }
+
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: var(--light-gray); }
+        ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #aaa; }
+    </style>
+</head>
+<body>
+
+    <!-- ===== TOP NAVBAR (same as education_home) ===== -->
+    <header class="header-area">
+        <div class="main-nav">
+            <a href="/" class="logo">
+                <img src="/static/images/logo.png" alt="OppoGlobe" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\'logo-text\'>Oppo<span>Globe</span></span>'">
+            </a>
+            <ul class="nav-icons">
+                <li><a href="/" title="Home"><i class="fas fa-home"></i></a></li>
+                <li><a href="/#job-listings" title="Browse Jobs"><i class="fas fa-search"></i></a></li>
+                {% if user.is_authenticated %}
+                <li><a href="/dashboard" title="Dashboard"><i class="fas fa-th-large"></i></a></li>
+                <li><a href="/messaging/" title="Messages"><i class="fas fa-comment-dots"></i></a></li>
+                <li class="profile-dropdown">
+                    <div class="profile-avatar-small" onclick="toggleProfileDropdown()">
+                        {{ user.username|first|upper }}
+                    </div>
+                    <div class="profile-menu" id="profileMenu">
+                        <a href="/profile/"><i class="fas fa-user"></i> Profile</a>
+                        {% if user.user_type == 'applicant' %}
+                        <a href="/applications/"><i class="fas fa-file-alt"></i> Applications</a>
+                        <a href="/profile/education/"><i class="fas fa-graduation-cap"></i> Education</a>
+                        {% else %}
+                        <a href="/admin-portal/jobs/"><i class="fas fa-briefcase"></i> Manage Jobs</a>
+                        <a href="/admin-portal/applications/"><i class="fas fa-users"></i> Applications</a>
+                        {% endif %}
+                        <div class="profile-divider"></div>
+                        <a href="/api/alerts/"><i class="fas fa-bell"></i> Alerts</a>
+                        <a href="/preferences/"><i class="fas fa-cog"></i> Preferences</a>
+                        <div class="profile-divider"></div>
+                        <a href="/logout/"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                </li>
+                <li class="three-dot-menu">
+                    <button class="dot-btn" onclick="toggleThreeDotMenu()">
+                        <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+                    <div class="menu-content" id="threeDotMenu">
+                        {% if user.user_type == 'applicant' %}
+                        <a href="/profile/skills/"><i class="fas fa-cogs"></i> Skills</a>
+                        <a href="/profile/employment/"><i class="fas fa-briefcase"></i> Employment</a>
+                        <a href="/profile/education/"><i class="fas fa-graduation-cap"></i> Education</a>
+                        <a href="/profile/documents/"><i class="fas fa-file-upload"></i> Documents</a>
+                        {% else %}
+                        <a href="/admin-portal/jobs/"><i class="fas fa-briefcase"></i> Jobs</a>
+                        <a href="/admin-portal/applications/"><i class="fas fa-users"></i> Applications</a>
+                        <a href="/admin-portal/analytics/"><i class="fas fa-chart-bar"></i> Analytics</a>
+                        {% endif %}
+                    </div>
+                </li>
+                {% else %}
+                <li><a href="#" onclick="showLogin()" title="Login"><i class="fas fa-sign-in-alt"></i></a></li>
+                <li><a href="#" onclick="showSignup()" title="Sign Up"><i class="fas fa-user-plus"></i></a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </header>
+
+    <!-- ===== DESKTOP SIDEBAR ===== -->
+    <div class="desktop-sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-title">Profile</div>
+            <a href="/profile/"><i class="fas fa-user"></i> My Profile</a>
+            <a href="/applications/"><i class="fas fa-file-alt"></i> Applications</a>
+        </div>
+        <hr>
+        <div class="sidebar-section">
+            <div class="sidebar-title">Education</div>
+            <a href="/api/education/"><i class="fas fa-graduation-cap"></i> Education Hub</a>
+            <a href="#" class="active"><i class="fas fa-users"></i> Business Applications</a>
+            <a href="/api/education/business/applications/?type=bursary"><i class="fas fa-hand-holding-heart"></i> Bursaries</a>
+            <a href="/api/education/business/applications/?type=university"><i class="fas fa-university"></i> Universities</a>
+            <a href="/api/education/business/applications/?type=school"><i class="fas fa-school"></i> Schools</a>
+        </div>
+        <hr>
+        <div class="sidebar-section">
+            <div class="sidebar-title">Quick Links</div>
+            <a href="/profile/skills/"><i class="fas fa-cogs"></i> Skills</a>
+            <a href="/profile/employment/"><i class="fas fa-briefcase"></i> Employment</a>
+            <a href="/profile/documents/"><i class="fas fa-file-upload"></i> Documents</a>
+        </div>
+    </div>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="main-container">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1>
+                <i class="fas fa-users"></i>
+                Business Applications
+                <span class="badge bg-secondary" style="font-size:14px;font-weight:500;background:var(--gray) !important;">
+                    {{ total_count }} total
+                </span>
+            </h1>
+            <div class="header-actions">
+                <a href="/api/education/" class="btn-back">
+                    <i class="fas fa-arrow-left"></i> Back to Hub
+                </a>
+                <a href="#" class="btn-primary-custom" onclick="window.location.reload();">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </a>
+            </div>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <form method="get" action="{% url 'education_business_applications' %}" id="filterForm">
+                <div class="row g-2 align-items-end">
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <label class="form-label">Search</label>
+                        <input type="text" name="q" class="form-control" placeholder="🔍 Name, email, institution..." value="{{ search_query }}">
+                    </div>
+                    <div class="col-6 col-md-2">
+                        <label class="form-label">Type</label>
+                        <select name="type" class="form-select">
+                            <option value="">All Types</option>
+                            {% for value, label in app_type_choices %}
+                                {% if value %}
+                                <option value="{{ value }}" {% if selected_type == value %}selected{% endif %}>{{ label }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-6 col-md-2">
+                        <label class="form-label">Status</label>
+                        <select name="status" class="form-select">
+                            <option value="">All Statuses</option>
+                            {% for value, label in status_choices %}
+                            <option value="{{ value }}" {% if selected_status == value %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-6 col-md-2">
+                        <label class="form-label">Field / Program</label>
+                        <select name="field" class="form-select">
+                            <option value="">All Fields</option>
+                            {% for field in available_fields %}
+                            <option value="{{ field }}" {% if selected_field == field %}selected{% endif %}>{{ field|capfirst }}</option>
+                            {% endfor %}
+                            {% for prog in available_programs %}
+                            <option value="{{ prog }}" {% if selected_field == prog %}selected{% endif %}>{{ prog|capfirst }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-6 col-md-2">
+                        <label class="form-label">From Date</label>
+                        <input type="date" name="from_date" class="form-control" value="{{ from_date }}">
+                    </div>
+                    <div class="col-6 col-md-2">
+                        <label class="form-label">To Date</label>
+                        <input type="date" name="to_date" class="form-control" value="{{ to_date }}">
+                    </div>
+                    <div class="col-6 col-md-1">
+                        <button class="btn-filter w-100" type="submit">
+                            <i class="fas fa-filter me-2"></i>Filter
+                        </button>
+                    </div>
+                </div>
+                {% if search_query or selected_type or selected_status or selected_field or from_date or to_date %}
+                <div class="mt-2">
+                    <a href="{% url 'education_business_applications' %}" class="text-decoration-none" style="font-size:13px;color:var(--primary);">
+                        <i class="fas fa-times-circle"></i> Clear all filters
+                    </a>
+                </div>
+                {% endif %}
+            </form>
+        </div>
+
+        <!-- Applications Table -->
+        <div class="table-responsive-custom">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Type</th>
+                        <th>Applicant</th>
+                        <th>Institution</th>
+                        <th>Status</th>
+                        <th>Submitted</th>
+                        <th style="min-width:80px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for app in applications %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td><span class="type-badge">{{ app.type_display }}</span></td>
+                        <td>
+                            <div>{{ app.applicant_name }}</div>
+                            <div style="font-size:11px;color:var(--gray);">{{ app.applicant_email }}</div>
+                        </td>
+                        <td>{{ app.institution_name }}</td>
+                        <td>
+                            <span class="badge-status {{ app.status }}">{{ app.status_display }}</span>
+                        </td>
+                        <td>{{ app.submitted_at|date:"Y-m-d H:i" }}</td>
+                        <td>
+                            <a href="{{ app.url }}" class="btn-sm-custom">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state" style="border:none;padding:30px 20px;">
+                                <i class="fas fa-inbox"></i>
+                                <h3>No Applications Found</h3>
+                                <p>Try adjusting your filters or check back later.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- Pagination -->
+            <div class="pagination-container">
+                <div style="font-size:13px;color:var(--gray);">
+                    Showing {{ applications.start_index }} - {{ applications.end_index }} of {{ total_count }}
+                </div>
+                <nav>
+                    <ul class="pagination">
+                        {% if applications.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ applications.previous_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% for num in applications.paginator.page_range %}
+                            {% if applications.number == num %}
+                            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                            {% elif num > applications.number|add:'-3' and num < applications.number|add:'3' %}
+                            <li class="page-item"><a class="page-link" href="?page={{ num }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if applications.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ applications.next_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ===== MOBILE BOTTOM NAV ===== -->
+    <div class="mobile-bottom-nav">
+        <a href="/"><i class="fas fa-home"></i>Home</a>
+        <a href="/dashboard"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
+        <a href="/api/education/" class="active"><i class="fas fa-graduation-cap"></i>Edu</a>
+        <a href="/profile/"><i class="fas fa-user"></i>Profile</a>
+    </div>
+
+    <!-- ===== TOAST CONTAINER ===== -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleProfileDropdown() {
+            document.getElementById("profileMenu").classList.toggle("show");
+        }
+        function toggleThreeDotMenu() {
+            document.getElementById("threeDotMenu").classList.toggle("show");
+        }
+
+        document.addEventListener("click", function(e) {
+            const profileMenu = document.getElementById("profileMenu");
+            const avatar = document.querySelector(".profile-avatar-small");
+            if (avatar && profileMenu && !avatar.contains(e.target) && !profileMenu.contains(e.target)) {
+                profileMenu.classList.remove("show");
+            }
+            const threeDotMenu = document.getElementById("threeDotMenu");
+            const dotBtn = document.querySelector(".three-dot-menu .dot-btn");
+            if (dotBtn && threeDotMenu && !dotBtn.contains(e.target) && !threeDotMenu.contains(e.target)) {
+                threeDotMenu.classList.remove("show");
+            }
+        });
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast-item ${type}`;
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                info: 'fa-info-circle',
+                warning: 'fa-exclamation-triangle'
+            };
+            toast.innerHTML = `
+                <i class="fas ${icons[type] || icons.info}"></i>
+                ${message}
+                <button class="close-toast" onclick="this.parentElement.remove()">&times;</button>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 5000);
+        }
+
+        function showLogin() {
+            showToast('Please login to continue', 'info');
+            window.location.href = '/login/';
+        }
+
+        function showSignup() {
+            showToast('Create an account to get started', 'info');
+            window.location.href = '/signup/';
+        }
+
+        // Auto-submit form on filter change (optional)
+        document.querySelectorAll('#filterForm select, #filterForm input[type="date"]').forEach(el => {
+            el.addEventListener('change', function() {
+                document.getElementById('filterForm').submit();
+            });
+        });
+        // But for search input we need to submit on enter or after delay? We'll keep the button.
+    </script>
+
+  <script src="/static/hiring/js/notifications-global.js" defer></script>
+</body>
+</html>

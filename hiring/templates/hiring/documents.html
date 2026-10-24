@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Documents - JobPortal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <style>
+        /* Top Navbar */
+        .header-area {
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+        }
+        .main-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 0;
+        }
+        .logo img {
+            max-height: 40px;
+        }
+
+        /* Desktop Sidebar */
+        .desktop-sidebar {
+            width: 250px;
+            background: white;
+            height: calc(100vh - 80px);
+            position: fixed;
+            top: 80px;
+            left: 0;
+            padding: 20px;
+            border-right: 1px solid #eee;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+            overflow-y: auto;
+        }
+
+        .desktop-sidebar a {
+            display: block;
+            padding: 12px 10px;
+            color: #333;
+            text-decoration: none;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .desktop-sidebar a:hover,
+        .desktop-sidebar a.active {
+            background-color: rgba(255, 88, 158, 0.1);
+            color: #ff589e;
+        }
+
+        /* Hide sidebar on mobile */
+        @media (max-width: 991px) {
+            .desktop-sidebar {
+                display: none;
+            }
+        }
+
+        /* Push page content right on desktop */
+        @media (min-width: 992px) {
+            body {
+                padding-left: 270px !important;
+            }
+        }
+
+        /* Mobile Bottom Navbar */
+        .mobile-bottom-nav {
+            display: none;
+        }
+
+        @media (max-width: 991px) {
+            .mobile-bottom-nav {
+                display: flex;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 65px;
+                background: white;
+                border-top: 1px solid #ddd;
+                justify-content: space-around;
+                align-items: center;
+                z-index: 9999;
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+            .mobile-bottom-nav a {
+                text-align: center;
+                color: #333;
+                font-size: 14px;
+                text-decoration: none;
+                flex: 1;
+                padding: 10px 5px;
+            }
+            .mobile-bottom-nav i {
+                font-size: 20px;
+                display: block;
+                margin-bottom: 3px;
+            }
+            .mobile-bottom-nav a.active {
+                color: #ff589e;
+            }
+        }
+
+        /* Body padding adjustments */
+        body {
+            padding-top: 80px;
+            background-color: #f8f9fa;
+            padding-bottom: 80px;
+        }
+
+        /* Top Right Navigation */
+        .nav-icons {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-icons a {
+            font-size: 20px;
+            color: #555;
+            transition: 0.2s;
+            text-decoration: none;
+        }
+
+        .nav-icons a:hover {
+            color: #ff589e;
+            transform: translateY(-2px);
+        }
+
+        /* Profile Dropdown */
+        .profile-dropdown {
+            position: relative;
+        }
+
+        .profile-avatar-small {
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, #ff589e 0%, #ff136f 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .profile-menu {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            width: 220px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            padding: 10px 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.25s ease;
+            z-index: 1000;
+        }
+
+        .profile-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0px);
+        }
+
+        .profile-menu a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            color: #444;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .profile-menu a:hover {
+            background: #f5f7fa;
+            color: #ff589e;
+        }
+
+        .profile-divider {
+            height: 1px;
+            background: #eee;
+            margin: 8px 0;
+        }
+
+        /* Fixed Three Dot Menu */
+        .three-dot-menu {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .three-dot-menu i {
+            font-size: 22px;
+            color: #555;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .three-dot-menu i:hover {
+            background-color: #f0f0f0;
+            color: #ff589e;
+        }
+
+        .three-dot-menu .menu-content {
+            position: absolute;
+            right: 0;
+            top: 45px;
+            background: #fff;
+            width: 200px;
+            padding: 8px 0;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .three-dot-menu:hover .menu-content {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .three-dot-menu .menu-content a {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            text-decoration: none;
+            color: #444;
+            transition: all 0.2s ease;
+            border: none;
+            background: none;
+            width: 100%;
+        }
+
+        .three-dot-menu .menu-content a:hover {
+            background: rgba(255, 88, 158, 0.1);
+            color: #ff589e;
+        }
+
+        .three-dot-menu .menu-content a i {
+            margin-right: 10px;
+            font-size: 16px;
+            width: 16px;
+            text-align: center;
+            padding: 0;
+            background: none;
+        }
+
+        /* Documents-specific styles */
+        .documents-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 0;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .document-card {
+            border: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            border-radius: 10px;
+            transition: all 0.3s;
+            border-left: 4px solid #ff589e;
+        }
+        .document-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+        .empty-state i {
+            font-size: 64px;
+            margin-bottom: 20px;
+            color: #dee2e6;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #ff589e 0%, #ff136f 100%);
+            border: none;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #ff136f 0%, #ff589e 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(255, 88, 158, 0.3);
+        }
+        .document-icon {
+            font-size: 24px;
+            margin-right: 10px;
+            color: #ff589e;
+        }
+
+        /* Business Documents View Styles */
+        .business-documents-view {
+            padding: 20px 0;
+        }
+
+        .applications-list {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .application-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .application-card:hover {
+            background-color: #f8f9fa;
+            border-color: #007bff;
+            transform: translateY(-2px);
+        }
+
+        .application-info h6 {
+            margin: 0;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: capitalize;
+        }
+
+        .status-submitted { background-color: #fff3cd; color: #856404; }
+        .status-under_review { background-color: #d1ecf1; color: #0c5460; }
+        .status-shortlisted { background-color: #d4edda; color: #155724; }
+        .status-interview { background-color: #cce7ff; color: #004085; }
+        .status-successful { background-color: #d4edda; color: #155724; }
+        .status-unsuccessful { background-color: #f8d7da; color: #721c24; }
+
+        .selected-applicant-documents {
+            margin-top: 30px;
+            padding: 25px;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            background: white;
+        }
+
+        .selected-applicant-header {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .documents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .document-card.business-view {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .document-card.business-view:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .document-icon-large {
+            font-size: 32px;
+            color: #dc3545;
+            margin-right: 15px;
+        }
+
+        .document-details {
+            flex: 1;
+        }
+
+        .document-details h6 {
+            margin: 0 0 8px 0;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .document-type {
+            color: #6c757d;
+            font-size: 14px;
+            margin: 0 0 5px 0;
+        }
+
+        .upload-date {
+            color: #6c757d;
+            font-size: 12px;
+            margin: 0;
+        }
+
+        .no-documents {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+            grid-column: 1 / -1;
+        }
+
+        .loading-spinner {
+            text-align: center;
+            padding: 40px;
+            color: #007bff;
+        }
+
+        .document-indicator .badge {
+            font-size: 12px;
+            padding: 6px 12px;
+        }
+
+        .back-button {
+            margin-bottom: 20px;
+        }
+
+        .applicant-profile-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .profile-completeness {
+            display: inline-block;
+            padding: 4px 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .profile-completeness.high { background: #d4edda; color: #155724; }
+        .profile-completeness.medium { background: #fff3cd; color: #856404; }
+        .profile-completeness.low { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    {% load api_utils %}
+    {% api_js_functions %}
+    <!-- Top Navigation -->
+    <header class="header-area">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <nav class="main-nav">
+                        <a href="/" class="logo">
+                            <img src="/static/images/logo.png" alt="JobPortal" style="max-height: 40px;">
+                        </a>
+
+                        <!-- Top Right Icons -->
+                        <ul class="nav-icons">
+                            <li>
+                                <a href="/" title="Home">
+                                    <i class="fas fa-home"></i>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="/#job-listings" title="Browse Jobs">
+                                    <i class="fas fa-search"></i>
+                                </a>
+                            </li>
+
+                            {% if user.is_authenticated %}
+                            <li>
+                                <a href="/dashboard" title="Dashboard">
+                                    <i class="fas fa-th-large"></i>
+                                </a>
+                            </li>
+
+                            <!-- Profile Dropdown Icon -->
+                            <li class="profile-dropdown">
+                                <div class="profile-avatar-small" onclick="toggleProfileDropdown()">
+                                    {{ user.username|first|upper }}
+                                </div>
+
+                                <div class="profile-menu" id="profileMenu">
+                                    <a href="/profile/"><i class="fas fa-user"></i> Profile</a>
+                                    <a href="/applications/"><i class="fas fa-file-alt"></i> Applications</a>
+                                    <div class="profile-divider"></div>
+
+                                    <a href="/api/alerts/"><i class="fas fa-bell"></i> Alerts</a>
+                                    <a href="/preferences/"><i class="fas fa-cog"></i> Preferences</a>
+
+                                    <div class="profile-divider"></div>
+
+                                    <a href="/logout/"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                                </div>
+                            </li>
+                            <li>
+                              <a href="/messaging/">
+                                <i class="fas fa-comment-dots"></i>
+                              </a>
+                            </li>  
+                            <li>
+                                <div class="three-dot-menu">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                    <div class="menu-content">
+                                        <a href="/profile/skills/"><i class="fas fa-cogs"></i> Skills</a>
+                                        <a href="/profile/employment/"><i class="fas fa-briefcase"></i> Employment</a>
+                                        <a href="/profile/education/"><i class="fas fa-graduation-cap"></i> Education</a>
+                                        <a href="/profile/documents/"><i class="fas fa-file-upload"></i> Documents</a>
+                                    </div>
+                                </div>
+                            </li>
+
+                            {% else %}
+                            <li>
+                                <a href="#" onclick="showLogin()" title="Login">
+                                    <i class="fas fa-sign-in-alt"></i>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="#" onclick="showSignup()" title="Sign Up">
+                                    <i class="fas fa-user-plus"></i>
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Desktop Sidebar -->
+    <div class="desktop-sidebar">
+        <a href="/profile/"><i class="fas fa-user"></i> My Profile</a>
+        <a href="/applications/"><i class="fas fa-file-alt"></i> Applications</a>
+        <a href="/profile/skills/"><i class="fas fa-cogs"></i> Skills</a>
+        <a href="/profile/employment/"><i class="fas fa-briefcase"></i> Employment</a>
+        <a href="/profile/education/"><i class="fas fa-graduation-cap"></i> Education</a>
+        <a href="/profile/documents/" class="active"><i class="fas fa-file-upload"></i> Documents</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <!-- Applicant View -->
+        <div id="applicantView" style="display: none;">
+            <!-- Documents Header -->
+            <div class="documents-header">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h1 class="display-5">My Documents</h1>
+                        <p class="lead">Manage your CV, certificates, and other important documents</p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <button class="btn btn-light btn-lg" onclick="showUploadModal()">
+                            <i class="fas fa-upload me-2"></i>Upload Document
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Documents Grid -->
+            <div class="row" id="documentsContainer">
+                <div class="col-12">
+                    <div class="text-center py-4">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading documents...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Business View -->
+        <div id="businessView" style="display: none;">
+            <div class="business-documents-view">
+                <div class="business-documents-header">
+                    <h1 class="display-5 mb-3">Applicant Documents</h1>
+                    <p class="lead text-muted">View documents submitted by applicants to your job listings</p>
+                </div>
+
+                <!-- Applications List -->
+                <div class="applications-section">
+                    <h4 class="mb-4">Applications</h4>
+                    <div class="applications-list" id="applicationsList">
+                        <div class="text-center py-4">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading applications...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Selected Applicant Documents -->
+                <div id="selectedApplicantSection" style="display: none;">
+                    <div class="selected-applicant-documents">
+                        <div class="selected-applicant-header">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h4 id="applicantName">Applicant Documents</h4>
+                                    <p class="text-muted mb-2" id="jobTitle">Job: Loading...</p>
+                                    <div class="applicant-profile-info">
+                                        <small><strong>Email:</strong> <span id="applicantEmail">Loading...</span></small>
+                                        <span class="mx-2">•</span>
+                                        <small><strong>Profile Completeness:</strong> <span id="profileCompleteness">Loading...</span></small>
+                                        <span class="mx-2">•</span>
+                                        <small><strong>Applied:</strong> <span id="appliedDate">Loading...</span></small>
+                                    </div>
+                                </div>
+                                <button class="btn btn-outline-secondary btn-sm back-button" onclick="backToApplications()">
+                                    <i class="fas fa-arrow-left me-1"></i>Back to Applications
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="applicantDocumentsContainer">
+                            <div class="loading-spinner">
+                                <i class="fas fa-spinner fa-spin me-2"></i> Loading documents...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Navbar -->
+    <div class="mobile-bottom-nav">
+        <a href="/"><i class="fas fa-home"></i>Home</a>
+        <a href="/dashboard"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
+        <a href="/applications/"><i class="fas fa-file-alt"></i>Jobs</a>
+        <a href="/profile/documents/" class="active"><i class="fas fa-file-upload"></i>Docs</a>
+    </div>
+
+    <!-- Upload Document Modal -->
+    <div class="modal fade" id="uploadModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Upload Document</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="uploadForm" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label class="form-label">Document Type</label>
+                            <select class="form-select" name="document_type" required>
+                                <option value="">Select Document Type</option>
+                                <option value="cv">CV / Resume</option>
+                                <option value="cover_letter">Cover Letter</option>
+                                <option value="certificate">Certificate</option>
+                                <option value="transcript">Academic Transcript</option>
+                                <option value="id">ID Document</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Select File</label>
+                            <input type="file" class="form-control" name="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" required>
+                            <div class="form-text">Allowed formats: PDF, DOC, DOCX, JPG, JPEG, PNG (Max 5MB)</div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-upload me-2"></i>Upload Document
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Global variables
+        let currentUserType = '{{ user.user_type }}'; // This comes from Django context
+        let selectedApplication = null;
+
+        // Initialize page based on user type
+        document.addEventListener('DOMContentLoaded', function() {
+            initializePage();
+        });
+
+        function initializePage() {
+            if (currentUserType === 'applicant') {
+                document.getElementById('applicantView').style.display = 'block';
+                document.getElementById('businessView').style.display = 'none';
+                loadApplicantDocuments();
+            } else if (currentUserType === 'admin') {
+                document.getElementById('applicantView').style.display = 'none';
+                document.getElementById('businessView').style.display = 'block';
+                loadBusinessApplications();
+            }
+        }
+
+        // ========== APPLICANT FUNCTIONS ==========
+        function loadApplicantDocuments() {
+            fetch('/api/profile/documents/')
+                .then(response => response.json())
+                .then(data => {
+                    const container = document.getElementById('documentsContainer');
+                    
+                    if (data.success && data.documents && data.documents.length > 0) {
+                        container.innerHTML = data.documents.map(doc => `
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card document-card">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-start mb-3">
+                                            <i class="fas ${getDocumentIcon(doc.document_type)} document-icon"></i>
+                                            <div class="flex-grow-1">
+                                                <h6 class="card-title mb-1">${escapeHtml(doc.file_name)}</h6>
+                                                <small class="text-muted">
+                                                    ${formatDocumentType(doc.document_type)}
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <p class="card-text small text-muted mb-3">
+                                            Uploaded: ${new Date(doc.uploaded_at).toLocaleDateString()}
+                                        </p>
+                                        <div class="d-flex gap-2">
+                                            <a href="${doc.file}" class="btn btn-outline-primary btn-sm flex-fill" target="_blank">
+                                                <i class="fas fa-download me-1"></i>Download
+                                            </a>
+                                            <button class="btn btn-outline-danger btn-sm" onclick="deleteDocument('${doc.id}')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('');
+                    } else {
+                        container.innerHTML = `
+                            <div class="col-12">
+                                <div class="empty-state">
+                                    <i class="fas fa-file-upload"></i>
+                                    <h3>No Documents Yet</h3>
+                                    <p class="mb-4">Upload your CV, certificates, and other important documents to complete your profile.</p>
+                                    <button class="btn btn-primary btn-lg" onclick="showUploadModal()">
+                                        <i class="fas fa-upload me-2"></i>Upload Your First Document
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading documents:', error);
+                    document.getElementById('documentsContainer').innerHTML = `
+                        <div class="col-12">
+                            <div class="alert alert-danger">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                Error loading documents. Please try again.
+                            </div>
+                        </div>
+                    `;
+                });
+        }
+
+        // ========== BUSINESS FUNCTIONS ==========
+        function loadBusinessApplications() {
+            fetch('/api/business/applications/documents/')
+                .then(response => response.json())
+                .then(data => {
+                    const container = document.getElementById('applicationsList');
+                    
+                    if (data.success && data.applications && data.applications.length > 0) {
+                        container.innerHTML = data.applications.map(app => `
+                            <div class="application-card" onclick="selectApplication('${app.application_id}')">
+                                <div class="application-info">
+                                    <h6>${escapeHtml(app.applicant.first_name)} ${escapeHtml(app.applicant.last_name)}</h6>
+                                    <p class="text-muted mb-1">${escapeHtml(app.applicant.email)}</p>
+                                    <p class="mb-1"><strong>Job:</strong> ${escapeHtml(app.job_listing.title)}</p>
+                                    <p class="mb-1"><strong>Applied:</strong> ${new Date(app.applied_date).toLocaleDateString()}</p>
+                                    <p class="mb-0"><strong>Status:</strong> 
+                                        <span class="status-badge status-${app.application_status}">
+                                            ${app.application_status.replace('_', ' ')}
+                                        </span>
+                                    </p>
+                                </div>
+                                <div class="document-indicator">
+                                    ${app.has_documents ? 
+                                        `<span class="badge bg-success">${app.document_count} document(s)</span>` :
+                                        `<span class="badge bg-secondary">No documents</span>`
+                                    }
+                                    <div class="mt-2">
+                                        <span class="profile-completeness ${getCompletenessClass(app.applicant.profile_completeness)}">
+                                            ${app.applicant.profile_completeness}% Complete
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('');
+                    } else {
+                        container.innerHTML = `
+                            <div class="col-12">
+                                <div class="empty-state">
+                                    <i class="fas fa-file-alt"></i>
+                                    <h3>No Applications Yet</h3>
+                                    <p class="mb-4">When applicants apply to your job listings, their documents will appear here.</p>
+                                </div>
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading applications:', error);
+                    document.getElementById('applicationsList').innerHTML = `
+                        <div class="col-12">
+                            <div class="alert alert-danger">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                Error loading applications. Please try again.
+                            </div>
+                        </div>
+                    `;
+                });
+        }
+
+        function selectApplication(applicationId) {
+            // Find the application data
+            fetch('/api/business/applications/documents/')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.applications) {
+                        selectedApplication = data.applications.find(app => app.application_id === applicationId);
+                        if (selectedApplication) {
+                            showApplicantDocuments(selectedApplication);
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error selecting application:', error);
+                    showAlert('Error loading application details', 'error');
+                });
+        }
+
+        function showApplicantDocuments(application) {
+            // Update header information
+            document.getElementById('applicantName').textContent = 
+                `${application.applicant.first_name} ${application.applicant.last_name}'s Documents`;
+            document.getElementById('jobTitle').textContent = `Job: ${application.job_listing.title}`;
+            document.getElementById('applicantEmail').textContent = application.applicant.email;
+            document.getElementById('profileCompleteness').textContent = `${application.applicant.profile_completeness}%`;
+            document.getElementById('appliedDate').textContent = new Date(application.applied_date).toLocaleDateString();
+
+            // Show loading state
+            const container = document.getElementById('applicantDocumentsContainer');
+            container.innerHTML = `
+                <div class="loading-spinner">
+                    <i class="fas fa-spinner fa-spin me-2"></i> Loading documents...
+                </div>
+            `;
+
+            // Load documents
+            fetch(`/api/business/applications/${application.application_id}/documents/`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        if (data.documents && data.documents.length > 0) {
+                            container.innerHTML = `
+                                <div class="documents-grid">
+                                    ${data.documents.map(doc => `
+                                        <div class="document-card business-view">
+                                            <div class="document-icon-large">
+                                                <i class="fas ${getDocumentIcon(doc.document_type)}"></i>
+                                            </div>
+                                            <div class="document-details">
+                                                <h6>${escapeHtml(doc.file_name)}</h6>
+                                                <p class="document-type">${formatDocumentType(doc.document_type)}</p>
+                                                <p class="upload-date">Uploaded: ${new Date(doc.uploaded_at).toLocaleDateString()}</p>
+                                            </div>
+                                            <div class="document-actions">
+                                                <a href="${doc.file}" target="_blank" class="btn btn-sm btn-primary mb-1">
+                                                    <i class="fas fa-eye me-1"></i>View
+                                                </a>
+                                                <a href="${doc.file}?download=true" class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-download me-1"></i>Download
+                                                </a>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            `;
+                        } else {
+                            container.innerHTML = `
+                                <div class="no-documents">
+                                    <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+                                    <h5>No Documents Available</h5>
+                                    <p class="text-muted">This applicant hasn't uploaded any documents yet.</p>
+                                </div>
+                            `;
+                        }
+                    } else {
+                        throw new Error(data.error || 'Failed to load documents');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading applicant documents:', error);
+                    container.innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Error loading documents. Please try again.
+                        </div>
+                    `;
+                });
+
+            // Show the selected applicant section
+            document.getElementById('selectedApplicantSection').style.display = 'block';
+            document.querySelector('.applications-section').style.display = 'none';
+        }
+
+        function backToApplications() {
+            document.getElementById('selectedApplicantSection').style.display = 'none';
+            document.querySelector('.applications-section').style.display = 'block';
+            selectedApplication = null;
+        }
+
+        // ========== SHARED FUNCTIONS ==========
+        function getDocumentIcon(type) {
+            const icons = {
+                'cv': 'fa-file-alt',
+                'cover_letter': 'fa-envelope',
+                'certificate': 'fa-award',
+                'transcript': 'fa-graduation-cap',
+                'id': 'fa-id-card',
+                'other': 'fa-file'
+            };
+            return icons[type] || 'fa-file';
+        }
+
+        function formatDocumentType(type) {
+            const types = {
+                'cv': 'CV / Resume',
+                'cover_letter': 'Cover Letter',
+                'certificate': 'Certificate',
+                'transcript': 'Academic Transcript',
+                'id': 'ID Document',
+                'other': 'Other Document'
+            };
+            return types[type] || type;
+        }
+
+        function getCompletenessClass(completeness) {
+            if (completeness >= 80) return 'high';
+            if (completeness >= 50) return 'medium';
+            return 'low';
+        }
+
+        function showUploadModal() {
+            const modal = new bootstrap.Modal(document.getElementById('uploadModal'));
+            modal.show();
+        }
+
+        // Handle upload form submission (for applicants)
+        document.getElementById('uploadForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            
+            // Show loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Uploading...';
+            submitBtn.disabled = true;
+
+            fetch('/api/profile/documents/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCSRFToken()
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    bootstrap.Modal.getInstance(document.getElementById('uploadModal')).hide();
+                    this.reset();
+                    loadApplicantDocuments(); // Reload documents list
+                    showAlert('Document uploaded successfully!', 'success');
+                } else {
+                    let errorMessage = 'Error uploading document: ';
+                    if (data.errors) {
+                        errorMessage += Object.values(data.errors).join(', ');
+                    } else {
+                        errorMessage += 'Please try again.';
+                    }
+                    showAlert(errorMessage, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('Error uploading document. Please try again.', 'error');
+            })
+            .finally(() => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            });
+        });
+
+        function deleteDocument(documentId) {
+            if (confirm('Are you sure you want to delete this document? This action cannot be undone.')) {
+                fetch(`/api/profile/documents/${documentId}/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': getCSRFToken()
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        loadApplicantDocuments();
+                        showAlert('Document deleted successfully!', 'success');
+                    } else {
+                        throw new Error('Delete failed');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showAlert('Error deleting document. Please try again.', 'error');
+                });
+            }
+        }
+
+        // ========== UTILITY FUNCTIONS ==========
+        function showAlert(message, type) {
+            // Create alert element
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show position-fixed`;
+            alertDiv.style.cssText = 'top: 100px; right: 20px; z-index: 1060; min-width: 300px;';
+            alertDiv.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check' : 'exclamation-triangle'} me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(alertDiv);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (alertDiv.parentElement) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        }
+
+        function getCSRFToken() {
+            const name = 'csrftoken';
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function escapeHtml(unsafe) {
+            if (unsafe === null || unsafe === undefined) return '';
+            return unsafe
+                .toString()
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // Simple navigation functions
+        function toggleProfileDropdown() {
+            document.getElementById("profileMenu").classList.toggle("show");
+        }
+
+        // Close dropdown on click outside
+        document.addEventListener("click", function(e) {
+            const menu = document.getElementById("profileMenu");
+            const avatar = document.querySelector(".profile-avatar-small");
+            const threeDotMenu = document.querySelector(".three-dot-menu");
+
+            if (avatar && menu && !avatar.contains(e.target) && !menu.contains(e.target)) {
+                menu.classList.remove("show");
+            }
+        });
+    </script>
+
+  <script src="/static/hiring/js/notifications-global.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,5182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
+
+    <title>OppoGlobe - Property Map</title>
+
+    <!-- Bootstrap -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Font Awesome -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    >
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+    >
+
+    <style>
+        /* =========================================================
+           OPPOGLOBE PROPERTY MAP
+           Fully responsive desktop + tablet + small-phone layout
+           ========================================================= */
+
+        :root {
+            --primary: #1a73e8;
+            --primary-dark: #1557b0;
+            --primary-light: #e8f0fe;
+
+            --secondary: #34a853;
+            --accent: #ea4335;
+            --warning: #fbbc04;
+
+            --dark: #202124;
+            --gray: #5f6368;
+            --muted: #80868b;
+
+            --light-gray: #f1f3f4;
+            --page-bg: #f6f7f9;
+            --border: #dadce0;
+
+            --white: #ffffff;
+
+            --shadow:
+                0 1px 3px rgba(0,0,0,.12),
+                0 1px 2px rgba(0,0,0,.08);
+
+            --shadow-soft:
+                0 10px 30px rgba(32,33,36,.12);
+
+            --shadow-card:
+                0 2px 10px rgba(32,33,36,.06);
+
+            --radius: 16px;
+            --radius-sm: 11px;
+
+            --header-height: 64px;
+            --mobile-nav-height: 68px;
+
+            --transition:
+                all .22s cubic-bezier(.4,0,.2,1);
+        }
+
+
+        /* =========================================================
+           RESET
+           ========================================================= */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            width: 100%;
+            min-height: 100%;
+        }
+
+        body {
+            width: 100%;
+            min-height: 100dvh;
+
+            background: var(--page-bg);
+            color: var(--dark);
+
+            font-family:
+                "Segoe UI",
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                sans-serif;
+
+            line-height: 1.5;
+
+            overflow: hidden;
+
+            padding-top:
+                calc(
+                    var(--header-height) +
+                    env(safe-area-inset-top)
+                );
+        }
+
+        body.mobile-sheet-open {
+            overflow: hidden;
+        }
+
+        button,
+        input,
+        select {
+            font: inherit;
+        }
+
+        button {
+            border: 0;
+            background: none;
+            cursor: pointer;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        img {
+            display: block;
+            max-width: 100%;
+        }
+
+        i {
+            line-height: 1;
+        }
+
+
+        /* =========================================================
+           HEADER
+           ========================================================= */
+
+        .header {
+            position: fixed;
+
+            top: 0;
+            left: 0;
+            right: 0;
+
+            z-index: 5000;
+
+            height:
+                calc(
+                    var(--header-height) +
+                    env(safe-area-inset-top)
+                );
+
+            padding:
+                env(safe-area-inset-top)
+                24px
+                0;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            background: rgba(255,255,255,.88);
+
+            -webkit-backdrop-filter: blur(18px);
+            backdrop-filter: blur(18px);
+
+            border-bottom: 1px solid rgba(218,220,224,.82);
+        }
+
+
+        .header-brand {
+            min-width: 0;
+
+            display: flex;
+            align-items: center;
+
+            gap: 10px;
+
+            color: var(--primary);
+
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -.4px;
+        }
+
+        .header-brand img {
+            width: auto;
+            height: 36px;
+
+            object-fit: contain;
+
+            flex-shrink: 0;
+        }
+
+        .header-brand span {
+            white-space: nowrap;
+        }
+
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+
+            gap: 7px;
+
+            margin-left: 12px;
+
+            flex-shrink: 0;
+        }
+
+
+        .btn-icon {
+            position: relative;
+
+            width: 40px;
+            height: 40px;
+
+            border-radius: 50%;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            color: var(--gray);
+
+            font-size: 16px;
+
+            transition: var(--transition);
+        }
+
+        .btn-icon:hover,
+        .btn-icon:focus-visible {
+            background: var(--light-gray);
+            color: var(--primary);
+        }
+
+
+        .user-badge {
+            min-height: 30px;
+
+            padding: 0 13px;
+
+            border-radius: 999px;
+
+            display: inline-flex;
+            align-items: center;
+
+            background: #fce8e6;
+            color: var(--accent);
+
+            font-size: 12px;
+            font-weight: 700;
+
+            white-space: nowrap;
+        }
+
+
+        .avatar {
+            width: 38px;
+            height: 38px;
+
+            border-radius: 50%;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #ea4335,
+                    #fbbc04
+                );
+
+            color: white;
+
+            font-size: 14px;
+            font-weight: 800;
+
+            cursor: pointer;
+
+            flex-shrink: 0;
+
+            box-shadow:
+                0 4px 12px rgba(234,67,53,.18);
+
+            transition: var(--transition);
+        }
+
+        .avatar:hover {
+            transform: scale(1.04);
+        }
+
+
+        /* =========================================================
+           DROPDOWNS
+           ========================================================= */
+
+        .dropdown-container {
+            position: relative;
+        }
+
+        .dropdown-menu-custom {
+            position: absolute;
+
+            top: calc(100% + 9px);
+            right: 0;
+
+            width: max-content;
+            min-width: 225px;
+            max-width: calc(100vw - 20px);
+
+            padding: 8px;
+
+            border: 1px solid var(--border);
+            border-radius: 16px;
+
+            background: rgba(255,255,255,.97);
+
+            -webkit-backdrop-filter: blur(18px);
+            backdrop-filter: blur(18px);
+
+            box-shadow:
+                0 18px 45px rgba(32,33,36,.18);
+
+            opacity: 0;
+            visibility: hidden;
+
+            transform:
+                translateY(-8px)
+                scale(.98);
+
+            transform-origin: top right;
+
+            transition: var(--transition);
+
+            pointer-events: none;
+
+            z-index: 5500;
+        }
+
+
+        .dropdown-menu-custom.show {
+            opacity: 1;
+            visibility: visible;
+
+            transform:
+                translateY(0)
+                scale(1);
+
+            pointer-events: auto;
+        }
+
+
+        .dropdown-item {
+            min-height: 42px;
+
+            padding: 9px 12px;
+
+            border-radius: 10px;
+
+            display: flex;
+            align-items: center;
+
+            gap: 11px;
+
+            color: var(--dark);
+
+            font-size: 13px;
+            font-weight: 500;
+
+            white-space: nowrap;
+
+            transition: var(--transition);
+        }
+
+
+        .dropdown-item:hover {
+            background: var(--light-gray);
+            color: var(--primary);
+        }
+
+
+        .dropdown-item i {
+            width: 18px;
+
+            color: var(--gray);
+
+            text-align: center;
+        }
+
+
+        .dropdown-divider {
+            height: 1px;
+
+            margin: 6px 4px;
+
+            background: var(--border);
+        }
+
+
+        /* =========================================================
+           DESKTOP SIDEBAR
+           ========================================================= */
+
+        .sidebar-nav {
+            position: fixed;
+
+            left: 0;
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            z-index: 3000;
+
+            padding: 10px 7px;
+
+            display: flex;
+            flex-direction: column;
+
+            gap: 4px;
+
+            border:
+                1px solid var(--border);
+
+            border-left: 0;
+
+            border-radius:
+                0
+                16px
+                16px
+                0;
+
+            background: rgba(255,255,255,.95);
+
+            box-shadow: var(--shadow);
+
+            -webkit-backdrop-filter: blur(14px);
+            backdrop-filter: blur(14px);
+        }
+
+
+        .sidebar-nav .nav-link {
+            position: relative;
+
+            width: 44px;
+            height: 44px;
+
+            border-radius: 11px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            color: var(--gray);
+
+            font-size: 17px;
+
+            transition: var(--transition);
+        }
+
+
+        .sidebar-nav .nav-link:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+
+        .sidebar-nav .nav-link.active {
+            background: var(--primary);
+            color: white;
+
+            box-shadow:
+                0 5px 14px rgba(26,115,232,.24);
+        }
+
+
+        .tooltip-text {
+            position: absolute;
+
+            left: calc(100% + 12px);
+            top: 50%;
+
+            transform:
+                translateY(-50%)
+                translateX(-5px);
+
+            padding: 6px 10px;
+
+            border-radius: 7px;
+
+            background: rgba(32,33,36,.96);
+            color: white;
+
+            font-size: 11px;
+
+            white-space: nowrap;
+
+            opacity: 0;
+            visibility: hidden;
+
+            transition: var(--transition);
+
+            pointer-events: none;
+        }
+
+
+        .sidebar-nav .nav-link:hover .tooltip-text {
+            opacity: 1;
+            visibility: visible;
+
+            transform:
+                translateY(-50%)
+                translateX(0);
+        }
+
+
+        /* =========================================================
+           MAIN LAYOUT
+           ========================================================= */
+
+        .map-shell {
+            width: 100%;
+
+            height:
+                calc(
+                    100dvh -
+                    var(--header-height) -
+                    env(safe-area-inset-top)
+                );
+
+            padding:
+                8px
+                16px
+                16px
+                78px;
+        }
+
+
+        .map-card {
+            position: relative;
+
+            width: 100%;
+            height: 100%;
+
+            display: grid;
+
+            grid-template-columns:
+                minmax(340px, 390px)
+                minmax(0, 1fr);
+
+            overflow: hidden;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 18px;
+
+            background: white;
+
+            box-shadow: var(--shadow-card);
+        }
+
+
+        /* =========================================================
+           PROPERTY LIST PANEL
+           ========================================================= */
+
+        .list-panel {
+            min-width: 0;
+            min-height: 0;
+
+            display: flex;
+            flex-direction: column;
+
+            background: white;
+
+            border-right:
+                1px solid var(--border);
+
+            overflow: hidden;
+        }
+
+
+        .list-panel-head {
+            flex-shrink: 0;
+
+            padding: 18px;
+
+            background: rgba(251,251,252,.98);
+
+            border-bottom:
+                1px solid var(--border);
+        }
+
+
+        .mobile-sheet-handle {
+            display: none;
+        }
+
+
+        .page-heading {
+            min-width: 0;
+
+            display: flex;
+            align-items: center;
+
+            gap: 11px;
+
+            margin-bottom: 13px;
+        }
+
+
+        .page-heading-icon {
+            width: 43px;
+            height: 43px;
+
+            flex-shrink: 0;
+
+            border-radius: 13px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--primary),
+                    #4285f4
+                );
+
+            color: white;
+
+            font-size: 18px;
+
+            box-shadow:
+                0 5px 14px rgba(26,115,232,.22);
+        }
+
+
+        .page-heading-copy {
+            min-width: 0;
+
+            flex: 1;
+        }
+
+
+        .page-heading h1 {
+            margin: 0;
+
+            color: var(--dark);
+
+            font-size: 20px;
+            font-weight: 800;
+
+            line-height: 1.2;
+        }
+
+
+        .page-heading p {
+            margin: 3px 0 0;
+
+            color: var(--gray);
+
+            font-size: 12px;
+
+            white-space: nowrap;
+
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+
+        .count-badge {
+            min-width: 34px;
+            height: 30px;
+
+            padding: 0 9px;
+
+            flex-shrink: 0;
+
+            border-radius: 999px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: var(--primary-light);
+            color: var(--primary);
+
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+
+        .mobile-panel-close {
+            display: none;
+        }
+
+
+        /* =========================================================
+           SEARCH
+           ========================================================= */
+
+        .search-wrap {
+            position: relative;
+
+            width: 100%;
+
+            margin-bottom: 9px;
+        }
+
+
+        .search-wrap > i {
+            position: absolute;
+
+            left: 13px;
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            color: #9aa0a6;
+
+            font-size: 13px;
+
+            z-index: 2;
+
+            pointer-events: none;
+        }
+
+
+        .search-input,
+        .filter-select {
+            width: 100%;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 11px;
+
+            outline: none;
+
+            background: white;
+            color: var(--dark);
+
+            font-size: 13px;
+
+            transition: var(--transition);
+        }
+
+
+        .search-input {
+            min-height: 42px;
+
+            padding:
+                10px
+                12px
+                10px
+                38px;
+        }
+
+
+        .filter-select {
+            min-height: 40px;
+
+            padding:
+                8px
+                30px
+                8px
+                10px;
+        }
+
+
+        .search-input:focus,
+        .filter-select:focus {
+            border-color: var(--primary);
+
+            box-shadow:
+                0 0 0 3px rgba(26,115,232,.10);
+        }
+
+
+        .filters-grid {
+            display: grid;
+
+            grid-template-columns:
+                minmax(0,1fr)
+                minmax(0,1fr);
+
+            gap: 8px;
+        }
+
+
+        .quick-actions {
+            display: grid;
+
+            grid-template-columns:
+                minmax(0,1fr)
+                minmax(0,1fr);
+
+            gap: 8px;
+
+            margin-top: 9px;
+        }
+
+
+        .mini-btn {
+            min-width: 0;
+            min-height: 38px;
+
+            padding: 7px 10px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 10px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 7px;
+
+            background: white;
+            color: var(--gray);
+
+            font-size: 12px;
+            font-weight: 700;
+
+            white-space: nowrap;
+
+            transition: var(--transition);
+        }
+
+
+        .mini-btn:hover {
+            color: var(--primary);
+
+            border-color:
+                rgba(26,115,232,.5);
+
+            background: var(--primary-light);
+        }
+
+
+        /* =========================================================
+           PROPERTY LIST
+           ========================================================= */
+
+        .property-list {
+            min-height: 0;
+
+            flex: 1;
+
+            overflow-y: auto;
+            overscroll-behavior: contain;
+
+            padding: 11px;
+
+            background: #f8f9fb;
+
+            -webkit-overflow-scrolling: touch;
+        }
+
+
+        .property-list::-webkit-scrollbar {
+            width: 5px;
+        }
+
+
+        .property-list::-webkit-scrollbar-thumb {
+            border-radius: 999px;
+            background: #d5d8dc;
+        }
+
+
+        .property-card {
+            min-width: 0;
+
+            display: grid;
+
+            grid-template-columns:
+                112px
+                minmax(0,1fr);
+
+            gap: 11px;
+
+            padding: 8px;
+
+            margin-bottom: 9px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 14px;
+
+            background: white;
+
+            box-shadow:
+                0 1px 4px rgba(32,33,36,.04);
+
+            cursor: pointer;
+
+            transition: var(--transition);
+        }
+
+
+        .property-card:last-child {
+            margin-bottom: 0;
+        }
+
+
+        .property-card:hover {
+            transform:
+                translateY(-1px);
+
+            border-color: #c7d8ee;
+
+            box-shadow:
+                0 7px 20px rgba(32,33,36,.09);
+        }
+
+
+        .property-card.active {
+            border:
+                2px solid var(--primary);
+
+            padding: 7px;
+
+            background: #fbfdff;
+        }
+
+
+        .property-image-wrap {
+            position: relative;
+
+            width: 100%;
+            height: 94px;
+
+            overflow: hidden;
+
+            border-radius: 10px;
+
+            background: var(--light-gray);
+        }
+
+
+        .property-image {
+            width: 100%;
+            height: 100%;
+
+            object-fit: cover;
+        }
+
+
+        .property-image-placeholder {
+            width: 100%;
+            height: 100%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: #eef1f4;
+            color: #a8adb4;
+
+            font-size: 23px;
+        }
+
+
+        .status-chip {
+            position: absolute;
+
+            top: 5px;
+            left: 5px;
+
+            max-width:
+                calc(100% - 10px);
+
+            padding: 3px 6px;
+
+            border-radius: 999px;
+
+            overflow: hidden;
+
+            background: rgba(32,33,36,.82);
+            color: white;
+
+            font-size: 7.5px;
+            font-weight: 800;
+
+            text-transform: uppercase;
+
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+
+        .property-card-content {
+            min-width: 0;
+
+            display: flex;
+            flex-direction: column;
+
+            justify-content: center;
+        }
+
+
+        .property-title {
+            margin-bottom: 3px;
+
+            color: var(--dark);
+
+            font-size: 13.5px;
+            font-weight: 800;
+
+            line-height: 1.3;
+
+            display: -webkit-box;
+
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+
+            overflow: hidden;
+        }
+
+
+        .property-location {
+            min-width: 0;
+
+            margin-bottom: 5px;
+
+            display: flex;
+            align-items: flex-start;
+
+            gap: 5px;
+
+            color: var(--gray);
+
+            font-size: 10.5px;
+
+            line-height: 1.35;
+        }
+
+
+        .property-location i {
+            margin-top: 2px;
+
+            color: var(--primary);
+
+            flex-shrink: 0;
+        }
+
+
+        .property-location span {
+            min-width: 0;
+
+            display: -webkit-box;
+
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+
+            overflow: hidden;
+        }
+
+
+        .property-price {
+            margin-bottom: 5px;
+
+            color: var(--primary);
+
+            font-size: 13px;
+            font-weight: 800;
+
+            line-height: 1.25;
+        }
+
+
+        .property-meta {
+            display: flex;
+            flex-wrap: wrap;
+
+            gap: 4px 8px;
+
+            color: var(--gray);
+
+            font-size: 10px;
+        }
+
+
+        .property-meta span {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 4px;
+        }
+
+
+        .empty-state,
+        .loading-state {
+            padding:
+                45px
+                16px;
+
+            color: var(--gray);
+
+            text-align: center;
+        }
+
+
+        .empty-icon {
+            width: 55px;
+            height: 55px;
+
+            margin:
+                0 auto
+                12px;
+
+            border-radius: 50%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: var(--primary-light);
+            color: var(--primary);
+
+            font-size: 21px;
+        }
+
+
+        /* =========================================================
+           MAP
+           ========================================================= */
+
+        .map-panel {
+            position: relative;
+
+            min-width: 0;
+            min-height: 0;
+
+            width: 100%;
+            height: 100%;
+
+            overflow: hidden;
+
+            background: #eef1f4;
+        }
+
+
+        #propertyMap {
+            position: absolute;
+
+            inset: 0;
+
+            width: 100%;
+            height: 100%;
+
+            min-height: 250px;
+        }
+
+
+        /* =========================================================
+           MAP TOOLBAR
+           ========================================================= */
+
+        .map-toolbar {
+            position: absolute;
+
+            top: 14px;
+            left: 14px;
+            right: 14px;
+
+            z-index: 25;
+
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+
+            gap: 10px;
+
+            pointer-events: none;
+        }
+
+
+        .map-toolbar-left,
+        .map-toolbar-right {
+            display: flex;
+            align-items: center;
+
+            gap: 7px;
+
+            pointer-events: auto;
+        }
+
+
+        .floating-card {
+            border:
+                1px solid rgba(218,220,224,.82);
+
+            border-radius: 14px;
+
+            background: rgba(255,255,255,.92);
+
+            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(16px);
+
+            box-shadow:
+                0 6px 20px rgba(0,0,0,.10);
+        }
+
+
+        .map-summary {
+            max-width: min(390px, 50vw);
+
+            padding:
+                10px
+                13px;
+        }
+
+
+        .map-summary strong {
+            display: block;
+
+            overflow: hidden;
+
+            color: var(--dark);
+
+            font-size: 13px;
+            font-weight: 800;
+
+            line-height: 1.3;
+
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+
+        .map-summary span {
+            display: block;
+
+            margin-top: 2px;
+
+            overflow: hidden;
+
+            color: var(--gray);
+
+            font-size: 10.5px;
+
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+
+        .floating-btn {
+            width: 42px;
+            height: 42px;
+
+            flex-shrink: 0;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            color: var(--gray);
+
+            transition: var(--transition);
+        }
+
+
+        .floating-btn:hover {
+            color: var(--primary);
+
+            transform: translateY(-1px);
+        }
+
+
+        /* =========================================================
+           MOBILE PROPERTY BUTTON
+           ========================================================= */
+
+        .mobile-list-toggle {
+            display: none;
+
+            position: absolute;
+
+            left: 50%;
+
+            bottom: 18px;
+
+            z-index: 35;
+
+            min-height: 44px;
+
+            padding:
+                9px
+                17px;
+
+            border-radius: 999px;
+
+            align-items: center;
+            justify-content: center;
+
+            gap: 7px;
+
+            transform: translateX(-50%);
+
+            background: rgba(32,33,36,.92);
+            color: white;
+
+            box-shadow:
+                0 9px 24px rgba(0,0,0,.24);
+
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+
+            font-size: 12px;
+            font-weight: 800;
+
+            white-space: nowrap;
+        }
+
+
+        /* =========================================================
+           MOBILE BOTTOM NAVIGATION
+           ========================================================= */
+
+        .mobile-nav {
+            display: none;
+
+            position: fixed;
+
+            left: 10px;
+            right: 10px;
+
+            bottom:
+                max(
+                    7px,
+                    env(safe-area-inset-bottom)
+                );
+
+            z-index: 4500;
+
+            min-height: 58px;
+
+            padding: 5px;
+
+            border:
+                1px solid rgba(218,220,224,.85);
+
+            border-radius: 19px;
+
+            background: rgba(255,255,255,.86);
+
+            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
+
+            box-shadow:
+                0 10px 35px rgba(32,33,36,.17);
+
+            align-items: stretch;
+            justify-content: space-around;
+        }
+
+
+        .mobile-nav a {
+            position: relative;
+
+            min-width: 0;
+
+            flex: 1;
+
+            border-radius: 14px;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            gap: 3px;
+
+            color: var(--gray);
+
+            transition: var(--transition);
+        }
+
+
+        .mobile-nav a i {
+            font-size: 18px;
+        }
+
+
+        .mobile-nav a span {
+            max-width: 100%;
+
+            overflow: hidden;
+
+            font-size: 8.5px;
+            font-weight: 700;
+
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+
+        .mobile-nav a.active {
+            background:
+                rgba(26,115,232,.10);
+
+            color: var(--primary);
+        }
+
+
+        .mobile-nav a:active {
+            transform: scale(.95);
+        }
+
+
+        /* =========================================================
+           MOBILE DRAWER OVERLAY
+           ========================================================= */
+
+        .mobile-sheet-overlay {
+            display: none;
+
+            position: fixed;
+
+            inset: 0;
+
+            z-index: 3900;
+
+            background:
+                rgba(17,24,39,.28);
+
+            opacity: 0;
+
+            visibility: hidden;
+
+            transition:
+                opacity .28s ease,
+                visibility .28s ease;
+        }
+
+
+        .mobile-sheet-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+
+        /* =========================================================
+           GOOGLE MAPS INFO WINDOW
+           ========================================================= */
+
+        .gm-style .gm-style-iw-c {
+            padding: 0 !important;
+
+            overflow: hidden !important;
+
+            border-radius: 15px !important;
+
+            box-shadow:
+                0 12px 34px rgba(0,0,0,.18) !important;
+        }
+
+
+        .gm-style .gm-style-iw-d {
+            overflow: hidden !important;
+        }
+
+
+        .gm-style .gm-style-iw-chr {
+            position: absolute !important;
+
+            top: 1px !important;
+            right: 2px !important;
+
+            z-index: 10 !important;
+        }
+
+
+        .map-info-card {
+            width: 288px;
+
+            max-width:
+                calc(100vw - 36px);
+
+            overflow: hidden;
+
+            background: white;
+
+            font-family:
+                "Segoe UI",
+                system-ui,
+                sans-serif;
+        }
+
+
+        .map-info-image {
+            width: 100%;
+            height: 140px;
+
+            background: var(--light-gray);
+        }
+
+
+        .map-info-image img {
+            width: 100%;
+            height: 100%;
+
+            object-fit: cover;
+        }
+
+
+        .map-info-image-placeholder {
+            width: 100%;
+            height: 100%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            color: #a4a9af;
+
+            font-size: 30px;
+        }
+
+
+        .map-info-body {
+            padding: 12px;
+        }
+
+
+        .map-info-title {
+            padding-right: 15px;
+
+            margin-bottom: 4px;
+
+            color: var(--dark);
+
+            font-size: 14px;
+            font-weight: 800;
+
+            line-height: 1.3;
+        }
+
+
+        .map-info-location {
+            margin-bottom: 7px;
+
+            color: var(--gray);
+
+            font-size: 10.5px;
+
+            line-height: 1.4;
+        }
+
+
+        .map-info-price {
+            margin-bottom: 8px;
+
+            color: var(--primary);
+
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+
+        .map-info-meta {
+            margin-bottom: 10px;
+
+            display: flex;
+            flex-wrap: wrap;
+
+            gap: 5px 9px;
+
+            color: var(--gray);
+
+            font-size: 10px;
+        }
+
+
+        .map-info-actions {
+            display: grid;
+
+            grid-template-columns:
+                minmax(0,1fr)
+                minmax(0,1fr);
+
+            gap: 7px;
+        }
+
+
+        .map-info-btn {
+            min-height: 35px;
+
+            border-radius: 9px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 5px;
+
+            font-size: 10.5px;
+            font-weight: 700;
+        }
+
+
+        .map-info-btn.primary {
+            background: var(--primary);
+            color: white !important;
+        }
+
+
+        .map-info-btn.secondary {
+            background: var(--light-gray);
+            color: var(--dark) !important;
+        }
+
+
+        /* =========================================================
+           TABLET / MOBILE
+           ========================================================= */
+
+        @media (max-width: 992px) {
+
+            body {
+                padding-bottom:
+                    calc(
+                        var(--mobile-nav-height) +
+                        env(safe-area-inset-bottom)
+                    );
+            }
+
+
+            .sidebar-nav {
+                display: none;
+            }
+
+
+            .mobile-nav {
+                display: flex;
+            }
+
+
+            .mobile-sheet-overlay {
+                display: block;
+            }
+
+
+            .map-shell {
+                height:
+                    calc(
+                        100dvh -
+                        var(--header-height) -
+                        env(safe-area-inset-top)
+                    );
+
+                padding:
+                    7px
+                    8px
+                    calc(
+                        var(--mobile-nav-height) +
+                        env(safe-area-inset-bottom)
+                    );
+            }
+
+
+            .map-card {
+                display: block;
+
+                border-radius: 17px;
+            }
+
+
+            .map-panel {
+                position: absolute;
+
+                inset: 0;
+
+                width: 100%;
+                height: 100%;
+            }
+
+
+            /*
+               Mobile listing panel becomes a true fixed bottom sheet.
+               It is no longer trapped inside the map-card dimensions.
+            */
+
+            .list-panel {
+                position: fixed;
+
+                left: 8px;
+                right: 8px;
+
+                bottom:
+                    calc(
+                        var(--mobile-nav-height) +
+                        env(safe-area-inset-bottom) +
+                        5px
+                    );
+
+                z-index: 4200;
+
+                width: auto;
+
+                height: min(
+                    76dvh,
+                    680px
+                );
+
+                max-height:
+                    calc(
+                        100dvh -
+                        var(--header-height) -
+                        var(--mobile-nav-height) -
+                        env(safe-area-inset-top) -
+                        env(safe-area-inset-bottom) -
+                        16px
+                    );
+
+                border:
+                    1px solid rgba(218,220,224,.95);
+
+                border-radius:
+                    22px
+                    22px
+                    18px
+                    18px;
+
+                background: white;
+
+                box-shadow:
+                    0 -12px 45px rgba(0,0,0,.20);
+
+                transform:
+                    translateY(
+                        calc(
+                            100% +
+                            var(--mobile-nav-height) +
+                            env(safe-area-inset-bottom) +
+                            35px
+                        )
+                    );
+
+                transition:
+                    transform .32s cubic-bezier(.2,.8,.2,1);
+
+                overflow: hidden;
+
+                border-right:
+                    1px solid var(--border);
+            }
+
+
+            .list-panel.mobile-open {
+                transform: translateY(0);
+            }
+
+
+            .list-panel-head {
+                padding:
+                    9px
+                    14px
+                    13px;
+            }
+
+
+            .mobile-sheet-handle {
+                width: 42px;
+                height: 5px;
+
+                margin:
+                    1px auto
+                    10px;
+
+                display: block;
+
+                border-radius: 999px;
+
+                background: #d5d8dc;
+            }
+
+
+            .mobile-panel-close {
+                width: 35px;
+                height: 35px;
+
+                margin-left: 2px;
+
+                flex-shrink: 0;
+
+                border-radius: 50%;
+
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                background: var(--light-gray);
+                color: var(--gray);
+
+                font-size: 13px;
+            }
+
+
+            .mobile-list-toggle {
+                display: inline-flex;
+
+                bottom:
+                    calc(
+                        var(--mobile-nav-height) +
+                        env(safe-area-inset-bottom) +
+                        14px
+                    );
+            }
+
+
+            .map-toolbar {
+                top: 10px;
+                left: 10px;
+                right: 10px;
+
+                gap: 7px;
+            }
+
+
+            .map-summary {
+                max-width:
+                    min(370px, 56vw);
+            }
+
+
+            .map-toolbar-right {
+                gap: 6px;
+            }
+
+
+            .floating-btn {
+                width: 40px;
+                height: 40px;
+            }
+        }
+
+
+        /* =========================================================
+           NORMAL PHONES
+           ========================================================= */
+
+        @media (max-width: 576px) {
+
+            :root {
+                --header-height: 58px;
+                --mobile-nav-height: 65px;
+            }
+
+
+            .header {
+                padding:
+                    env(safe-area-inset-top)
+                    10px
+                    0;
+            }
+
+
+            .header-brand {
+                gap: 7px;
+
+                font-size: 16px;
+            }
+
+
+            .header-brand img {
+                height: 29px;
+            }
+
+
+            .header-actions {
+                gap: 1px;
+
+                margin-left: 7px;
+            }
+
+
+            .user-badge {
+                display: none;
+            }
+
+
+            .btn-icon {
+                width: 36px;
+                height: 36px;
+
+                font-size: 15px;
+            }
+
+
+            .avatar {
+                width: 35px;
+                height: 35px;
+
+                font-size: 12px;
+            }
+
+
+            .dropdown-menu-custom {
+                position: fixed;
+
+                top:
+                    calc(
+                        var(--header-height) +
+                        env(safe-area-inset-top) +
+                        5px
+                    );
+
+                right: 8px;
+
+                max-height:
+                    calc(
+                        100dvh -
+                        var(--header-height) -
+                        env(safe-area-inset-top) -
+                        20px
+                    );
+
+                overflow-y: auto;
+            }
+
+
+            .map-shell {
+                padding:
+                    5px
+                    5px
+                    calc(
+                        var(--mobile-nav-height) +
+                        env(safe-area-inset-bottom)
+                    );
+            }
+
+
+            .map-card {
+                border-radius: 15px;
+            }
+
+
+            .list-panel {
+                left: 5px;
+                right: 5px;
+
+                bottom:
+                    calc(
+                        var(--mobile-nav-height) +
+                        env(safe-area-inset-bottom) +
+                        4px
+                    );
+
+                height: 78dvh;
+
+                max-height:
+                    calc(
+                        100dvh -
+                        var(--header-height) -
+                        var(--mobile-nav-height) -
+                        env(safe-area-inset-top) -
+                        env(safe-area-inset-bottom) -
+                        12px
+                    );
+
+                border-radius:
+                    20px
+                    20px
+                    15px
+                    15px;
+            }
+
+
+            .page-heading {
+                gap: 9px;
+
+                margin-bottom: 10px;
+            }
+
+
+            .page-heading-icon {
+                width: 38px;
+                height: 38px;
+
+                border-radius: 12px;
+
+                font-size: 15px;
+            }
+
+
+            .page-heading h1 {
+                font-size: 17px;
+            }
+
+
+            .page-heading p {
+                max-width: 180px;
+
+                font-size: 10.5px;
+            }
+
+
+            .count-badge {
+                min-width: 30px;
+                height: 28px;
+
+                padding: 0 8px;
+
+                font-size: 10px;
+            }
+
+
+            .mobile-panel-close {
+                width: 32px;
+                height: 32px;
+            }
+
+
+            .search-input {
+                min-height: 40px;
+
+                font-size: 12px;
+            }
+
+
+            .filters-grid {
+                grid-template-columns:
+                    minmax(0,1fr)
+                    minmax(0,1fr);
+
+                gap: 6px;
+            }
+
+
+            .filter-select {
+                min-height: 38px;
+
+                padding-left: 8px;
+
+                font-size: 11px;
+            }
+
+
+            .quick-actions {
+                gap: 6px;
+            }
+
+
+            .mini-btn {
+                min-height: 36px;
+
+                padding:
+                    7px
+                    5px;
+
+                font-size: 10.5px;
+            }
+
+
+            .property-list {
+                padding: 9px;
+            }
+
+
+            .property-card {
+                grid-template-columns:
+                    96px
+                    minmax(0,1fr);
+
+                gap: 9px;
+
+                padding: 7px;
+
+                border-radius: 12px;
+            }
+
+
+            .property-card.active {
+                padding: 6px;
+            }
+
+
+            .property-image-wrap {
+                height: 83px;
+            }
+
+
+            .property-title {
+                font-size: 12.5px;
+            }
+
+
+            .property-location {
+                margin-bottom: 4px;
+
+                font-size: 9.5px;
+            }
+
+
+            .property-price {
+                margin-bottom: 4px;
+
+                font-size: 12px;
+            }
+
+
+            .property-meta {
+                gap: 3px 6px;
+
+                font-size: 9px;
+            }
+
+
+            .map-toolbar {
+                top: 8px;
+                left: 8px;
+                right: 8px;
+            }
+
+
+            .map-summary {
+                max-width:
+                    calc(100vw - 120px);
+
+                padding:
+                    9px
+                    10px;
+            }
+
+
+            .map-summary strong {
+                font-size: 11.5px;
+            }
+
+
+            .map-summary span {
+                font-size: 9px;
+            }
+
+
+            .floating-btn {
+                width: 37px;
+                height: 37px;
+
+                border-radius: 12px;
+
+                font-size: 13px;
+            }
+
+
+            .map-toolbar-right {
+                flex-direction: column;
+            }
+
+
+            .mobile-list-toggle {
+                min-height: 42px;
+
+                bottom:
+                    calc(
+                        var(--mobile-nav-height) +
+                        env(safe-area-inset-bottom) +
+                        12px
+                    );
+
+                padding:
+                    8px
+                    14px;
+
+                font-size: 11px;
+            }
+
+
+            .mobile-nav {
+                left: 6px;
+                right: 6px;
+
+                min-height: 57px;
+
+                border-radius: 18px;
+            }
+
+
+            .mobile-nav a {
+                gap: 2px;
+            }
+
+
+            .mobile-nav a i {
+                font-size: 17px;
+            }
+
+
+            .mobile-nav a span {
+                font-size: 7.5px;
+            }
+
+
+            .map-info-card {
+                width:
+                    min(
+                        265px,
+                        calc(100vw - 45px)
+                    );
+            }
+
+
+            .map-info-image {
+                height: 118px;
+            }
+
+
+            .map-info-body {
+                padding: 10px;
+            }
+
+
+            .map-info-title {
+                font-size: 13px;
+            }
+
+
+            .map-info-actions {
+                gap: 5px;
+            }
+
+
+            .map-info-btn {
+                min-height: 33px;
+
+                font-size: 9.5px;
+            }
+        }
+
+
+        /* =========================================================
+           VERY SMALL PHONES - iPhone SE / old Android etc.
+           ========================================================= */
+
+        @media (max-width: 390px) {
+
+            .header-brand span {
+                font-size: 14px;
+            }
+
+
+            .header-brand img {
+                height: 26px;
+            }
+
+
+            .header-actions {
+                margin-left: 4px;
+            }
+
+
+            .btn-icon {
+                width: 33px;
+                height: 33px;
+            }
+
+
+            .avatar {
+                width: 33px;
+                height: 33px;
+            }
+
+
+            .list-panel-head {
+                padding:
+                    8px
+                    10px
+                    11px;
+            }
+
+
+            .page-heading-icon {
+                width: 35px;
+                height: 35px;
+
+                font-size: 14px;
+            }
+
+
+            .page-heading h1 {
+                font-size: 15px;
+            }
+
+
+            .page-heading p {
+                max-width: 135px;
+
+                font-size: 9.5px;
+            }
+
+
+            .count-badge {
+                min-width: 27px;
+                height: 25px;
+            }
+
+
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+
+
+            .quick-actions {
+                grid-template-columns:
+                    minmax(0,1fr)
+                    minmax(0,1fr);
+            }
+
+
+            .property-card {
+                grid-template-columns:
+                    84px
+                    minmax(0,1fr);
+
+                gap: 8px;
+            }
+
+
+            .property-image-wrap {
+                height: 77px;
+            }
+
+
+            .property-title {
+                font-size: 11.5px;
+            }
+
+
+            .property-location {
+                -webkit-line-clamp: 1;
+
+                font-size: 9px;
+            }
+
+
+            .property-price {
+                font-size: 11px;
+            }
+
+
+            .property-meta {
+                font-size: 8.5px;
+            }
+
+
+            .map-summary {
+                max-width:
+                    calc(100vw - 108px);
+
+                padding:
+                    8px
+                    9px;
+            }
+
+
+            .map-summary span {
+                display: none;
+            }
+
+
+            .floating-btn {
+                width: 35px;
+                height: 35px;
+            }
+
+
+            .mobile-nav a span {
+                display: none;
+            }
+
+
+            .mobile-nav a i {
+                font-size: 19px;
+            }
+
+
+            .map-info-card {
+                width:
+                    calc(100vw - 52px);
+            }
+
+
+            .map-info-image {
+                height: 105px;
+            }
+        }
+
+
+        /* =========================================================
+           SHORT PHONE SCREENS
+           ========================================================= */
+
+        @media
+            (max-width: 576px)
+            and (max-height: 650px) {
+
+            .list-panel {
+                height: 82dvh;
+            }
+
+
+            .page-heading p {
+                display: none;
+            }
+
+
+            .list-panel-head {
+                padding-bottom: 9px;
+            }
+
+
+            .mobile-sheet-handle {
+                margin-bottom: 7px;
+            }
+
+
+            .page-heading {
+                margin-bottom: 8px;
+            }
+
+
+            .quick-actions {
+                margin-top: 6px;
+            }
+
+
+            .map-info-image {
+                height: 90px;
+            }
+        }
+
+
+        /* =========================================================
+           LANDSCAPE MOBILE
+           ========================================================= */
+
+        @media
+            (max-width: 992px)
+            and (orientation: landscape)
+            and (max-height: 600px) {
+
+            :root {
+                --header-height: 52px;
+                --mobile-nav-height: 55px;
+            }
+
+
+            .header-brand img {
+                height: 25px;
+            }
+
+
+            .list-panel {
+                top:
+                    calc(
+                        var(--header-height) +
+                        env(safe-area-inset-top) +
+                        5px
+                    );
+
+                bottom:
+                    calc(
+                        var(--mobile-nav-height) +
+                        env(safe-area-inset-bottom) +
+                        5px
+                    );
+
+                left: 8px;
+
+                width: min(420px, 70vw);
+                height: auto;
+
+                max-height: none;
+
+                border-radius: 18px;
+
+                transform: translateX(
+                    calc(-100% - 25px)
+                );
+            }
+
+
+            .list-panel.mobile-open {
+                transform: translateX(0);
+            }
+
+
+            .mobile-list-toggle {
+                left: 16px;
+
+                bottom:
+                    calc(
+                        var(--mobile-nav-height) +
+                        env(safe-area-inset-bottom) +
+                        12px
+                    );
+
+                transform: none;
+            }
+
+
+            .mobile-nav a span {
+                display: none;
+            }
+        }
+
+
+        /* =========================================================
+           ACCESSIBILITY / REDUCED MOTION
+           ========================================================= */
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+
+                transition-duration: .01ms !important;
+
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+            }
+        }
+    </style>
+</head>
+
+
+<body>
+
+    <!-- =====================================================
+         DESKTOP SIDEBAR
+         ===================================================== -->
+
+    <nav class="sidebar-nav">
+
+        <a
+            href="/admin-portal/"
+            class="nav-link"
+            title="Dashboard"
+        >
+            <i class="fas fa-th-large"></i>
+            <span class="tooltip-text">Dashboard</span>
+        </a>
+
+
+        <a
+            href="/properties/manage/"
+            class="nav-link"
+            title="Properties"
+        >
+            <i class="fas fa-home"></i>
+            <span class="tooltip-text">Properties</span>
+        </a>
+
+
+        <a
+            href="/properties/add/"
+            class="nav-link"
+            title="Add Property"
+        >
+            <i class="fas fa-plus-circle"></i>
+            <span class="tooltip-text">Add Property</span>
+        </a>
+
+
+        <a
+            href="/features/manage/"
+            class="nav-link"
+            title="Features"
+        >
+            <i class="fas fa-star"></i>
+            <span class="tooltip-text">Features</span>
+        </a>
+
+
+        <a
+            href="/properties/bookings/"
+            class="nav-link"
+            title="Bookings"
+        >
+            <i class="fas fa-calendar-check"></i>
+            <span class="tooltip-text">Bookings</span>
+        </a>
+
+
+        <a
+            href="/property-map/"
+            class="nav-link active"
+            title="Map View"
+        >
+            <i class="fas fa-map"></i>
+            <span class="tooltip-text">Map View</span>
+        </a>
+
+    </nav>
+
+
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <header class="header">
+
+        <a href="/" class="header-brand">
+
+            <img
+                src="/static/images/logo.png"
+                alt="OppoGlobe"
+            >
+
+            <span>OppoGlobe</span>
+
+        </a>
+
+
+        <div class="header-actions">
+
+            <span class="user-badge">
+
+                <i class="fas fa-building me-1"></i>
+
+                Business
+
+            </span>
+
+
+            <a
+                href="/messaging/"
+                class="btn-icon"
+                title="Messages"
+                aria-label="Messages"
+            >
+                <i class="fas fa-comment-dots"></i>
+            </a>
+
+
+
+            <!-- PROFILE -->
+
+            <div class="dropdown-container">
+
+                <button
+                    type="button"
+                    class="avatar"
+                    onclick="toggleDropdown('profileMenu')"
+                    aria-label="Open profile menu"
+                >
+                    {{ user.username|first|upper }}
+                </button>
+
+
+                <div
+                    class="dropdown-menu-custom"
+                    id="profileMenu"
+                >
+
+                    <a
+                        href="/admin-portal/"
+                        class="dropdown-item"
+                    >
+                        <i class="fas fa-th-large"></i>
+                        Dashboard
+                    </a>
+
+
+                    <a
+                        href="/properties/manage/"
+                        class="dropdown-item"
+                    >
+                        <i class="fas fa-home"></i>
+                        Properties
+                    </a>
+
+
+                    <a
+                        href="/properties/add/"
+                        class="dropdown-item"
+                    >
+                        <i class="fas fa-plus-circle"></i>
+                        Add Property
+                    </a>
+
+
+                    <a
+                        href="/features/manage/"
+                        class="dropdown-item"
+                    >
+                        <i class="fas fa-star"></i>
+                        Features
+                    </a>
+
+
+                    <a
+                        href="/properties/bookings/"
+                        class="dropdown-item"
+                    >
+                        <i class="fas fa-calendar-check"></i>
+                        Bookings
+                    </a>
+
+
+                    <a
+                        href="/property-map/"
+                        class="dropdown-item"
+                    >
+                        <i class="fas fa-map"></i>
+                        Map View
+                    </a>
+
+
+                    <div class="dropdown-divider"></div>
+
+
+                    <a
+                        href="/logout/"
+                        class="dropdown-item"
+                    >
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </a>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- MORE MENU -->
+
+            <div class="dropdown-container">
+
+                <button
+                    type="button"
+                    class="btn-icon"
+                    onclick="toggleDropdown('moreMenu')"
+                    title="More"
+                    aria-label="More"
+                >
+                    <i class="bi bi-three-dots-vertical"></i>
+                </button>
+
+
+                <div
+                    class="dropdown-menu-custom"
+                    id="moreMenu"
+                >
+
+                    <a
+                        href="/properties/analytics/"
+                        class="dropdown-item"
+                    >
+                        <i class="fas fa-chart-line"></i>
+                        Property Analytics
+                    </a>
+
+
+                    <a
+                        href="/properties/manage/"
+                        class="dropdown-item"
+                    >
+                        <i class="fas fa-list"></i>
+                        Manage Listings
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         MOBILE DRAWER OVERLAY
+         ===================================================== -->
+
+    <div
+        class="mobile-sheet-overlay"
+        id="mobileSheetOverlay"
+        onclick="toggleMobileList(false)"
+    ></div>
+
+
+
+    <!-- =====================================================
+         MAIN
+         ===================================================== -->
+
+    <main class="map-shell">
+
+        <div class="map-card">
+
+
+            <!-- =================================================
+                 LIST PANEL
+                 ================================================= -->
+
+            <aside
+                class="list-panel"
+                id="listPanel"
+            >
+
+                <div class="list-panel-head">
+
+                    <span class="mobile-sheet-handle"></span>
+
+
+                    <div class="page-heading">
+
+                        <span class="page-heading-icon">
+
+                            <i class="fas fa-map-marked-alt"></i>
+
+                        </span>
+
+
+                        <div class="page-heading-copy">
+
+                            <h1>Property Map</h1>
+
+                            <p>
+                                Explore your listings by location
+                            </p>
+
+                        </div>
+
+
+                        <span
+                            class="count-badge"
+                            id="propertyCount"
+                        >
+                            0
+                        </span>
+
+
+                        <button
+                            type="button"
+                            class="mobile-panel-close"
+                            onclick="toggleMobileList(false)"
+                            title="Close"
+                            aria-label="Close properties"
+                        >
+                            <i class="fas fa-times"></i>
+                        </button>
+
+                    </div>
+
+
+
+                    <!-- SEARCH -->
+
+                    <div class="search-wrap">
+
+                        <i class="fas fa-search"></i>
+
+                        <input
+                            type="search"
+                            class="search-input"
+                            id="propertySearch"
+                            placeholder="Search property or location..."
+                            autocomplete="off"
+                        >
+
+                    </div>
+
+
+
+                    <!-- FILTERS -->
+
+                    <div class="filters-grid">
+
+                        <select
+                            class="filter-select"
+                            id="listingFilter"
+                        >
+
+                            <option value="">
+                                All listing types
+                            </option>
+
+                            <option value="sale">
+                                For Sale
+                            </option>
+
+                            <option value="rent">
+                                For Rent
+                            </option>
+
+                            <option value="lease">
+                                For Lease
+                            </option>
+
+                            <option value="booking">
+                                For Booking
+                            </option>
+
+                            <option value="event">
+                                For Events
+                            </option>
+
+                            <option value="auction">
+                                Auction
+                            </option>
+
+                        </select>
+
+
+                        <select
+                            class="filter-select"
+                            id="typeFilter"
+                        >
+
+                            <option value="">
+                                All property types
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+
+                    <!-- QUICK ACTIONS -->
+
+                    <div class="quick-actions">
+
+                        <button
+                            type="button"
+                            class="mini-btn"
+                            onclick="fitAllProperties()"
+                        >
+                            <i class="fas fa-expand"></i>
+
+                            <span>
+                                Show All
+                            </span>
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="mini-btn"
+                            onclick="useMyLocation()"
+                        >
+                            <i class="fas fa-location-arrow"></i>
+
+                            <span>
+                                My Location
+                            </span>
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- PROPERTY LIST -->
+
+                <div
+                    class="property-list"
+                    id="propertyList"
+                >
+
+                    <div class="loading-state">
+
+                        <div class="empty-icon">
+
+                            <i class="fas fa-spinner fa-spin"></i>
+
+                        </div>
+
+
+                        <div
+                            style="
+                                font-weight:700;
+                                margin-bottom:3px;
+                            "
+                        >
+                            Loading properties...
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </aside>
+
+
+
+            <!-- =================================================
+                 MAP PANEL
+                 ================================================= -->
+
+            <section class="map-panel">
+
+                <div id="propertyMap"></div>
+
+
+
+                <!-- MAP TOOLBAR -->
+
+                <div class="map-toolbar">
+
+                    <div class="map-toolbar-left">
+
+                        <div class="floating-card map-summary">
+
+                            <strong id="mapSummaryTitle">
+                                Your property locations
+                            </strong>
+
+                            <span id="mapSummaryText">
+                                Select a marker or listing to view details
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="map-toolbar-right">
+
+                        <button
+                            type="button"
+                            class="floating-card floating-btn"
+                            onclick="fitAllProperties()"
+                            title="Show all properties"
+                            aria-label="Show all properties"
+                        >
+
+                            <i class="fas fa-expand-arrows-alt"></i>
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="floating-card floating-btn"
+                            onclick="useMyLocation()"
+                            title="Use my location"
+                            aria-label="Use my location"
+                        >
+
+                            <i class="fas fa-crosshairs"></i>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- MOBILE LIST BUTTON -->
+
+                <button
+                    type="button"
+                    class="mobile-list-toggle"
+                    onclick="toggleMobileList()"
+                >
+
+                    <i class="fas fa-home"></i>
+
+                    <span id="mobileListText">
+                        View properties
+                    </span>
+
+                </button>
+
+            </section>
+
+        </div>
+
+    </main>
+
+
+
+    <!-- =====================================================
+         MOBILE NAVIGATION
+         ===================================================== -->
+
+    <nav class="mobile-nav">
+
+        <a href="/admin-portal/">
+
+            <i class="fas fa-th-large"></i>
+
+            <span>
+                Dashboard
+            </span>
+
+        </a>
+
+
+        <a href="/properties/manage/">
+
+            <i class="fas fa-home"></i>
+
+            <span>
+                Properties
+            </span>
+
+        </a>
+
+
+        <a href="/properties/add/">
+
+            <i class="fas fa-plus"></i>
+
+            <span>
+                Add
+            </span>
+
+        </a>
+
+
+        <a
+            href="/property-map/"
+            class="active"
+        >
+
+            <i class="fas fa-map"></i>
+
+            <span>
+                Map
+            </span>
+
+        </a>
+
+
+        <a href="/profile/">
+
+            <i class="fas fa-user"></i>
+
+            <span>
+                Profile
+            </span>
+
+        </a>
+
+    </nav>
+
+
+
+    <!-- =====================================================
+         DJANGO PROPERTY DATA
+         ===================================================== -->
+
+    {{ map_properties|json_script:"map-properties-data" }}
+
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+         ===================================================== -->
+
+    <script>
+
+        /* =========================================================
+           GLOBALS
+           ========================================================= */
+
+        let map = null;
+
+        let properties = [];
+        let filteredProperties = [];
+
+        let markers = [];
+        let markerLookup = {};
+
+        let activeInfoWindow = null;
+        let userLocationMarker = null;
+
+        let mobileSheetOpen = false;
+
+
+        const DEFAULT_CENTER = {
+            lat: -30.5595,
+            lng: 22.9375
+        };
+
+        const DEFAULT_ZOOM = 5;
+
+
+
+        /* =========================================================
+           HELPERS
+           ========================================================= */
+
+        function escapeHtml(value) {
+
+            const div =
+                document.createElement("div");
+
+            div.textContent =
+                value == null
+                    ? ""
+                    : String(value);
+
+            return div.innerHTML;
+        }
+
+
+
+        function isMobileLayout() {
+
+            return window.matchMedia(
+                "(max-width: 992px)"
+            ).matches;
+        }
+
+
+
+        function isSmallPhone() {
+
+            return window.matchMedia(
+                "(max-width: 576px)"
+            ).matches;
+        }
+
+
+
+        /* =========================================================
+           DROPDOWNS
+           ========================================================= */
+
+        function toggleDropdown(id) {
+
+            const menu =
+                document.getElementById(id);
+
+            if (!menu) {
+                return;
+            }
+
+
+            document
+                .querySelectorAll(
+                    ".dropdown-menu-custom.show"
+                )
+                .forEach(otherMenu => {
+
+                    if (otherMenu.id !== id) {
+
+                        otherMenu.classList.remove(
+                            "show"
+                        );
+                    }
+
+                });
+
+
+            menu.classList.toggle("show");
+        }
+
+
+
+        document.addEventListener(
+            "click",
+            function (event) {
+
+                if (
+                    !event.target.closest(
+                        ".dropdown-container"
+                    )
+                ) {
+
+                    document
+                        .querySelectorAll(
+                            ".dropdown-menu-custom.show"
+                        )
+                        .forEach(menu => {
+
+                            menu.classList.remove(
+                                "show"
+                            );
+
+                        });
+                }
+            }
+        );
+
+
+
+        /* =========================================================
+           NORMALIZE PROPERTY DATA
+           ========================================================= */
+
+        function normalizeProperty(raw) {
+
+            return {
+
+                id:
+                    raw.id || "",
+
+                title:
+                    raw.title || "Property",
+
+                description:
+                    raw.description || "",
+
+                address:
+                    raw.address || "",
+
+                city:
+                    raw.city || "",
+
+                state:
+                    raw.state || "",
+
+                country:
+                    raw.country || "",
+
+                latitude:
+                    Number(raw.latitude),
+
+                longitude:
+                    Number(raw.longitude),
+
+                price:
+                    raw.price,
+
+                currency:
+                    raw.currency || "ZAR",
+
+                status:
+                    raw.status || "",
+
+                listing_type:
+                    raw.listing_type || "",
+
+                bedrooms:
+                    Number(raw.bedrooms || 0),
+
+                bathrooms:
+                    Number(raw.bathrooms || 0),
+
+                garages:
+                    Number(raw.garages || 0),
+
+                property_type:
+                    raw.property_type || "Property",
+
+                image:
+                    raw.image || ""
+            };
+        }
+
+
+
+        /* =========================================================
+           PRICE
+           ========================================================= */
+
+        function formatPrice(property) {
+
+            if (
+                property.price === null ||
+                property.price === undefined ||
+                property.price === ""
+            ) {
+
+                return "Contact for price";
+            }
+
+
+            const amount =
+                Number(property.price);
+
+
+            if (
+                Number.isNaN(amount)
+            ) {
+
+                return `${property.currency || "ZAR"} ${property.price}`;
+            }
+
+
+            try {
+
+                return new Intl.NumberFormat(
+                    "en-ZA",
+                    {
+                        style: "currency",
+                        currency:
+                            property.currency ||
+                            "ZAR",
+                        maximumFractionDigits: 0
+                    }
+                ).format(amount);
+
+            } catch (error) {
+
+                return `${
+                    property.currency || "ZAR"
+                } ${amount.toLocaleString()}`;
+            }
+        }
+
+
+
+        /* =========================================================
+           LOCATION TEXT
+           ========================================================= */
+
+        function getLocationText(property) {
+
+            return [
+
+                property.address,
+                property.city,
+                property.state,
+                property.country
+
+            ]
+                .filter(Boolean)
+                .join(", ")
+                ||
+                "Location available";
+        }
+
+
+
+        /* =========================================================
+           URL HELPERS
+           ========================================================= */
+
+        function getEditUrl(property) {
+
+            return `/properties/${property.id}/edit/`;
+        }
+
+
+
+        function getGoogleMapsUrl(property) {
+
+            const coordinates =
+                `${property.latitude},${property.longitude}`;
+
+            return (
+                "https://www.google.com/maps/search/" +
+                "?api=1&query=" +
+                encodeURIComponent(coordinates)
+            );
+        }
+
+
+
+        /* =========================================================
+           MAP INITIALIZATION
+           ========================================================= */
+
+        function initPropertyMap() {
+
+            const rawDataElement =
+                document.getElementById(
+                    "map-properties-data"
+                );
+
+
+            try {
+
+                const raw =
+                    rawDataElement
+                        ? JSON.parse(
+                            rawDataElement.textContent ||
+                            "[]"
+                        )
+                        : [];
+
+
+                properties =
+                    raw
+                        .map(normalizeProperty)
+                        .filter(property => {
+
+                            return (
+                                Number.isFinite(
+                                    property.latitude
+                                )
+                                &&
+                                Number.isFinite(
+                                    property.longitude
+                                )
+                            );
+                        });
+
+            } catch (error) {
+
+                console.error(
+                    "Failed to parse map properties:",
+                    error
+                );
+
+                properties = [];
+            }
+
+
+
+            map =
+                new google.maps.Map(
+                    document.getElementById(
+                        "propertyMap"
+                    ),
+                    {
+                        center:
+                            DEFAULT_CENTER,
+
+                        zoom:
+                            DEFAULT_ZOOM,
+
+                        mapTypeControl:
+                            !isSmallPhone(),
+
+                        fullscreenControl:
+                            false,
+
+                        streetViewControl:
+                            !isSmallPhone(),
+
+                        gestureHandling:
+                            "greedy",
+
+                        clickableIcons:
+                            false,
+
+                        zoomControl:
+                            true,
+
+                        styles: [
+                            {
+                                featureType:
+                                    "poi.business",
+
+                                stylers: [
+                                    {
+                                        visibility:
+                                            "off"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                );
+
+
+            populateTypeFilter();
+
+            applyFilters();
+
+
+            if (properties.length) {
+
+                setTimeout(() => {
+
+                    fitAllProperties(false);
+
+                }, 250);
+            }
+        }
+
+
+
+        /* =========================================================
+           PROPERTY TYPE FILTER
+           ========================================================= */
+
+        function populateTypeFilter() {
+
+            const select =
+                document.getElementById(
+                    "typeFilter"
+                );
+
+
+            const types =
+                [
+                    ...new Set(
+                        properties
+                            .map(
+                                property =>
+                                    property.property_type
+                            )
+                            .filter(Boolean)
+                    )
+                ].sort();
+
+
+            types.forEach(type => {
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+
+                option.value =
+                    type.toLowerCase();
+
+                option.textContent =
+                    type;
+
+
+                select.appendChild(
+                    option
+                );
+            });
+        }
+
+
+
+        /* =========================================================
+           MARKERS
+           ========================================================= */
+
+        function clearMarkers() {
+
+            markers.forEach(marker => {
+
+                marker.setMap(null);
+
+            });
+
+
+            markers = [];
+
+            markerLookup = {};
+        }
+
+
+
+        function markerColor(property) {
+
+            const type =
+                String(
+                    property.listing_type ||
+                    ""
+                ).toLowerCase();
+
+
+            if (
+                type.includes("sale")
+            ) {
+                return "#1a73e8";
+            }
+
+
+            if (
+                type.includes("rent")
+            ) {
+                return "#34a853";
+            }
+
+
+            if (
+                type.includes("lease")
+            ) {
+                return "#ea4335";
+            }
+
+
+            if (
+                type.includes("booking")
+            ) {
+                return "#9c27b0";
+            }
+
+
+            if (
+                type.includes("auction")
+            ) {
+                return "#fbbc04";
+            }
+
+
+            return "#5f6368";
+        }
+
+
+
+        function createMarker(property) {
+
+            const marker =
+                new google.maps.Marker(
+                    {
+                        position: {
+                            lat:
+                                property.latitude,
+
+                            lng:
+                                property.longitude
+                        },
+
+                        map:
+                            map,
+
+                        title:
+                            property.title,
+
+                        icon: {
+
+                            path:
+                                google.maps
+                                    .SymbolPath
+                                    .CIRCLE,
+
+                            scale:
+                                9,
+
+                            fillColor:
+                                markerColor(
+                                    property
+                                ),
+
+                            fillOpacity:
+                                1,
+
+                            strokeColor:
+                                "#ffffff",
+
+                            strokeWeight:
+                                3
+                        }
+                    }
+                );
+
+
+            marker.addListener(
+                "click",
+                () => {
+
+                    selectProperty(
+                        property.id,
+                        true
+                    );
+
+                }
+            );
+
+
+            markers.push(marker);
+
+
+            markerLookup[
+                String(property.id)
+            ] = marker;
+        }
+
+
+
+        function renderMarkers() {
+
+            clearMarkers();
+
+            filteredProperties.forEach(
+                createMarker
+            );
+        }
+
+
+
+        /* =========================================================
+           PROPERTY LIST
+           ========================================================= */
+
+        function renderPropertyList() {
+
+            const container =
+                document.getElementById(
+                    "propertyList"
+                );
+
+
+            const count =
+                filteredProperties.length;
+
+
+            document.getElementById(
+                "propertyCount"
+            ).textContent = count;
+
+
+            document.getElementById(
+                "mobileListText"
+            ).textContent =
+
+                count === 1
+                    ? "1 property"
+                    : `${count} properties`;
+
+
+            document.getElementById(
+                "mapSummaryTitle"
+            ).textContent =
+
+                count === 1
+                    ? "1 mapped property"
+                    : `${count} mapped properties`;
+
+
+            document.getElementById(
+                "mapSummaryText"
+            ).textContent =
+
+                count
+                    ? "Select a marker or listing to view details"
+                    : "No properties match your filters";
+
+
+            container.innerHTML = "";
+
+
+            if (!count) {
+
+                container.innerHTML = `
+                    <div class="empty-state">
+
+                        <div class="empty-icon">
+
+                            <i class="fas fa-map-marked-alt"></i>
+
+                        </div>
+
+                        <div
+                            style="
+                                font-weight:700;
+                                margin-bottom:4px;
+                            "
+                        >
+                            No matching properties
+                        </div>
+
+                        <div
+                            style="
+                                font-size:12px;
+                            "
+                        >
+                            Try changing your search or filters.
+                        </div>
+
+                    </div>
+                `;
+
+                return;
+            }
+
+
+
+            filteredProperties.forEach(
+                property => {
+
+                    const card =
+                        document.createElement(
+                            "article"
+                        );
+
+
+                    card.className =
+                        "property-card";
+
+
+                    card.dataset.propertyId =
+                        String(property.id);
+
+
+
+                    const imageHtml =
+                        property.image
+                            ? `
+                                <img
+                                    class="property-image"
+                                    src="${escapeHtml(property.image)}"
+                                    alt="${escapeHtml(property.title)}"
+                                    loading="lazy"
+                                >
+                            `
+                            : `
+                                <div
+                                    class="property-image-placeholder"
+                                >
+                                    <i class="fas fa-home"></i>
+                                </div>
+                            `;
+
+
+
+                    const beds =
+                        property.bedrooms > 0
+                            ? `
+                                <span>
+                                    <i class="fas fa-bed"></i>
+                                    ${property.bedrooms}
+                                </span>
+                            `
+                            : "";
+
+
+                    const baths =
+                        property.bathrooms > 0
+                            ? `
+                                <span>
+                                    <i class="fas fa-bath"></i>
+                                    ${property.bathrooms}
+                                </span>
+                            `
+                            : "";
+
+
+                    const garages =
+                        property.garages > 0
+                            ? `
+                                <span>
+                                    <i class="fas fa-car"></i>
+                                    ${property.garages}
+                                </span>
+                            `
+                            : "";
+
+
+
+                    const status =
+                        property.status
+                            ? `
+                                <span
+                                    class="status-chip"
+                                >
+                                    ${
+                                        escapeHtml(
+                                            property.status
+                                                .replace(
+                                                    /_/g,
+                                                    " "
+                                                )
+                                        )
+                                    }
+                                </span>
+                            `
+                            : "";
+
+
+
+                    card.innerHTML = `
+
+                        <div
+                            class="property-image-wrap"
+                        >
+
+                            ${imageHtml}
+
+                            ${status}
+
+                        </div>
+
+
+                        <div
+                            class="property-card-content"
+                        >
+
+                            <div
+                                class="property-title"
+                            >
+                                ${
+                                    escapeHtml(
+                                        property.title
+                                    )
+                                }
+                            </div>
+
+
+                            <div
+                                class="property-location"
+                            >
+
+                                <i
+                                    class="fas fa-map-marker-alt"
+                                ></i>
+
+                                <span>
+                                    ${
+                                        escapeHtml(
+                                            getLocationText(
+                                                property
+                                            )
+                                        )
+                                    }
+                                </span>
+
+                            </div>
+
+
+                            <div
+                                class="property-price"
+                            >
+                                ${
+                                    escapeHtml(
+                                        formatPrice(
+                                            property
+                                        )
+                                    )
+                                }
+                            </div>
+
+
+                            <div
+                                class="property-meta"
+                            >
+
+                                ${beds}
+
+                                ${baths}
+
+                                ${garages}
+
+
+                                <span>
+
+                                    <i
+                                        class="fas fa-shapes"
+                                    ></i>
+
+                                    ${
+                                        escapeHtml(
+                                            property.property_type
+                                        )
+                                    }
+
+                                </span>
+
+                            </div>
+
+                        </div>
+                    `;
+
+
+
+                    card.addEventListener(
+                        "click",
+                        () => {
+
+                            selectProperty(
+                                property.id,
+                                true
+                            );
+
+                        }
+                    );
+
+
+                    container.appendChild(
+                        card
+                    );
+
+                }
+            );
+        }
+
+
+
+        /* =========================================================
+           MAP INFO WINDOW
+           ========================================================= */
+
+        function buildInfoWindow(property) {
+
+            const imageHtml =
+                property.image
+                    ? `
+                        <div class="map-info-image">
+
+                            <img
+                                src="${escapeHtml(property.image)}"
+                                alt="${escapeHtml(property.title)}"
+                            >
+
+                        </div>
+                    `
+                    : `
+                        <div class="map-info-image">
+
+                            <div
+                                class="map-info-image-placeholder"
+                            >
+
+                                <i class="fas fa-home"></i>
+
+                            </div>
+
+                        </div>
+                    `;
+
+
+
+            const beds =
+                property.bedrooms > 0
+                    ? `
+                        <span>
+                            <i class="fas fa-bed"></i>
+                            ${property.bedrooms}
+                        </span>
+                    `
+                    : "";
+
+
+            const baths =
+                property.bathrooms > 0
+                    ? `
+                        <span>
+                            <i class="fas fa-bath"></i>
+                            ${property.bathrooms}
+                        </span>
+                    `
+                    : "";
+
+
+            const garages =
+                property.garages > 0
+                    ? `
+                        <span>
+                            <i class="fas fa-car"></i>
+                            ${property.garages}
+                        </span>
+                    `
+                    : "";
+
+
+
+            return `
+
+                <div class="map-info-card">
+
+                    ${imageHtml}
+
+
+                    <div class="map-info-body">
+
+                        <div class="map-info-title">
+
+                            ${
+                                escapeHtml(
+                                    property.title
+                                )
+                            }
+
+                        </div>
+
+
+                        <div class="map-info-location">
+
+                            <i
+                                class="fas fa-map-marker-alt"
+                            ></i>
+
+                            ${
+                                escapeHtml(
+                                    getLocationText(
+                                        property
+                                    )
+                                )
+                            }
+
+                        </div>
+
+
+                        <div class="map-info-price">
+
+                            ${
+                                escapeHtml(
+                                    formatPrice(
+                                        property
+                                    )
+                                )
+                            }
+
+                        </div>
+
+
+                        <div class="map-info-meta">
+
+                            ${beds}
+
+                            ${baths}
+
+                            ${garages}
+
+
+                            <span>
+
+                                <i
+                                    class="fas fa-shapes"
+                                ></i>
+
+                                ${
+                                    escapeHtml(
+                                        property.property_type
+                                    )
+                                }
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="map-info-actions">
+
+                            <a
+                                class="
+                                    map-info-btn
+                                    primary
+                                "
+                                href="${
+                                    getEditUrl(
+                                        property
+                                    )
+                                }"
+                            >
+
+                                <i class="fas fa-pen"></i>
+
+                                Edit
+
+                            </a>
+
+
+                            <a
+                                class="
+                                    map-info-btn
+                                    secondary
+                                "
+                                href="${
+                                    getGoogleMapsUrl(
+                                        property
+                                    )
+                                }"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+
+                                <i class="fas fa-route"></i>
+
+                                Maps
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            `;
+        }
+
+
+
+        /* =========================================================
+           SELECT PROPERTY
+           ========================================================= */
+
+        function selectProperty(
+            propertyId,
+            openInfo = true
+        ) {
+
+            const property =
+                properties.find(
+                    item =>
+                        String(item.id)
+                        ===
+                        String(propertyId)
+                );
+
+
+            if (!property) {
+                return;
+            }
+
+
+
+            document
+                .querySelectorAll(
+                    ".property-card"
+                )
+                .forEach(card => {
+
+                    card.classList.toggle(
+                        "active",
+
+                        card.dataset.propertyId
+                            ===
+                        String(propertyId)
+                    );
+                });
+
+
+
+            const escapedId =
+                window.CSS &&
+                typeof CSS.escape === "function"
+                    ? CSS.escape(
+                        String(propertyId)
+                    )
+                    : String(propertyId);
+
+
+
+            const activeCard =
+                document.querySelector(
+                    `.property-card[data-property-id="${escapedId}"]`
+                );
+
+
+            if (activeCard) {
+
+                activeCard.scrollIntoView(
+                    {
+                        behavior: "smooth",
+                        block: "nearest"
+                    }
+                );
+            }
+
+
+
+            map.panTo(
+                {
+                    lat:
+                        property.latitude,
+
+                    lng:
+                        property.longitude
+                }
+            );
+
+
+            if (
+                map.getZoom() < 14
+            ) {
+
+                map.setZoom(14);
+            }
+
+
+
+            const marker =
+                markerLookup[
+                    String(property.id)
+                ];
+
+
+
+            if (
+                marker &&
+                openInfo
+            ) {
+
+                if (
+                    activeInfoWindow
+                ) {
+
+                    activeInfoWindow.close();
+                }
+
+
+                activeInfoWindow =
+                    new google.maps.InfoWindow(
+                        {
+                            content:
+                                buildInfoWindow(
+                                    property
+                                )
+                        }
+                    );
+
+
+                activeInfoWindow.open(
+                    {
+                        map:
+                            map,
+
+                        anchor:
+                            marker
+                    }
+                );
+            }
+
+
+
+            document.getElementById(
+                "mapSummaryTitle"
+            ).textContent =
+                property.title;
+
+
+            document.getElementById(
+                "mapSummaryText"
+            ).textContent =
+                getLocationText(property);
+
+
+
+            /*
+             * Important mobile behaviour:
+             * after choosing a property from the sheet,
+             * close the sheet so the user actually sees the map.
+             */
+
+            if (
+                isMobileLayout()
+            ) {
+
+                setTimeout(
+                    () => {
+
+                        toggleMobileList(false);
+
+                    },
+                    180
+                );
+            }
+        }
+
+
+
+        /* =========================================================
+           FILTERS
+           ========================================================= */
+
+        function applyFilters() {
+
+            const search =
+                document
+                    .getElementById(
+                        "propertySearch"
+                    )
+                    .value
+                    .trim()
+                    .toLowerCase();
+
+
+            const listing =
+                document
+                    .getElementById(
+                        "listingFilter"
+                    )
+                    .value
+                    .trim()
+                    .toLowerCase();
+
+
+            const type =
+                document
+                    .getElementById(
+                        "typeFilter"
+                    )
+                    .value
+                    .trim()
+                    .toLowerCase();
+
+
+
+            filteredProperties =
+                properties.filter(
+                    property => {
+
+                        const searchable =
+                            [
+                                property.title,
+                                property.description,
+                                property.address,
+                                property.city,
+                                property.state,
+                                property.country,
+                                property.property_type
+                            ]
+                                .join(" ")
+                                .toLowerCase();
+
+
+
+                        const searchMatches =
+                            !search ||
+                            searchable.includes(
+                                search
+                            );
+
+
+                        const listingMatches =
+                            !listing ||
+                            String(
+                                property.listing_type ||
+                                ""
+                            )
+                                .toLowerCase()
+                                .includes(
+                                    listing
+                                );
+
+
+                        const typeMatches =
+                            !type ||
+                            String(
+                                property.property_type ||
+                                ""
+                            )
+                                .toLowerCase()
+                            ===
+                            type;
+
+
+
+                        return (
+                            searchMatches &&
+                            listingMatches &&
+                            typeMatches
+                        );
+                    }
+                );
+
+
+
+            renderMarkers();
+
+            renderPropertyList();
+
+
+
+            if (
+                activeInfoWindow
+            ) {
+
+                activeInfoWindow.close();
+            }
+
+
+
+            if (
+                filteredProperties.length &&
+                map
+            ) {
+
+                fitAllProperties(false);
+            }
+        }
+
+
+
+        /* =========================================================
+           FIT PROPERTIES
+           ========================================================= */
+
+        function fitAllProperties(
+            animate = true
+        ) {
+
+            if (!map) {
+                return;
+            }
+
+
+            const items =
+                filteredProperties.length
+                    ? filteredProperties
+                    : properties;
+
+
+
+            if (!items.length) {
+
+                map.setCenter(
+                    DEFAULT_CENTER
+                );
+
+                map.setZoom(
+                    DEFAULT_ZOOM
+                );
+
+                return;
+            }
+
+
+
+            if (
+                items.length === 1
+            ) {
+
+                map.setCenter(
+                    {
+                        lat:
+                            items[0].latitude,
+
+                        lng:
+                            items[0].longitude
+                    }
+                );
+
+
+                map.setZoom(14);
+
+                return;
+            }
+
+
+
+            const bounds =
+                new google.maps.LatLngBounds();
+
+
+
+            items.forEach(property => {
+
+                bounds.extend(
+                    {
+                        lat:
+                            property.latitude,
+
+                        lng:
+                            property.longitude
+                    }
+                );
+
+            });
+
+
+
+            /*
+             * Less padding on tiny phones.
+             */
+
+            const padding =
+                isSmallPhone()
+                    ? 35
+                    : 70;
+
+
+            map.fitBounds(
+                bounds,
+                padding
+            );
+        }
+
+
+
+        /* =========================================================
+           GEOLOCATION
+           ========================================================= */
+
+        function useMyLocation() {
+
+            if (
+                !navigator.geolocation
+            ) {
+
+                alert(
+                    "Your browser does not support location services."
+                );
+
+                return;
+            }
+
+
+
+            navigator.geolocation.getCurrentPosition(
+
+                position => {
+
+                    const location = {
+
+                        lat:
+                            position.coords.latitude,
+
+                        lng:
+                            position.coords.longitude
+                    };
+
+
+
+                    if (
+                        userLocationMarker
+                    ) {
+
+                        userLocationMarker.setMap(
+                            null
+                        );
+                    }
+
+
+
+                    userLocationMarker =
+                        new google.maps.Marker(
+                            {
+                                position:
+                                    location,
+
+                                map:
+                                    map,
+
+                                title:
+                                    "Your location",
+
+                                zIndex:
+                                    9999,
+
+                                icon: {
+
+                                    path:
+                                        google.maps
+                                            .SymbolPath
+                                            .CIRCLE,
+
+                                    scale:
+                                        9,
+
+                                    fillColor:
+                                        "#1a73e8",
+
+                                    fillOpacity:
+                                        1,
+
+                                    strokeColor:
+                                        "#ffffff",
+
+                                    strokeWeight:
+                                        4
+                                }
+                            }
+                        );
+
+
+
+                    map.panTo(
+                        location
+                    );
+
+
+                    map.setZoom(
+                        14
+                    );
+
+
+
+                    document.getElementById(
+                        "mapSummaryTitle"
+                    ).textContent =
+                        "Your location";
+
+
+                    document.getElementById(
+                        "mapSummaryText"
+                    ).textContent =
+                        "Showing the map around your current position";
+
+
+                    if (
+                        isMobileLayout()
+                    ) {
+
+                        toggleMobileList(false);
+                    }
+
+                },
+
+
+                error => {
+
+                    console.warn(
+                        "Geolocation error:",
+                        error
+                    );
+
+
+                    alert(
+                        "We could not access your location. Please allow location access in your browser."
+                    );
+                },
+
+
+                {
+                    enableHighAccuracy:
+                        true,
+
+                    timeout:
+                        10000,
+
+                    maximumAge:
+                        60000
+                }
+            );
+        }
+
+
+
+        /* =========================================================
+           MOBILE PROPERTY SHEET
+           ========================================================= */
+
+        function toggleMobileList(
+            forceOpen = null
+        ) {
+
+            if (
+                !isMobileLayout()
+            ) {
+
+                return;
+            }
+
+
+            const panel =
+                document.getElementById(
+                    "listPanel"
+                );
+
+
+            const overlay =
+                document.getElementById(
+                    "mobileSheetOverlay"
+                );
+
+
+            if (!panel) {
+                return;
+            }
+
+
+
+            if (
+                forceOpen === true
+            ) {
+
+                mobileSheetOpen =
+                    true;
+
+            } else if (
+                forceOpen === false
+            ) {
+
+                mobileSheetOpen =
+                    false;
+
+            } else {
+
+                mobileSheetOpen =
+                    !mobileSheetOpen;
+            }
+
+
+
+            panel.classList.toggle(
+                "mobile-open",
+                mobileSheetOpen
+            );
+
+
+            if (overlay) {
+
+                overlay.classList.toggle(
+                    "show",
+                    mobileSheetOpen
+                );
+            }
+
+
+
+            document.body.classList.toggle(
+                "mobile-sheet-open",
+                mobileSheetOpen
+            );
+
+
+
+            /*
+             * Google Maps can get confused after
+             * viewport/layout movement.
+             */
+
+            if (
+                map &&
+                !mobileSheetOpen
+            ) {
+
+                setTimeout(
+                    () => {
+
+                        google.maps.event.trigger(
+                            map,
+                            "resize"
+                        );
+
+                    },
+                    350
+                );
+            }
+        }
+
+
+
+        /* =========================================================
+           ESC KEY CLOSE
+           ========================================================= */
+
+        document.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (
+                    event.key === "Escape"
+                ) {
+
+                    toggleMobileList(false);
+
+
+                    document
+                        .querySelectorAll(
+                            ".dropdown-menu-custom.show"
+                        )
+                        .forEach(menu => {
+
+                            menu.classList.remove(
+                                "show"
+                            );
+
+                        });
+                }
+            }
+        );
+
+
+
+        /* =========================================================
+           WINDOW RESIZE / ROTATION
+           ========================================================= */
+
+        let resizeTimer = null;
+
+
+        window.addEventListener(
+            "resize",
+            function () {
+
+                clearTimeout(
+                    resizeTimer
+                );
+
+
+                resizeTimer =
+                    setTimeout(
+                        function () {
+
+                            if (
+                                !isMobileLayout()
+                            ) {
+
+                                mobileSheetOpen =
+                                    false;
+
+
+                                document
+                                    .getElementById(
+                                        "listPanel"
+                                    )
+                                    ?.classList
+                                    .remove(
+                                        "mobile-open"
+                                    );
+
+
+                                document
+                                    .getElementById(
+                                        "mobileSheetOverlay"
+                                    )
+                                    ?.classList
+                                    .remove(
+                                        "show"
+                                    );
+
+
+                                document.body.classList.remove(
+                                    "mobile-sheet-open"
+                                );
+                            }
+
+
+                            if (map) {
+
+                                google.maps.event.trigger(
+                                    map,
+                                    "resize"
+                                );
+
+
+                                /*
+                                 * Re-fit markers after rotation.
+                                 */
+
+                                if (
+                                    filteredProperties.length
+                                ) {
+
+                                    fitAllProperties(false);
+                                }
+                            }
+
+                        },
+                        180
+                    );
+            }
+        );
+
+
+
+        /* =========================================================
+           MOBILE TOUCH SWIPE TO CLOSE
+           ========================================================= */
+
+        let touchStartY = null;
+        let touchCurrentY = null;
+
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
+
+                const panel =
+                    document.getElementById(
+                        "listPanel"
+                    );
+
+
+                const handle =
+                    panel?.querySelector(
+                        ".mobile-sheet-handle"
+                    );
+
+
+
+                if (handle) {
+
+                    handle.addEventListener(
+                        "touchstart",
+                        function (event) {
+
+                            touchStartY =
+                                event.touches[0]
+                                    .clientY;
+
+                            touchCurrentY =
+                                touchStartY;
+
+                        },
+                        {
+                            passive: true
+                        }
+                    );
+
+
+                    handle.addEventListener(
+                        "touchmove",
+                        function (event) {
+
+                            touchCurrentY =
+                                event.touches[0]
+                                    .clientY;
+
+                        },
+                        {
+                            passive: true
+                        }
+                    );
+
+
+                    handle.addEventListener(
+                        "touchend",
+                        function () {
+
+                            if (
+                                touchStartY !== null &&
+                                touchCurrentY !== null
+                            ) {
+
+                                const distance =
+                                    touchCurrentY -
+                                    touchStartY;
+
+
+                                if (
+                                    distance > 45
+                                ) {
+
+                                    toggleMobileList(
+                                        false
+                                    );
+                                }
+                            }
+
+
+                            touchStartY = null;
+
+                            touchCurrentY = null;
+                        }
+                    );
+                }
+
+
+
+                document
+                    .getElementById(
+                        "propertySearch"
+                    )
+                    .addEventListener(
+                        "input",
+                        applyFilters
+                    );
+
+
+                document
+                    .getElementById(
+                        "listingFilter"
+                    )
+                    .addEventListener(
+                        "change",
+                        applyFilters
+                    );
+
+
+                document
+                    .getElementById(
+                        "typeFilter"
+                    )
+                    .addEventListener(
+                        "change",
+                        applyFilters
+                    );
+            }
+        );
+
+    </script>
+
+
+
+    <!-- =====================================================
+         GOOGLE MAPS
+         ===================================================== -->
+
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&libraries=places&callback=initPropertyMap"
+        async
+        defer
+    ></script>
+
+
+  <script src="/static/hiring/js/notifications-global.js" defer></script>
+</body>
+</html>

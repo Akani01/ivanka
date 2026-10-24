@@ -1,0 +1,7 @@
+{% extends 'oppo_seo/base.html' %}
+{% block og_type %}article{% endblock %}
+{% block extra_head %}<script type="application/ld+json">{{ schema|safe }}</script>{% endblock %}
+{% block content %}<nav aria-label="Breadcrumb"><a href="/">Home</a> / <a href="{% url 'oppo_seo:guides' %}">Education guides</a></nav><article><h1>{{ guide.title }}</h1><p class="lead">{{ guide.summary }}</p><p class="meta">OppoGlobe practical guide · Published <time datetime="{{ guide.date }}">15 October 2026</time></p>
+{% for section in guide.sections %}<section><h2>{{ section.title }}</h2><p>{{ section.body }}</p></section>{% endfor %}
+<section class="sources"><h2>Official information and further reading</h2><ul>{% for source in guide.sources %}<li><a href="{{ source.url }}">{{ source.title }}</a></li>{% endfor %}</ul><p>Source links checked when this guide was prepared. Verify current requirements with the provider before applying. Examples and planning methods are general guidance.</p><p><a href="{% url 'oppo_seo:editorial' %}">About these guides and corrections</a></p></section></article>
+<aside><h2>Continue planning</h2><ul>{% for item in related %}<li><a href="{% url 'oppo_seo:guide' item.slug %}">{{ item.title }}</a></li>{% endfor %}</ul></aside>{% endblock %}

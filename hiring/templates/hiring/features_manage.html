@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PropNest - Manage Features</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --primary-dark: #1557b0;
+            --primary-light: #e8f0fe;
+            --secondary: #34a853;
+            --accent: #ea4335;
+            --warning: #fbbc04;
+            --dark: #202124;
+            --gray: #5f6368;
+            --light-gray: #f1f3f4;
+            --border: #dadce0;
+            --shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            --shadow-hover: 0 4px 12px rgba(0,0,0,0.15);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #f8f9fa;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            padding-top: 72px;
+            padding-bottom: 40px;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        button { cursor: pointer; border: none; background: none; }
+
+        /* ===== HEADER ===== */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 24px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--primary);
+        }
+
+        .header-brand img { height: 36px; }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-actions .btn-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .header-actions .btn-icon:hover {
+            background: var(--light-gray);
+            color: var(--primary);
+        }
+
+        .user-badge {
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            background: #fce8e6;
+            color: var(--accent);
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            color: white;
+            background: linear-gradient(135deg, var(--primary), #4285f4);
+            cursor: pointer;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+
+        .avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(26,115,232,0.3);
+        }
+
+        .avatar.business {
+            background: linear-gradient(135deg, #ea4335, #fbbc04);
+        }
+
+        /* ===== DROPDOWNS ===== */
+        .dropdown-container { position: relative; }
+        
+        .dropdown-menu-custom {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            min-width: 220px;
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            padding: 8px 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px) scale(0.98);
+            transition: var(--transition);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+
+        .dropdown-menu-custom.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+        .dropdown-menu-custom .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 20px;
+            color: var(--dark);
+            font-size: 14px;
+            transition: var(--transition);
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .dropdown-menu-custom .dropdown-item:hover {
+            background: var(--light-gray);
+            color: var(--primary);
+        }
+
+        .dropdown-menu-custom .dropdown-item i {
+            width: 20px;
+            color: var(--gray);
+            font-size: 16px;
+        }
+
+        .dropdown-menu-custom .dropdown-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 6px 16px;
+        }
+
+        /* ===== SIDEBAR NAV ===== */
+        .sidebar-nav {
+            position: fixed;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            background: white;
+            border-radius: 0 var(--radius) var(--radius) 0;
+            box-shadow: var(--shadow);
+            padding: 12px 8px;
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            z-index: 900;
+            border: 1px solid var(--border);
+            border-left: none;
+        }
+
+        @media (min-width: 992px) {
+            .sidebar-nav { display: flex; }
+            body { padding-left: 80px; }
+        }
+
+        .sidebar-nav .nav-link {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .sidebar-nav .nav-link:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .sidebar-nav .nav-link.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .sidebar-nav .nav-link .tooltip-text {
+            position: absolute;
+            left: calc(100% + 12px);
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--dark);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .sidebar-nav .nav-link:hover .tooltip-text {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* ===== MAIN LAYOUT ===== */
+        .main-layout {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* ===== PAGE HEADER ===== */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .page-header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 0;
+        }
+
+        .page-header h1 i { color: var(--primary); }
+        .page-header .subtitle { color: var(--gray); font-size: 14px; font-weight: 400; }
+
+        /* ===== STATS CARDS ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
+        }
+
+        .stat-card .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .stat-card .stat-icon.primary { background: var(--primary-light); color: var(--primary); }
+        .stat-card .stat-icon.success { background: #e6f4ea; color: var(--secondary); }
+        .stat-card .stat-icon.warning { background: #fef7e0; color: var(--warning); }
+        .stat-card .stat-icon.info { background: #e8f0fe; color: #4285f4; }
+
+        .stat-card .stat-info h3 { margin: 0; font-size: 22px; font-weight: 700; }
+        .stat-card .stat-info p { margin: 0; font-size: 13px; color: var(--gray); }
+
+        /* ===== FILTER BAR ===== */
+        .filter-bar {
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .filter-bar .search-box {
+            flex: 1;
+            min-width: 200px;
+            display: flex;
+            align-items: center;
+            background: var(--light-gray);
+            border-radius: var(--radius-sm);
+            padding: 0 12px;
+            transition: var(--transition);
+        }
+
+        .filter-bar .search-box:focus-within {
+            background: white;
+            box-shadow: 0 0 0 2px var(--primary);
+        }
+
+        .filter-bar .search-box input {
+            border: none;
+            background: transparent;
+            padding: 8px 12px;
+            flex: 1;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .filter-bar .search-box i {
+            color: var(--gray);
+            font-size: 16px;
+        }
+
+        .filter-bar select {
+            padding: 8px 32px 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            background: white;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%235f6368' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            min-width: 140px;
+        }
+
+        .filter-bar select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(26,115,232,0.15);
+        }
+
+        .btn-add {
+            padding: 8px 20px;
+            border-radius: var(--radius-sm);
+            background: var(--primary);
+            color: white;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .btn-add:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(26,115,232,0.3);
+        }
+
+        /* ===== FEATURE TABLE ===== */
+        .table-container {
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .table-container .table-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--light-gray);
+        }
+
+        .table-container .table-header .results-count {
+            font-size: 14px;
+            color: var(--gray);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: var(--light-gray);
+        }
+
+        th {
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+            vertical-align: middle;
+        }
+
+        tr:hover td {
+            background: #fafafa;
+        }
+
+        .feature-icon {
+            font-size: 20px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: var(--light-gray);
+        }
+
+        .feature-name {
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .feature-name .custom-badge {
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: #fef7e0;
+            color: #e37400;
+            font-weight: 600;
+        }
+
+        .feature-name .global-badge {
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: #e8f0fe;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .category-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .category-badge.amenity { background: #e3f2fd; color: #1565c0; }
+        .category-badge.facility { background: #e8f5e9; color: #2e7d32; }
+        .category-badge.safety { background: #fce4ec; color: #c62828; }
+        .category-badge.utility { background: #fff3e0; color: #e65100; }
+        .category-badge.entertainment { background: #f3e5f5; color: #6a1b9a; }
+        .category-badge.accessibility { background: #e0f7fa; color: #00695c; }
+        .category-badge.business { background: #e8eaf6; color: #283593; }
+        .category-badge.other { background: #f5f5f5; color: #616161; }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .status-badge.active { background: #e6f4ea; color: var(--secondary); }
+        .status-badge.inactive { background: #fce8e6; color: var(--accent); }
+
+        .action-buttons {
+            display: flex;
+            gap: 6px;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            border: none;
+            background: transparent;
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        .action-btn:hover { background: var(--light-gray); }
+        .action-btn.edit:hover { color: var(--primary); background: var(--primary-light); }
+        .action-btn.toggle:hover { color: var(--warning); background: #fef7e0; }
+        .action-btn.delete:hover { color: var(--accent); background: #fce8e6; }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .modal-overlay.show { display: flex; }
+
+        .modal-box {
+            background: white;
+            border-radius: var(--radius);
+            max-width: 520px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalIn 0.3s ease;
+        }
+
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.95) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .modal-box .modal-head {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+        }
+
+        .modal-box .modal-head .close-btn {
+            font-size: 24px;
+            color: var(--gray);
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0 8px;
+        }
+
+        .modal-box .modal-head .close-btn:hover { color: var(--dark); }
+
+        .modal-box .modal-body { padding: 20px; }
+
+        .modal-box .modal-foot {
+            padding: 12px 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        /* ===== FORM ELEMENTS ===== */
+        .form-group { margin-bottom: 20px; }
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            font-size: 14px;
+            margin-bottom: 6px;
+            color: var(--dark);
+        }
+        .form-group label .required { color: var(--accent); margin-left: 2px; }
+        .form-group .help-text { font-size: 12px; color: var(--gray); margin-top: 4px; }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            transition: var(--transition);
+            background: white;
+            color: var(--dark);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(26,115,232,0.15);
+        }
+
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%235f6368' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 36px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #ccc;
+            transition: var(--transition);
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            transition: var(--transition);
+            border-radius: 50%;
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background: var(--primary);
+        }
+
+        .toggle-switch input:checked + .toggle-slider:before {
+            transform: translateX(20px);
+        }
+
+        /* ===== TOAST ===== */
+        .toast-container {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toast-item {
+            padding: 12px 20px;
+            border-radius: var(--radius-sm);
+            color: white;
+            font-size: 14px;
+            animation: slideIn 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 280px;
+            box-shadow: var(--shadow-hover);
+        }
+
+        .toast-item.success { background: var(--secondary); }
+        .toast-item.error { background: var(--accent); }
+        .toast-item.info { background: var(--primary); }
+
+        .toast-item .close-toast {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.7);
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .toast-item .close-toast:hover { color: white; }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(60px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* ===== MOBILE NAV ===== */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid var(--border);
+            padding: 6px 0 env(safe-area-inset-bottom);
+            z-index: 999;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        @media (max-width: 992px) {
+            .mobile-nav { display: flex; }
+            body { padding-bottom: 72px; }
+        }
+
+        .mobile-nav a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            font-size: 10px;
+            color: var(--gray);
+            padding: 4px 12px;
+            transition: var(--transition);
+            border: none;
+            background: none;
+        }
+
+        .mobile-nav a i { font-size: 20px; }
+        .mobile-nav a.active { color: var(--primary); }
+        .mobile-nav a:hover { color: var(--primary); }
+
+        /* ===== EMPTY STATE ===== */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-state i {
+            font-size: 56px;
+            color: var(--border);
+            margin-bottom: 16px;
+        }
+
+        .empty-state h3 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            color: var(--gray);
+            margin-bottom: 16px;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 576px) {
+            .header { padding: 0 12px; }
+            .header-brand { font-size: 16px; }
+            .header-brand img { height: 28px; }
+            .main-layout { padding: 0 12px; }
+            .page-header h1 { font-size: 20px; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .stat-card { padding: 12px 16px; }
+            .stat-card .stat-icon { width: 36px; height: 36px; font-size: 16px; }
+            .stat-card .stat-info h3 { font-size: 18px; }
+            .filter-bar { flex-direction: column; align-items: stretch; }
+            .filter-bar .search-box { min-width: auto; }
+            .form-row { grid-template-columns: 1fr; }
+            .table-container { overflow-x: auto; }
+            .toast-item { min-width: auto; width: calc(100vw - 40px); }
+            .action-buttons { flex-wrap: wrap; }
+        }
+
+        .pagination-container {
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .pagination-container .pagination {
+            display: flex;
+            gap: 4px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .pagination-container .pagination li a,
+        .pagination-container .pagination li span {
+            display: block;
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            color: var(--gray);
+            transition: var(--transition);
+            border: 1px solid var(--border);
+            background: white;
+            font-size: 14px;
+        }
+
+        .pagination-container .pagination li.active span {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .pagination-container .pagination li a:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== SIDEBAR NAV ===== -->
+    <nav class="sidebar-nav">
+        <a href="/admin-portal/" class="nav-link" title="Dashboard">
+            <i class="fas fa-th-large"></i>
+            <span class="tooltip-text">Dashboard</span>
+        </a>
+        <a href="/properties/manage/" class="nav-link" title="Properties">
+            <i class="fas fa-home"></i>
+            <span class="tooltip-text">Properties</span>
+        </a>
+        <a href="/properties/add/" class="nav-link" title="Add Property">
+            <i class="fas fa-plus-circle"></i>
+            <span class="tooltip-text">Add Property</span>
+        </a>
+        <a href="/features/manage/" class="nav-link active" title="Features">
+            <i class="fas fa-star"></i>
+            <span class="tooltip-text">Features</span>
+        </a>
+        <a href="/properties/bookings/" class="nav-link" title="Bookings">
+            <i class="fas fa-calendar-check"></i>
+            <span class="tooltip-text">Bookings</span>
+        </a>
+    </nav>
+
+    <!-- ===== HEADER ===== -->
+    <header class="header">
+        <a href="/" class="header-brand">
+            <img src="/static/images/logo.png" alt="PropNest">
+            <span>PropNest</span>
+        </a>
+
+        <div class="header-actions">
+            <span class="user-badge"><i class="fas fa-building me-1"></i>Business</span>
+            <a href="/messaging/" class="btn-icon"><i class="fas fa-comment-dots"></i></a>
+
+            <div class="dropdown-container">
+                <div class="avatar business" onclick="toggleDropdown('profileMenu')">
+                    {{ user.username|first|upper }}
+                </div>
+                <div class="dropdown-menu-custom" id="profileMenu">
+                    <a href="/admin-portal/" class="dropdown-item"><i class="fas fa-th-large"></i> Dashboard</a>
+                    <a href="/properties/manage/" class="dropdown-item"><i class="fas fa-home"></i> Properties</a>
+                    <a href="/features/manage/" class="dropdown-item"><i class="fas fa-star"></i> Features</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="/logout/" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="main-layout">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div>
+                <h1>
+                    <i class="fas fa-star"></i>
+                    Manage Features
+                    <span class="subtitle">Create and manage property features</span>
+                </h1>
+            </div>
+            <button class="btn-add" onclick="showAddFeatureModal()">
+                <i class="fas fa-plus"></i> Add Feature
+            </button>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon primary"><i class="fas fa-list"></i></div>
+                <div class="stat-info">
+                    <h3>{{ total_count }}</h3>
+                    <p>Total Features</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon success"><i class="fas fa-check-circle"></i></div>
+                <div class="stat-info">
+                    <h3>{{ active_count }}</h3>
+                    <p>Active Features</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon warning"><i class="fas fa-user-plus"></i></div>
+                <div class="stat-info">
+                    <h3>{{ custom_count }}</h3>
+                    <p>Custom Features</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon info"><i class="fas fa-globe"></i></div>
+                <div class="stat-info">
+                    <h3>{{ global_count }}</h3>
+                    <p>Global Features</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Search features..." value="{{ search_query }}">
+            </div>
+            <select id="categoryFilter">
+                <option value="">All Categories</option>
+                {% for code, label in feature_categories %}
+                <option value="{{ code }}" {% if category_filter == code %}selected{% endif %}>
+                    {{ label }}
+                </option>
+                {% endfor %}
+            </select>
+            <select id="statusFilter">
+                <option value="">All Status</option>
+                <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Active</option>
+                <option value="inactive" {% if status_filter == 'inactive' %}selected{% endif %}>Inactive</option>
+            </select>
+        </div>
+
+        <!-- Table -->
+        <div class="table-container">
+            <div class="table-header">
+                <span class="results-count">{{ features|length }} features found</span>
+            </div>
+
+            {% if features %}
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width:30px;">#</th>
+                        <th>Feature</th>
+                        <th>Category</th>
+                        <th>Status</th>
+                        <th style="width:150px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for feature in features %}
+                    <tr>
+                        <td>{{ forloop.counter0|add:features.start_index }}</td>
+                        <td>
+                            <div class="feature-name">
+                                <span class="feature-icon"><i class="{{ feature.icon|default:'fas fa-tag' }}"></i></span>
+                                {{ feature.name }}
+                                {% if feature.is_custom %}
+                                <span class="custom-badge">Custom</span>
+                                {% else %}
+                                <span class="global-badge">Global</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td>
+                            <span class="category-badge {{ feature.category }}">
+                                {{ feature.get_category_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="status-badge {% if feature.is_active %}active{% else %}inactive{% endif %}">
+                                {{ feature.is_active|yesno:"Active,Inactive" }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn edit" onclick="editFeature('{{ feature.id }}')" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="action-btn toggle" onclick="toggleFeature('{{ feature.id }}')" title="Toggle Status">
+                                    <i class="fas fa-power-off"></i>
+                                </button>
+                                <button class="action-btn delete" onclick="deleteFeature('{{ feature.id }}', '{{ feature.name }}')" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- Pagination -->
+            <div class="pagination-container">
+                <span>Showing {{ features.start_index }} to {{ features.end_index }} of {{ features.paginator.count }} features</span>
+                <ul class="pagination">
+                    {% if features.has_previous %}
+                    <li><a href="?page={{ features.previous_page_number }}{% if category_filter %}&category={{ category_filter }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">&laquo;</a></li>
+                    {% endif %}
+                    {% for num in features.paginator.page_range %}
+                    <li class="{% if features.number == num %}active{% endif %}">
+                        <a href="?page={{ num }}{% if category_filter %}&category={{ category_filter }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">{{ num }}</a>
+                    </li>
+                    {% endfor %}
+                    {% if features.has_next %}
+                    <li><a href="?page={{ features.next_page_number }}{% if category_filter %}&category={{ category_filter }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">&raquo;</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-star"></i>
+                <h3>No features found</h3>
+                <p>Create your first feature by clicking the "Add Feature" button.</p>
+            </div>
+            {% endif %}
+        </div>
+
+    </div>
+
+    <!-- ===== ADD/EDIT FEATURE MODAL ===== -->
+    <div class="modal-overlay" id="featureModal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <span id="modalTitle">Add New Feature</span>
+                <button class="close-btn" onclick="closeFeatureModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="featureForm">
+                    <input type="hidden" id="featureId" value="">
+                    <div class="form-group">
+                        <label>Feature Name <span class="required">*</span></label>
+                        <input type="text" class="form-control" id="featureName" placeholder="e.g., Swimming Pool" required>
+                        <div class="help-text">Enter a descriptive name for the feature</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Category <span class="required">*</span></label>
+                        <select class="form-control" id="featureCategory" required>
+                            {% for code, label in feature_categories %}
+                            <option value="{{ code }}">{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Icon (Font Awesome)</label>
+                        <input type="text" class="form-control" id="featureIcon" placeholder="fas fa-swimming-pool" value="fas fa-tag">
+                        <div class="help-text">Enter a Font Awesome icon class (e.g., fas fa-swimming-pool)</div>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <span>Active Status</span>
+                            <label class="toggle-switch" style="margin-left:12px;">
+                                <input type="checkbox" id="featureActive" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </label>
+                        <div class="help-text">Toggle to activate or deactivate this feature</div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-foot">
+                <button class="btn btn-secondary" onclick="closeFeatureModal()">Cancel</button>
+                <button class="btn btn-primary" id="saveFeatureBtn" onclick="saveFeature()">
+                    <i class="fas fa-save"></i> Save Feature
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== DELETE CONFIRMATION MODAL ===== -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal-box" style="max-width:400px;">
+            <div class="modal-head">
+                <span>Delete Feature</span>
+                <button class="close-btn" onclick="closeDeleteModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete <strong id="deleteFeatureName"></strong>?</p>
+                <p class="text-muted" style="font-size:13px;">This action cannot be undone. Properties using this feature will not be affected.</p>
+            </div>
+            <div class="modal-foot">
+                <button class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+                <button class="btn btn-danger" id="confirmDeleteBtn" onclick="confirmDelete()">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MOBILE NAV ===== -->
+    <nav class="mobile-nav">
+        <a href="/admin-portal/"><i class="fas fa-th-large"></i><span>Dashboard</span></a>
+        <a href="/properties/manage/"><i class="fas fa-home"></i><span>Properties</span></a>
+        <a href="/features/manage/" class="active"><i class="fas fa-star"></i><span>Features</span></a>
+        <a href="/properties/bookings/"><i class="fas fa-calendar-check"></i><span>Bookings</span></a>
+        <a href="/profile/"><i class="fas fa-user"></i><span>Profile</span></a>
+    </nav>
+
+    <!-- ===== TOAST CONTAINER ===== -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // ===== TOGGLE DROPDOWN =====
+        function toggleDropdown(id) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            document.querySelectorAll('.dropdown-menu-custom.show').forEach(d => {
+                if (d.id !== id) d.classList.remove('show');
+            });
+            el.classList.toggle('show');
+        }
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.dropdown-container')) {
+                document.querySelectorAll('.dropdown-menu-custom.show').forEach(d => d.classList.remove('show'));
+            }
+        });
+
+        // ===== TOAST =====
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast-item ${type}`;
+            toast.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+                ${message}
+                <button class="close-toast" onclick="this.parentElement.remove()">&times;</button>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 5000);
+        }
+
+        // ===== GET CSRF TOKEN =====
+        function getCSRFToken() {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                const [name, value] = cookie.trim().split('=');
+                if (name === 'csrftoken') return decodeURIComponent(value);
+            }
+            return null;
+        }
+
+        // ===== FILTERS =====
+        document.getElementById('searchInput').addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') applyFilters();
+        });
+
+        document.getElementById('categoryFilter').addEventListener('change', applyFilters);
+        document.getElementById('statusFilter').addEventListener('change', applyFilters);
+
+        function applyFilters() {
+            const search = document.getElementById('searchInput').value;
+            const category = document.getElementById('categoryFilter').value;
+            const status = document.getElementById('statusFilter').value;
+            let url = window.location.pathname + '?';
+            if (search) url += `search=${encodeURIComponent(search)}&`;
+            if (category) url += `category=${encodeURIComponent(category)}&`;
+            if (status) url += `status=${encodeURIComponent(status)}&`;
+            window.location.href = url;
+        }
+
+        // ===== ADD FEATURE MODAL =====
+        function showAddFeatureModal() {
+            document.getElementById('modalTitle').textContent = 'Add New Feature';
+            document.getElementById('featureId').value = '';
+            document.getElementById('featureName').value = '';
+            document.getElementById('featureCategory').value = 'other';
+            document.getElementById('featureIcon').value = 'fas fa-tag';
+            document.getElementById('featureActive').checked = true;
+            document.getElementById('saveFeatureBtn').innerHTML = '<i class="fas fa-plus"></i> Add Feature';
+            document.getElementById('featureModal').classList.add('show');
+            document.getElementById('featureName').focus();
+        }
+
+        function closeFeatureModal() {
+            document.getElementById('featureModal').classList.remove('show');
+        }
+
+        // ===== EDIT FEATURE =====
+        function editFeature(featureId) {
+            fetch(`/api/features/detail/${featureId}/`, {
+                headers: {
+                    'X-CSRFToken': getCSRFToken()
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    const f = data.feature;
+                    document.getElementById('modalTitle').textContent = 'Edit Feature';
+                    document.getElementById('featureId').value = f.id;
+                    document.getElementById('featureName').value = f.name;
+                    document.getElementById('featureCategory').value = f.category;
+                    document.getElementById('featureIcon').value = f.icon || 'fas fa-tag';
+                    document.getElementById('featureActive').checked = f.is_active;
+                    document.getElementById('saveFeatureBtn').innerHTML = '<i class="fas fa-save"></i> Update Feature';
+                    document.getElementById('featureModal').classList.add('show');
+                } else {
+                    showToast(data.error || 'Failed to load feature', 'error');
+                }
+            })
+            .catch(() => {
+                showToast('Network error. Please try again.', 'error');
+            });
+        }
+
+        // ===== SAVE FEATURE =====
+        function saveFeature() {
+            const id = document.getElementById('featureId').value;
+            const name = document.getElementById('featureName').value.trim();
+            const category = document.getElementById('featureCategory').value;
+            const icon = document.getElementById('featureIcon').value.trim() || 'fas fa-tag';
+            const is_active = document.getElementById('featureActive').checked;
+
+            if (!name) {
+                showToast('Feature name is required', 'error');
+                document.getElementById('featureName').focus();
+                return;
+            }
+
+            const btn = document.getElementById('saveFeatureBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            btn.disabled = true;
+
+            const formData = new FormData();
+            formData.append('name', name);
+            formData.append('category', category);
+            formData.append('icon', icon);
+            formData.append('is_active', is_active);
+
+            const url = id ? `/api/features/edit/${id}/` : '/api/features/add/';
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCSRFToken()
+                },
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    closeFeatureModal();
+                    setTimeout(() => window.location.reload(), 1000);
+                } else {
+                    showToast(data.error || 'Failed to save feature', 'error');
+                }
+            })
+            .catch(() => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                showToast('Network error. Please try again.', 'error');
+            });
+        }
+
+        // ===== TOGGLE FEATURE STATUS =====
+        function toggleFeature(featureId) {
+            if (!confirm('Toggle the status of this feature?')) return;
+
+            fetch(`/api/features/toggle/${featureId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCSRFToken(),
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    setTimeout(() => window.location.reload(), 800);
+                } else {
+                    showToast(data.error || 'Failed to toggle feature', 'error');
+                }
+            })
+            .catch(() => {
+                showToast('Network error. Please try again.', 'error');
+            });
+        }
+
+        // ===== DELETE FEATURE =====
+        let deleteFeatureId = null;
+
+        function deleteFeature(featureId, featureName) {
+            deleteFeatureId = featureId;
+            document.getElementById('deleteFeatureName').textContent = featureName;
+            document.getElementById('deleteModal').classList.add('show');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.remove('show');
+            deleteFeatureId = null;
+        }
+
+        function confirmDelete() {
+            if (!deleteFeatureId) return;
+
+            const btn = document.getElementById('confirmDeleteBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
+            btn.disabled = true;
+
+            fetch(`/api/features/delete/${deleteFeatureId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCSRFToken(),
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    closeDeleteModal();
+                    setTimeout(() => window.location.reload(), 1000);
+                } else {
+                    showToast(data.error || 'Failed to delete feature', 'error');
+                }
+            })
+            .catch(() => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                showToast('Network error. Please try again.', 'error');
+            });
+        }
+
+        // ===== CLOSE MODALS ON OUTSIDE CLICK =====
+        document.getElementById('featureModal').addEventListener('click', function(e) {
+            if (e.target === this) closeFeatureModal();
+        });
+
+        document.getElementById('deleteModal').addEventListener('click', function(e) {
+            if (e.target === this) closeDeleteModal();
+        });
+
+        // ===== CLOSE MODALS ON ESCAPE =====
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeFeatureModal();
+                closeDeleteModal();
+            }
+        });
+
+        // ===== ENTER KEY ON MODAL =====
+        document.getElementById('featureName').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') saveFeature();
+        });
+    </script>
+
+  <script src="/static/hiring/js/notifications-global.js" defer></script>
+</body>
+</html>

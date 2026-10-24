@@ -1,0 +1,173 @@
+<!-- hiring/templates/hiring/analytics.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Analytics Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">Analytics Dashboard</h1>
+        <a href="{% url 'property_add' %}" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i>Add Property
+        </a>
+    </div>
+
+    <!-- Loading/Empty State -->
+    <div id="analytics-content">
+        <div class="text-center py-5" id="loading-state">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-3 text-muted">Loading analytics data...</p>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    loadAnalytics();
+});
+
+function loadAnalytics() {
+    const content = document.getElementById('analytics-content');
+    
+    fetch('/api/property-analytics/summary/', {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('access_token') || ''}`
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            renderAnalytics(data);
+        } else {
+            renderEmptyState();
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        renderEmptyState();
+    });
+}
+
+function renderAnalytics(data) {
+    const summary = data.summary || {};
+    const hasProperties = summary.total_properties > 0;
+    
+    let html = '';
+    
+    if (!hasProperties) {
+        // Empty state - show add property button
+        html = `
+            <div class="text-center py-5">
+                <i class="fas fa-chart-line fa-4x text-muted mb-3"></i>
+                <h4>No Properties Found</h4>
+                <p class="text-muted">Add your first property to start tracking analytics.</p>
+                <a href="{% url 'property_add' %}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-plus me-2"></i>Add Your First Property
+                </a>
+            </div>
+        `;
+    } else {
+        // Show analytics
+        html = `
+            <!-- Stats Cards -->
+            <div class="row g-4 mb-4">
+                <div class="col-xl-3 col-md-6">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <h6 class="text-white-50">Properties</h6>
+                            <h2 class="mb-0">${summary.total_properties}</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <h6 class="text-white-50">Views</h6>
+                            <h2 class="mb-0">${summary.total_views || 0}</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="card bg-warning text-white">
+                        <div class="card-body">
+                            <h6 class="text-white-50">Bookings</h6>
+                            <h2 class="mb-0">${summary.total_bookings || 0}</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="card bg-info text-white">
+                        <div class="card-body">
+                            <h6 class="text-white-50">Revenue</h6>
+                            <h2 class="mb-0">R${summary.total_revenue || 0}</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Top Properties -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Top Properties</h5>
+                </div>
+                <div class="card-body">
+                    ${renderTopProperties(summary.top_properties || [])}
+                </div>
+            </div>
+        `;
+    }
+    
+    document.getElementById('analytics-content').innerHTML = html;
+}
+
+function renderTopProperties(properties) {
+    if (!properties || properties.length === 0) {
+        return `<p class="text-muted text-center">No property data available yet.</p>`;
+    }
+    
+    let html = `<div class="table-responsive"><table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>Views</th>
+                <th>Bookings</th>
+                <th>Revenue</th>
+                <th>Rating</th>
+            </tr>
+        </thead>
+        <tbody>`;
+    
+    properties.forEach(p => {
+        html += `
+            <tr>
+                <td><strong>${p.property_title}</strong></td>
+                <td>${p.total_views || 0}</td>
+                <td>${p.total_bookings || 0}</td>
+                <td>R${p.total_revenue || 0}</td>
+                <td>${p.average_rating || 0} ★</td>
+            </tr>
+        `;
+    });
+    
+    html += `</tbody></table></div>`;
+    return html;
+}
+
+function renderEmptyState() {
+    document.getElementById('analytics-content').innerHTML = `
+        <div class="text-center py-5">
+            <i class="fas fa-chart-line fa-4x text-muted mb-3"></i>
+            <h4>No Analytics Data</h4>
+            <p class="text-muted">Add properties to see analytics here.</p>
+            <a href="{% url 'property_add' %}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Add Property
+            </a>
+        </div>
+    `;
+}
+</script>
+{% endblock %}

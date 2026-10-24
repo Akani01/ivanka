@@ -1,0 +1,631 @@
+<!-- education/templates/education/university_detail.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>{{ university.name }} - Education Hub | OppoGlobe</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================================
+           DESIGN TOKENS — matched to OppoGlobe jade/coral system
+           ============================================================ */
+        :root {
+            --ink:#16241F;
+            --ink-soft:#5B6660;
+            --ink-faint:#8B958F;
+            --paper:#F6F7F5;
+            --surface:#FFFFFF;
+            --line:#E4E7E2;
+            --line-soft:#EEF0ED;
+
+            --jade:#1F6F5C;
+            --jade-deep:#154F41;
+            --jade-wash:#E7F1EC;
+            --coral:#FF6B4A;
+            --coral-deep:#E24E2F;
+            --coral-wash:#FFEAE3;
+            --gold:#E8A93B;
+            --gold-wash:#FBF0DA;
+
+            --success:#2C9A5B;
+
+            --radius:16px;
+            --radius-sm:10px;
+            --radius-pill:999px;
+
+            --shadow:0 1px 3px rgba(22,36,31,.06), 0 1px 2px rgba(22,36,31,.04);
+            --shadow-hover:0 8px 30px rgba(22,36,31,.10);
+            --shadow-lg:0 20px 48px rgba(22,36,31,.14);
+
+            --font-display:'Fraunces', Georgia, serif;
+            --font-body:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+            --transition: all .2s cubic-bezier(.34,1.2,.4,1);
+            --header-h: 64px;
+            --safe-b: env(safe-area-inset-bottom, 0px);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { overflow-x: hidden; width: 100%; }
+        body {
+            background: var(--paper);
+            font-family: var(--font-body);
+            padding-top: var(--header-h);
+            padding-bottom: 24px;
+            color: var(--ink);
+            line-height: 1.6;
+            overflow-x: hidden;
+            width: 100%;
+        }
+        a { text-decoration: none; color: inherit; }
+        button { cursor: pointer; border: none; background: none; font-family: inherit; }
+        img { max-width: 100%; display: block; }
+        h1,h2,h3,h4,h5 { font-family: var(--font-display); letter-spacing: -.01em; }
+        :focus-visible { outline: 2.5px solid var(--jade); outline-offset: 2px; border-radius: 6px; }
+
+        /* ===== TOP NAVBAR ===== */
+        .header-area {
+            background: var(--surface);
+            border-bottom: 1px solid var(--line);
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            height: var(--header-h);
+        }
+        .main-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+            padding: 0 clamp(12px, 3vw, 32px);
+            max-width: 1400px;
+            margin: 0 auto;
+            gap: 8px;
+        }
+        .logo { display: flex; align-items: center; gap: 8px; flex-shrink: 0; min-width: 0; }
+        .logo img { max-height: 34px; width: auto; object-fit: contain; }
+        .logo-text { font-family: var(--font-display); font-size: clamp(15px, 4vw, 19px); font-weight: 700; color: var(--ink); white-space: nowrap; }
+        .logo-text span { color: var(--jade); }
+
+        .nav-icons { display: flex; list-style: none; gap: 2px; align-items: center; margin: 0; padding: 0; flex-shrink: 0; }
+        @media (min-width: 576px) { .nav-icons { gap: 6px; } }
+        .nav-icons a {
+            font-size: 16px; color: var(--ink-soft); transition: var(--transition);
+            border-radius: var(--radius-pill); display: flex; align-items: center; justify-content: center;
+            width: 36px; height: 36px;
+        }
+        @media (min-width: 576px) { .nav-icons a { width: 40px; height: 40px; font-size: 17px; } }
+        .nav-icons a:hover { color: var(--jade-deep); background: var(--jade-wash); }
+
+        .profile-avatar-small {
+            width: 32px; height: 32px; background: linear-gradient(135deg, var(--coral), var(--gold)); color: #fff;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;
+            font-size: 13px; cursor: pointer; transition: var(--transition); flex-shrink: 0;
+        }
+        @media (min-width: 576px) { .profile-avatar-small { width: 36px; height: 36px; font-size: 14px; } }
+        .profile-avatar-small:hover { transform: scale(1.05); }
+        .profile-dropdown { position: relative; }
+        .profile-menu {
+            position: absolute; top: 46px; right: 0; width: 220px; max-width: calc(100vw - 20px);
+            background: var(--surface); border-radius: var(--radius-sm); box-shadow: var(--shadow-lg);
+            padding: 6px; opacity: 0; visibility: hidden; transform: translateY(-8px) scale(.98);
+            transition: var(--transition); z-index: 2000; border: 1px solid var(--line);
+        }
+        .profile-menu.show { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+        .profile-menu a { display: flex; align-items: center; gap: 10px; padding: 9px 10px; color: var(--ink); font-size: 13.5px; border-radius: var(--radius-sm); }
+        .profile-menu a:hover { background: var(--paper); color: var(--jade-deep); }
+        .profile-menu a i { width: 18px; color: var(--ink-faint); font-size: 14px; text-align: center; }
+        .profile-divider { height: 1px; background: var(--line-soft); margin: 5px 6px; }
+
+        .three-dot-menu { position: relative; }
+        .three-dot-menu .dot-btn {
+            font-size: 18px; color: var(--ink-soft); border-radius: var(--radius-pill); transition: var(--transition);
+            display: flex; align-items: center; justify-content: center; width: 36px; height: 36px;
+        }
+        @media (min-width: 576px) { .three-dot-menu .dot-btn { width: 40px; height: 40px; font-size: 19px; } }
+        .three-dot-menu .dot-btn:hover { background: var(--jade-wash); color: var(--jade-deep); }
+        .menu-content {
+            position: absolute; right: 0; top: 46px; background: var(--surface); width: 200px; max-width: calc(100vw - 20px);
+            padding: 6px; border-radius: var(--radius-sm); box-shadow: var(--shadow-lg);
+            opacity: 0; visibility: hidden; transform: translateY(-8px) scale(.98); transition: var(--transition);
+            z-index: 2000; border: 1px solid var(--line);
+        }
+        .menu-content.show { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+        .menu-content a { display: flex; align-items: center; gap: 10px; padding: 9px 10px; color: var(--ink); font-size: 13.5px; border-radius: var(--radius-sm); }
+        .menu-content a:hover { background: var(--paper); color: var(--jade-deep); }
+        .menu-content a i { width: 18px; color: var(--ink-faint); font-size: 14px; text-align: center; }
+
+        /* ===== SIDEBAR ===== */
+        .desktop-sidebar {
+            width: 220px;
+            background: var(--surface);
+            height: calc(100vh - var(--header-h));
+            position: fixed;
+            top: var(--header-h); left: 0;
+            padding: 16px 12px;
+            border-right: 1px solid var(--line);
+            overflow-y: auto;
+            z-index: 100;
+        }
+        @media (max-width: 991px) { .desktop-sidebar { display: none; } }
+        .desktop-sidebar .sidebar-section { margin-bottom: 16px; }
+        .desktop-sidebar .sidebar-title {
+            font-family: var(--font-display); font-size: 11px; font-weight: 600; color: var(--ink-faint);
+            text-transform: uppercase; letter-spacing: .5px; padding: 0 4px; margin-bottom: 6px;
+        }
+        .desktop-sidebar a {
+            display: flex; align-items: center; gap: 10px; padding: 9px 12px; color: var(--ink-soft);
+            border-radius: var(--radius-sm); font-weight: 500; font-size: 13px; transition: var(--transition); margin-bottom: 2px;
+        }
+        .desktop-sidebar a:hover { background: var(--jade-wash); color: var(--jade-deep); transform: translateX(2px); }
+        .desktop-sidebar a.active { background: linear-gradient(135deg, var(--jade), var(--jade-deep)); color: #fff; }
+        .desktop-sidebar a.active i { color: #fff; }
+        .desktop-sidebar a i { width: 20px; color: var(--jade); font-size: 15px; text-align: center; }
+        .desktop-sidebar hr { margin: 8px 4px; border: none; border-top: 1px solid var(--line-soft); }
+        @media (min-width: 992px) { body { padding-left: 240px !important; } }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-container { max-width: 1200px; margin: 0 auto; padding: 16px clamp(10px,2.5vw,20px) 0; }
+
+        .back-link {
+            display: inline-flex; align-items: center; gap: 8px; color: var(--jade-deep);
+            font-weight: 600; font-size: 12.5px; margin-bottom: 16px; padding: 8px 16px;
+            background: var(--surface); border-radius: var(--radius-pill); box-shadow: var(--shadow);
+            transition: var(--transition); border: 1px solid var(--line);
+        }
+        .back-link:hover { transform: translateX(-3px); box-shadow: var(--shadow-hover); color: var(--coral-deep); border-color: var(--jade); }
+
+        .detail-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--line);
+        }
+        .detail-header {
+            padding: 20px clamp(16px,4vw,28px) 16px;
+            border-bottom: 1px solid var(--line);
+            background: var(--surface);
+        }
+        .detail-header .header-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px; }
+        .detail-header h1 { font-size: clamp(21px, 4vw, 28px); font-weight: 600; margin: 0 0 4px; color: var(--ink); line-height: 1.2; }
+        .detail-header .location { font-size: 13.5px; color: var(--ink-soft); }
+        .detail-header .location i { color: var(--jade); margin-right: 4px; }
+        .detail-header .badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 9px; }
+        .badge-custom { padding: 4px 11px; border-radius: var(--radius-pill); font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .3px; }
+        .badge-info { background: var(--jade-wash); color: var(--jade-deep); }
+        .badge-success { background: #e6f4eb; color: var(--success); }
+
+        .detail-image { width: 100%; max-height: 300px; object-fit: cover; background: var(--jade-wash); }
+        @media (max-width: 576px) { .detail-image { max-height: 190px; } }
+
+        .detail-body { padding: clamp(16px,4vw,28px); }
+        .detail-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 26px; }
+        @media (max-width: 992px) { .detail-grid { grid-template-columns: 1fr; gap: 20px; } }
+
+        .detail-section { margin-bottom: 22px; }
+        .detail-section:last-child { margin-bottom: 0; }
+        .detail-section h3 { font-size: 15.5px; font-weight: 600; margin-bottom: 9px; display: flex; align-items: center; gap: 8px; color: var(--ink); }
+        .detail-section h3 i { color: var(--coral); }
+        .detail-section p { color: var(--ink-soft); line-height: 1.75; font-size: 13.5px; }
+        .detail-section a { color: var(--jade-deep); font-weight: 500; }
+        .detail-section a:hover { text-decoration: underline; }
+
+        .sidebar { display: flex; flex-direction: column; gap: 14px; }
+        .sidebar-card { background: var(--paper); border-radius: var(--radius-sm); padding: 16px 17px; border: 1px solid var(--line); }
+        .sidebar-card h4 { font-size: 13.5px; font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; color: var(--ink); }
+        .sidebar-card h4 i { color: var(--coral); }
+        .sidebar-card .info-row { display: flex; justify-content: space-between; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--line-soft); font-size: 12.5px; }
+        .sidebar-card .info-row:last-child { border-bottom: none; }
+        .sidebar-card .info-row .label-text { color: var(--ink-faint); }
+        .sidebar-card .info-row .value-text { font-weight: 600; color: var(--ink); text-align: right; }
+        .sidebar-card .info-row a { color: var(--jade-deep); font-weight: 500; }
+        .sidebar-card .info-row a:hover { text-decoration: underline; }
+
+        /* ===== ACTION BUTTONS ===== */
+        .action-buttons { display: flex; flex-direction: column; gap: 8px; }
+        .btn-custom {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 11px 20px; border-radius: var(--radius-pill); font-weight: 600; font-size: 13px;
+            text-decoration: none; transition: var(--transition); border: none; cursor: pointer;
+            min-height: 44px; width: 100%;
+        }
+        .btn-custom:hover { transform: translateY(-2px); }
+        .btn-primary-custom { background: var(--ink); color: #fff; }
+        .btn-primary-custom:hover { background: var(--jade-deep); color: #fff; box-shadow: 0 4px 16px rgba(21,79,65,.25); }
+        .btn-success-custom { background: linear-gradient(135deg, var(--jade), var(--jade-deep)); color: #fff; }
+        .btn-success-custom:hover { box-shadow: 0 4px 16px rgba(31,111,92,.3); color: #fff; }
+        .btn-outline-custom { background: transparent; color: var(--ink); border: 1.5px solid var(--line); }
+        .btn-outline-custom:hover { border-color: var(--jade); background: var(--jade-wash); color: var(--jade-deep); }
+
+        .share-buttons { display: flex; gap: 6px; flex-wrap: wrap; }
+        .share-btn {
+            padding: 6px 12px; border-radius: var(--radius-pill); border: none; font-size: 11px; font-weight: 600;
+            cursor: pointer; transition: var(--transition); color: #fff; display: inline-flex; align-items: center;
+            gap: 5px; flex: 1; justify-content: center; min-height: 32px;
+        }
+        .share-btn:hover { transform: scale(1.05); }
+        .share-btn.whatsapp { background: #25D366; }
+        .share-btn.whatsapp:hover { background: #1da851; }
+        .share-btn.facebook { background: #1877F2; }
+        .share-btn.facebook:hover { background: #0d65d9; }
+        .share-btn.twitter { background: var(--ink); }
+        .share-btn.twitter:hover { background: #2d2d4a; }
+        .share-btn.linkedin { background: #0A66C2; }
+        .share-btn.linkedin:hover { background: #0853a0; }
+        .share-btn.copy { background: var(--ink-faint); }
+        .share-btn.copy:hover { background: var(--ink-soft); }
+
+        .related-item {
+            padding: 11px 13px; background: var(--surface); border-radius: var(--radius-sm); border: 1px solid var(--line);
+            margin-bottom: 8px; transition: var(--transition); cursor: pointer; display: block; color: inherit;
+        }
+        .related-item:hover { border-color: var(--jade); transform: translateX(3px); box-shadow: var(--shadow); }
+        .related-item h5 { font-size: 13px; font-weight: 600; margin: 0; color: var(--ink); }
+        .related-item p { font-size: 11px; color: var(--ink-faint); margin: 2px 0 0; }
+
+        /* ===== TOAST ===== */
+        .toast-container { position: fixed; top: calc(var(--header-h) + 10px); right: 12px; z-index: 9999; max-width: calc(100vw - 24px); }
+        @media (min-width: 576px) { .toast-container { max-width: 360px; } }
+        .toast-item {
+            padding: 11px 15px; border-radius: var(--radius-sm); color: #fff; font-size: 13px;
+            animation: slideIn .25s ease; display: flex; align-items: center; gap: 10px;
+            box-shadow: var(--shadow-lg); margin-bottom: 8px; font-weight: 500;
+        }
+        .toast-item.success { background: var(--success); }
+        .toast-item.error { background: #D64545; }
+        .toast-item.info { background: #2E8BC0; }
+        .toast-item.warning { background: var(--gold); color: #241a06; }
+        .toast-item .close-toast { margin-left: auto; background: none; border: none; color: rgba(255,255,255,.75); font-size: 16px; cursor: pointer; }
+        .toast-item .close-toast:hover { color: #fff; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+
+        /* ===== MOBILE BOTTOM NAV ===== */
+        .mobile-bottom-nav {
+            display: none;
+            position: fixed;
+            left: 10px; right: 10px; bottom: calc(8px + var(--safe-b));
+            height: 62px;
+            background: rgba(255,255,255,.97);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--line);
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            justify-content: space-around;
+            align-items: center;
+            z-index: 999;
+        }
+        @media (max-width: 991px) { .mobile-bottom-nav { display: flex !important; } body { padding-bottom: 82px; } }
+        @media (min-width: 992px) { body { padding-bottom: 24px; } }
+        .mobile-bottom-nav a {
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+            font-size: 9.5px; color: var(--ink-faint); font-weight: 600; padding: 4px 6px;
+            transition: var(--transition); flex: 1; text-align: center; height: 100%;
+        }
+        .mobile-bottom-nav a i { font-size: 17px; display: block; }
+        .mobile-bottom-nav a.active { color: var(--jade-deep); }
+        .mobile-bottom-nav a:hover { color: var(--jade-deep); }
+
+        /* ===== SMALL SCREEN REFINEMENTS ===== */
+        @media (max-width: 576px) {
+            .main-nav { padding: 0 12px; }
+            .detail-header { padding: 16px 16px 14px; }
+            .detail-header .header-top { flex-direction: column; }
+            .detail-body { padding: 16px; }
+            .share-btn { font-size: 10px; padding: 5px 8px; min-height: 30px; }
+            .share-btn i { font-size: 12px; }
+            .sidebar-card { padding: 14px 15px; }
+            .btn-custom { font-size: 12.5px; padding: 10px 16px; }
+        }
+        @media (max-width: 400px) {
+            .logo-text { display: none; }
+            .nav-icons a { width: 32px; height: 32px; font-size: 15px; }
+            .profile-avatar-small { width: 30px; height: 30px; }
+            .detail-header h1 { font-size: 19px; }
+            .badge-custom { font-size: 8.5px; padding: 3px 9px; }
+        }
+
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: var(--paper); }
+        ::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--ink-faint); }
+    </style>
+</head>
+<body>
+
+    <!-- ===== TOP NAVBAR ===== -->
+    <header class="header-area">
+        <div class="main-nav">
+            <a href="/" class="logo">
+                <img src="/static/images/logo.png" alt="OppoGlobe" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\'logo-text\'>Oppo<span>Globe</span></span>'">
+            </a>
+            <ul class="nav-icons">
+                <li><a href="/" title="Home"><i class="fas fa-home"></i></a></li>
+                <li><a href="/education/" title="Education Hub"><i class="fas fa-graduation-cap"></i></a></li>
+                {% if user.is_authenticated %}
+                <li><a href="/dashboard" title="Dashboard"><i class="fas fa-th-large"></i></a></li>
+                <li><a href="/messaging/" title="Messages"><i class="fas fa-comment-dots"></i></a></li>
+                <li class="profile-dropdown">
+                    <div class="profile-avatar-small" onclick="toggleProfileDropdown()">{{ user.username|first|upper }}</div>
+                    <div class="profile-menu" id="profileMenu">
+                        <a href="/profile/"><i class="fas fa-user"></i> Profile</a>
+                        <a href="/applications/"><i class="fas fa-file-alt"></i> Applications</a>
+                        <a href="/profile/education/"><i class="fas fa-graduation-cap"></i> Education</a>
+                        <div class="profile-divider"></div>
+                        <a href="/api/alerts/"><i class="fas fa-bell"></i> Alerts</a>
+                        <a href="/preferences/"><i class="fas fa-cog"></i> Preferences</a>
+                        <div class="profile-divider"></div>
+                        <a href="/logout/"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                </li>
+                <li class="three-dot-menu">
+                    <button class="dot-btn" onclick="toggleThreeDotMenu()"><i class="bi bi-three-dots-vertical"></i></button>
+                    <div class="menu-content" id="threeDotMenu">
+                        <a href="/profile/skills/"><i class="fas fa-cogs"></i> Skills</a>
+                        <a href="/profile/employment/"><i class="fas fa-briefcase"></i> Employment</a>
+                        <a href="/profile/education/"><i class="fas fa-graduation-cap"></i> Education</a>
+                        <a href="/profile/documents/"><i class="fas fa-file-upload"></i> Documents</a>
+                    </div>
+                </li>
+                {% else %}
+                <li><a href="#" onclick="showLogin()" title="Login"><i class="fas fa-sign-in-alt"></i></a></li>
+                <li><a href="#" onclick="showSignup()" title="Sign Up"><i class="fas fa-user-plus"></i></a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </header>
+
+    <!-- ===== DESKTOP SIDEBAR ===== -->
+    <div class="desktop-sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-title">Profile</div>
+            <a href="/profile/"><i class="fas fa-user"></i> My Profile</a>
+            <a href="/applications/"><i class="fas fa-file-alt"></i> Applications</a>
+        </div>
+        <hr>
+        <div class="sidebar-section">
+            <div class="sidebar-title">Education</div>
+            <a href="/profile/education/"><i class="fas fa-graduation-cap"></i> My Education</a>
+            <a href="/education/" class="active"><i class="fas fa-graduation-cap"></i> Education Hub</a>
+        </div>
+        <hr>
+        <div class="sidebar-section">
+            <div class="sidebar-title">Quick Links</div>
+            <a href="/profile/skills/"><i class="fas fa-cogs"></i> Skills</a>
+            <a href="/profile/employment/"><i class="fas fa-briefcase"></i> Employment</a>
+            <a href="/profile/documents/"><i class="fas fa-file-upload"></i> Documents</a>
+        </div>
+    </div>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="main-container">
+
+        <a href="/education/" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to Education Hub
+        </a>
+
+        <div class="detail-card">
+            <!-- Header -->
+            <div class="detail-header">
+                <div class="header-top">
+                    <div>
+                        <h1>{{ university.name }}</h1>
+                        <div class="location">
+                            <i class="fas fa-map-marker-alt"></i> {{ university.city }}, {{ university.province }}
+                        </div>
+                        <div class="badges">
+                            <span class="badge-custom badge-info">🏛️ University</span>
+                            {% if university.is_public %}
+                            <span class="badge-custom badge-success">✅ Public</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Image -->
+            {% if university.logo %}
+            <img src="{{ university.logo.url }}" alt="{{ university.name }}" class="detail-image" loading="lazy">
+            {% else %}
+            <div class="detail-image d-flex align-items-center justify-content-center">
+                <i class="fas fa-university" style="font-size:56px;color:rgba(31,111,92,0.18);"></i>
+            </div>
+            {% endif %}
+
+            <!-- Body -->
+            <div class="detail-body">
+                <div class="detail-grid">
+
+                    <!-- LEFT COLUMN -->
+                    <div>
+                        <div class="detail-section">
+                            <h3><i class="fas fa-align-left"></i> About</h3>
+                            <p>{{ university.description|default:"No description available."|linebreaks }}</p>
+                        </div>
+
+                        <div class="detail-section">
+                            <h3><i class="fas fa-address-card"></i> Contact Information</h3>
+                            <div class="row g-2">
+                                {% if university.website %}
+                                <div class="col-12">
+                                    <p><i class="fas fa-globe"></i> <a href="{{ university.website }}" target="_blank">{{ university.website }}</a></p>
+                                </div>
+                                {% endif %}
+                                {% if university.email %}
+                                <div class="col-12">
+                                    <p><i class="fas fa-envelope"></i> <a href="mailto:{{ university.email }}">{{ university.email }}</a></p>
+                                </div>
+                                {% endif %}
+                                {% if university.phone %}
+                                <div class="col-12">
+                                    <p><i class="fas fa-phone"></i> {{ university.phone }}</p>
+                                </div>
+                                {% endif %}
+                                {% if university.address %}
+                                <div class="col-12">
+                                    <p><i class="fas fa-map-pin"></i> {{ university.address }}</p>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {% if bursaries %}
+                        <div class="detail-section">
+                            <h3><i class="fas fa-hand-holding-heart"></i> Available Bursaries</h3>
+                            {% for bursary in bursaries %}
+                            <a href="{% url 'education_bursary_detail' bursary.id %}" class="related-item">
+                                <h5>{{ bursary.title }}</h5>
+                                <p>{{ bursary.provider }} • Closes: {{ bursary.closing_date|date:"M d, Y" }}</p>
+                            </a>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- RIGHT COLUMN (SIDEBAR) -->
+                    <div class="sidebar">
+                        <div class="sidebar-card">
+                            <h4><i class="fas fa-info-circle"></i> Quick Info</h4>
+                            <div class="info-row">
+                                <span class="label-text">Province</span>
+                                <span class="value-text">{{ university.province }}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label-text">City</span>
+                                <span class="value-text">{{ university.city }}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label-text">Type</span>
+                                <span class="value-text">{% if university.is_public %}Public{% else %}Private{% endif %}</span>
+                            </div>
+                            {% if university.website %}
+                            <div class="info-row">
+                                <span class="label-text">Website</span>
+                                <span class="value-text"><a href="{{ university.website }}" target="_blank">Visit <i class="fas fa-external-link-alt" style="font-size:10px;"></i></a></span>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- ===== ACTION BUTTONS ===== -->
+                        <div class="action-buttons">
+                            {% if user.is_authenticated %}
+                                {% if university %}
+                                <a href="{% url 'education_apply_university_with_id' university.id %}" class="btn-custom btn-success-custom">
+                                    <i class="fas fa-paper-plane"></i> Apply Now
+                                </a>
+                                {% else %}
+                                <a href="{% url 'education_apply_university' %}" class="btn-custom btn-success-custom">
+                                    <i class="fas fa-paper-plane"></i> Apply Now
+                                </a>
+                                {% endif %}
+                            {% else %}
+                            <a href="/login/?next={{ request.path }}" class="btn-custom btn-primary-custom">
+                                <i class="fas fa-sign-in-alt"></i> Login to Apply
+                            </a>
+                            {% endif %}
+                            <a href="/education/" class="btn-custom btn-outline-custom">
+                                <i class="fas fa-arrow-left"></i> Back to All
+                            </a>
+                        </div>
+
+                        <div class="sidebar-card">
+                            <h4><i class="fas fa-share-alt"></i> Share</h4>
+                            <div class="share-buttons">
+                                <button class="share-btn whatsapp" onclick="shareContent('whatsapp')"><i class="fab fa-whatsapp"></i></button>
+                                <button class="share-btn facebook" onclick="shareContent('facebook')"><i class="fab fa-facebook-f"></i></button>
+                                <button class="share-btn twitter" onclick="shareContent('twitter')"><i class="fab fa-twitter"></i></button>
+                                <button class="share-btn linkedin" onclick="shareContent('linkedin')"><i class="fab fa-linkedin-in"></i></button>
+                                <button class="share-btn copy" onclick="copyLink()"><i class="fas fa-copy"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ===== MOBILE BOTTOM NAV ===== -->
+    <div class="mobile-bottom-nav">
+        <a href="/"><i class="fas fa-home"></i>Home</a>
+        <a href="/dashboard"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
+        <a href="/education/" class="active"><i class="fas fa-graduation-cap"></i>Edu</a>
+        <a href="/profile/"><i class="fas fa-user"></i>Profile</a>
+    </div>
+
+    <!-- ===== TOAST CONTAINER ===== -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        function toggleProfileDropdown() {
+            document.getElementById("profileMenu").classList.toggle("show");
+        }
+
+        function toggleThreeDotMenu() {
+            document.getElementById("threeDotMenu").classList.toggle("show");
+        }
+
+        document.addEventListener("click", function(e) {
+            const profileMenu = document.getElementById("profileMenu");
+            const avatar = document.querySelector(".profile-avatar-small");
+            if (avatar && profileMenu && !avatar.contains(e.target) && !profileMenu.contains(e.target)) {
+                profileMenu.classList.remove("show");
+            }
+            const threeDotMenu = document.getElementById("threeDotMenu");
+            const dotBtn = document.querySelector(".three-dot-menu .dot-btn");
+            if (dotBtn && threeDotMenu && !dotBtn.contains(e.target) && !threeDotMenu.contains(e.target)) {
+                threeDotMenu.classList.remove("show");
+            }
+        });
+
+        function shareContent(platform) {
+            const url = window.location.href;
+            const title = encodeURIComponent("{{ university.name }} - University | OppoGlobe");
+            let shareUrl = '';
+            if (platform === 'whatsapp') shareUrl = `https://wa.me/?text=${title}%20${encodeURIComponent(url)}`;
+            else if (platform === 'facebook') shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+            else if (platform === 'twitter') shareUrl = `https://twitter.com/intent/tweet?text=${title}&url=${encodeURIComponent(url)}`;
+            else if (platform === 'linkedin') shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+            if (shareUrl) { window.open(shareUrl, '_blank'); showToast('📤 Shared successfully!', 'success'); }
+        }
+
+        function copyLink() {
+            const url = window.location.href;
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(url).then(() => showToast('✅ Link copied!', 'success')).catch(() => fallbackCopy(url));
+            } else { fallbackCopy(url); }
+        }
+
+        function fallbackCopy(text) {
+            const input = document.createElement('input');
+            input.value = text;
+            document.body.appendChild(input);
+            input.select();
+            document.execCommand('copy');
+            document.body.removeChild(input);
+            showToast('✅ Link copied!', 'success');
+        }
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast-item ${type}`;
+            const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', info: 'fa-info-circle', warning: 'fa-exclamation-triangle' };
+            toast.innerHTML = `<i class="fas ${icons[type] || icons.info}"></i> ${message} <button class="close-toast" onclick="this.parentElement.remove()">&times;</button>`;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 5000);
+        }
+
+        function showLogin() { showToast('Please login to continue', 'info'); window.location.href = '/login/'; }
+        function showSignup() { showToast('Create an account to get started', 'info'); window.location.href = '/signup/'; }
+    </script>
+
+  <script src="/static/hiring/js/notifications-global.js" defer></script>
+</body>
+</html>

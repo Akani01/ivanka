@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OppoGlobe - Manage Bookings</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <style>
+        /* ===== ROOT VARIABLES ===== */
+        :root {
+            --primary: #1a73e8;
+            --primary-dark: #1557b0;
+            --primary-light: #e8f0fe;
+            --secondary: #34a853;
+            --accent: #ea4335;
+            --warning: #fbbc04;
+            --dark: #202124;
+            --gray: #5f6368;
+            --light-gray: #f1f3f4;
+            --border: #dadce0;
+            --shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            --shadow-hover: 0 4px 12px rgba(0,0,0,0.15);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f8f9fa;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            padding-top: 72px;
+            padding-bottom: 40px;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        button { cursor: pointer; border: none; background: none; }
+        img { max-width: 100%; }
+
+        /* ===== HEADER ===== */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 24px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--primary);
+        }
+
+        .header-brand img {
+            height: 36px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-actions .btn-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .header-actions .btn-icon:hover {
+            background: var(--light-gray);
+            color: var(--primary);
+        }
+
+        .user-badge {
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            background: #fce8e6;
+            color: var(--accent);
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            color: white;
+            background: linear-gradient(135deg, var(--primary), #4285f4);
+            cursor: pointer;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+
+        .avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(26,115,232,0.3);
+        }
+
+        .avatar.business {
+            background: linear-gradient(135deg, #ea4335, #fbbc04);
+        }
+
+        /* ===== DROPDOWNS ===== */
+        .dropdown-container { position: relative; }
+        
+        .dropdown-menu-custom {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            min-width: 220px;
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            padding: 8px 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px) scale(0.98);
+            transition: var(--transition);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+
+        .dropdown-menu-custom.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+        .dropdown-menu-custom .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 20px;
+            color: var(--dark);
+            font-size: 14px;
+            transition: var(--transition);
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .dropdown-menu-custom .dropdown-item:hover {
+            background: var(--light-gray);
+            color: var(--primary);
+        }
+
+        .dropdown-menu-custom .dropdown-item i {
+            width: 20px;
+            color: var(--gray);
+            font-size: 16px;
+        }
+
+        .dropdown-menu-custom .dropdown-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 6px 16px;
+        }
+
+        /* ===== SIDEBAR NAV ===== */
+        .sidebar-nav {
+            position: fixed;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            background: white;
+            border-radius: 0 var(--radius) var(--radius) 0;
+            box-shadow: var(--shadow);
+            padding: 12px 8px;
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            z-index: 900;
+            border: 1px solid var(--border);
+            border-left: none;
+        }
+
+        @media (min-width: 992px) {
+            .sidebar-nav { display: flex; }
+            body { padding-left: 80px; }
+        }
+
+        .sidebar-nav .nav-link {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .sidebar-nav .nav-link:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .sidebar-nav .nav-link.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .sidebar-nav .nav-link .tooltip-text {
+            position: absolute;
+            left: calc(100% + 12px);
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--dark);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .sidebar-nav .nav-link:hover .tooltip-text {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* ===== MAIN LAYOUT ===== */
+        .main-layout {
+            max-width: 1360px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* ===== PAGE HEADER ===== */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .page-header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 0;
+        }
+
+        .page-header h1 i {
+            color: var(--primary);
+        }
+
+        .page-header .subtitle {
+            color: var(--gray);
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        /* ===== STATS CARDS ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stats-card {
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            padding: 20px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stats-card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
+        }
+
+        .stats-card .stats-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            margin-bottom: 12px;
+        }
+
+        .stats-card .stats-icon.blue { background: #e3f2fd; color: #1976d2; }
+        .stats-card .stats-icon.green { background: #e8f5e9; color: #2e7d32; }
+        .stats-card .stats-icon.orange { background: #fff3e0; color: #e65100; }
+        .stats-card .stats-icon.purple { background: #f3e5f5; color: #6a1b9a; }
+        .stats-card .stats-icon.red { background: #fce4ec; color: #c62828; }
+
+        .stats-card .stats-label {
+            font-size: 13px;
+            color: var(--gray);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .stats-card .stats-number {
+            font-size: 28px;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+
+        .stats-card .stats-number.blue { color: #1976d2; }
+        .stats-card .stats-number.green { color: #2e7d32; }
+        .stats-card .stats-number.orange { color: #e65100; }
+        .stats-card .stats-number.purple { color: #6a1b9a; }
+        .stats-card .stats-number.red { color: #c62828; }
+
+        /* ===== FILTER BAR ===== */
+        .filter-bar {
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .filter-bar .filter-group {
+            display: flex;
+            gap: 10px;
+            flex: 1;
+            flex-wrap: wrap;
+            min-width: 200px;
+        }
+
+        .filter-bar select,
+        .filter-bar input {
+            padding: 8px 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            background: white;
+            transition: var(--transition);
+            min-width: 140px;
+            flex: 1;
+        }
+
+        .filter-bar select:focus,
+        .filter-bar input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(26,115,232,0.15);
+        }
+
+        .filter-bar .btn-filter {
+            padding: 8px 20px;
+            border-radius: var(--radius-sm);
+            background: var(--primary);
+            color: white;
+            font-weight: 500;
+            transition: var(--transition);
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .filter-bar .btn-filter:hover {
+            background: var(--primary-dark);
+            box-shadow: 0 2px 8px rgba(26,115,232,0.3);
+        }
+
+        .filter-bar .btn-clear {
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            background: var(--light-gray);
+            color: var(--gray);
+            font-weight: 500;
+            transition: var(--transition);
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .filter-bar .btn-clear:hover {
+            background: #e8eaed;
+            color: var(--dark);
+        }
+
+        @media (max-width: 768px) {
+            .filter-bar { flex-direction: column; align-items: stretch; }
+            .filter-bar .filter-group { flex-direction: column; }
+            .filter-bar select, .filter-bar input { min-width: 100%; }
+        }
+
+        /* ===== BOOKINGS TABLE ===== */
+        .table-wrap {
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .table-wrap .table-responsive {
+            overflow-x: auto;
+        }
+
+        .table-wrap table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .table-wrap table thead {
+            background: var(--light-gray);
+        }
+
+        .table-wrap table th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--gray);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .table-wrap table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        .table-wrap table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table-wrap table tr:hover td {
+            background: var(--primary-light);
+        }
+
+        /* ===== STATUS BADGES ===== */
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .status-badge.pending {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .status-badge.confirmed {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .status-badge.completed {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-badge.cancelled {
+            background: #fce4ec;
+            color: #c62828;
+        }
+
+        .status-badge.refunded {
+            background: #f3e5f5;
+            color: #6a1b9a;
+        }
+
+        /* ===== ACTION BUTTONS ===== */
+        .action-btns {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .action-btns .btn-sm {
+            padding: 4px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 500;
+            transition: var(--transition);
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .action-btns .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .action-btns .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .action-btns .btn-success {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .action-btns .btn-success:hover {
+            background: #2d9248;
+        }
+
+        .action-btns .btn-danger {
+            background: var(--accent);
+            color: white;
+        }
+
+        .action-btns .btn-danger:hover {
+            background: #d33426;
+        }
+
+        .action-btns .btn-warning {
+            background: var(--warning);
+            color: var(--dark);
+        }
+
+        .action-btns .btn-warning:hover {
+            background: #e5a800;
+        }
+
+        .action-btns .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        .action-btns .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* ===== EMPTY STATE ===== */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+
+        .empty-state i {
+            font-size: 56px;
+            color: var(--border);
+            margin-bottom: 16px;
+        }
+
+        .empty-state h4 {
+            color: var(--dark);
+            margin-bottom: 4px;
+        }
+
+        .empty-state p {
+            color: var(--gray);
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        /* ===== PAGINATION ===== */
+        .pagination-wrap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 4px;
+            margin-top: 24px;
+        }
+
+        .pagination-wrap .page-btn {
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: white;
+            color: var(--dark);
+            font-size: 14px;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .pagination-wrap .page-btn:hover {
+            background: var(--light-gray);
+            border-color: var(--gray);
+        }
+
+        .pagination-wrap .page-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .pagination-wrap .page-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .pagination-wrap .page-info {
+            font-size: 14px;
+            color: var(--gray);
+            padding: 0 12px;
+        }
+
+        /* ===== TOAST ===== */
+        .toast-container {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toast-item {
+            padding: 12px 20px;
+            border-radius: var(--radius-sm);
+            color: white;
+            font-size: 14px;
+            animation: slideIn 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 280px;
+            box-shadow: var(--shadow-hover);
+        }
+
+        .toast-item.success { background: var(--secondary); }
+        .toast-item.error { background: var(--accent); }
+        .toast-item.info { background: var(--primary); }
+
+        .toast-item .close-toast {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.7);
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .toast-item .close-toast:hover { color: white; }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(60px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* ===== MOBILE BOTTOM NAV ===== */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid var(--border);
+            padding: 6px 0 env(safe-area-inset-bottom);
+            z-index: 999;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        @media (max-width: 992px) {
+            .mobile-nav { display: flex; }
+            body { padding-bottom: 72px; }
+        }
+
+        .mobile-nav a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            font-size: 10px;
+            color: var(--gray);
+            padding: 4px 12px;
+            transition: var(--transition);
+            border: none;
+            background: none;
+        }
+
+        .mobile-nav a i { font-size: 20px; }
+        .mobile-nav a.active { color: var(--primary); }
+        .mobile-nav a:hover { color: var(--primary); }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .stats-card .stats-number { font-size: 22px; }
+            .table-wrap table { font-size: 13px; }
+            .table-wrap table th, .table-wrap table td { padding: 10px 12px; }
+        }
+
+        @media (max-width: 576px) {
+            .header { padding: 0 12px; }
+            .header-brand { font-size: 16px; }
+            .header-brand img { height: 28px; }
+            .page-header h1 { font-size: 20px; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .action-btns { flex-direction: column; }
+            .action-btns .btn-sm { width: 100%; justify-content: center; }
+            .toast-item { min-width: auto; width: calc(100vw - 40px); }
+            .main-layout { padding: 0 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== SIDEBAR NAV ===== -->
+    <nav class="sidebar-nav">
+        <a href="/admin-portal/" class="nav-link" title="Dashboard">
+            <i class="fas fa-th-large"></i>
+            <span class="tooltip-text">Dashboard</span>
+        </a>
+        <a href="/properties/manage/" class="nav-link" title="Properties">
+            <i class="fas fa-home"></i>
+            <span class="tooltip-text">Properties</span>
+        </a>
+        <a href="/properties/bookings/" class="nav-link active" title="Bookings">
+            <i class="fas fa-calendar-check"></i>
+            <span class="tooltip-text">Bookings</span>
+        </a>
+        <a href="/admin-portal/jobs/" class="nav-link" title="Jobs">
+            <i class="fas fa-briefcase"></i>
+            <span class="tooltip-text">Jobs</span>
+        </a>
+        <a href="/admin-portal/applications/" class="nav-link" title="Applications">
+            <i class="fas fa-file-alt"></i>
+            <span class="tooltip-text">Applications</span>
+        </a>
+        <a href="/properties/analytics/" class="nav-link" title="Analytics">
+            <i class="fas fa-chart-bar"></i>
+            <span class="tooltip-text">Analytics</span>
+        </a>
+    </nav>
+
+    <!-- ===== HEADER ===== -->
+    <header class="header">
+        <a href="/" class="header-brand">
+            <img src="/static/images/logo.png" alt="OppoGlobe">
+            <span>OppoGlobe</span>
+        </a>
+
+        <div class="header-actions">
+            <span class="user-badge">
+                <i class="fas fa-building me-1"></i>Business
+            </span>
+
+            <a href="/messaging/" class="btn-icon" title="Messages">
+                <i class="fas fa-comment-dots"></i>
+            </a>
+
+            <div class="dropdown-container">
+                <div class="avatar business" onclick="toggleDropdown('profileMenu')">
+                    {{ user.username|first|upper }}
+                </div>
+                <div class="dropdown-menu-custom" id="profileMenu">
+                    <a href="/admin-portal/" class="dropdown-item"><i class="fas fa-th-large"></i> Dashboard</a>
+                    <a href="/properties/manage/" class="dropdown-item"><i class="fas fa-home"></i> Properties</a>
+                    <a href="/properties/add/" class="dropdown-item"><i class="fas fa-plus-circle"></i> Add Property</a>
+                    <a href="/properties/bookings/" class="dropdown-item"><i class="fas fa-calendar-check"></i> Bookings</a>
+                    <a href="/admin-portal/jobs/" class="dropdown-item"><i class="fas fa-briefcase"></i> Jobs</a>
+                    <a href="/admin-portal/applications/" class="dropdown-item"><i class="fas fa-file-alt"></i> Applications</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="/logout/" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+
+            <div class="dropdown-container">
+                <button class="btn-icon" onclick="toggleDropdown('moreMenu')">
+                    <i class="bi bi-three-dots-vertical"></i>
+                </button>
+                <div class="dropdown-menu-custom" id="moreMenu">
+                    <a href="/properties/analytics/" class="dropdown-item"><i class="fas fa-chart-line"></i> Analytics</a>
+                    <a href="/properties/reports/" class="dropdown-item"><i class="fas fa-file-pdf"></i> Reports</a>
+                    <a href="/admin-portal/settings/" class="dropdown-item"><i class="fas fa-cog"></i> Settings</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===== MAIN LAYOUT ===== -->
+    <div class="main-layout">
+
+        <!-- ===== PAGE HEADER ===== -->
+        <div class="page-header">
+            <div>
+                <h1>
+                    <i class="fas fa-calendar-check"></i>
+                    Manage Bookings
+                    <span class="subtitle">View and manage all property bookings</span>
+                </h1>
+            </div>
+            <a href="/properties/manage/" class="btn btn-primary" style="padding:10px 24px;border-radius:8px;background:var(--primary);color:white;font-weight:500;transition:var(--transition);display:inline-flex;align-items:center;gap:8px;border:none;">
+                <i class="fas fa-arrow-left"></i> Back to Properties
+            </a>
+        </div>
+
+        <!-- ===== STATS ===== -->
+        <div class="stats-grid">
+            <div class="stats-card">
+                <div class="stats-icon blue"><i class="fas fa-calendar-alt"></i></div>
+                <div class="stats-label">Total Bookings</div>
+                <div class="stats-number blue">{{ total_count|default:0 }}</div>
+            </div>
+            <div class="stats-card">
+                <div class="stats-icon orange"><i class="fas fa-clock"></i></div>
+                <div class="stats-label">Pending</div>
+                <div class="stats-number orange">{{ pending_count|default:0 }}</div>
+            </div>
+            <div class="stats-card">
+                <div class="stats-icon green"><i class="fas fa-check-circle"></i></div>
+                <div class="stats-label">Confirmed</div>
+                <div class="stats-number green">{{ confirmed_count|default:0 }}</div>
+            </div>
+            <div class="stats-card">
+                <div class="stats-icon purple"><i class="fas fa-check-double"></i></div>
+                <div class="stats-label">Completed</div>
+                <div class="stats-number purple">{{ completed_count|default:0 }}</div>
+            </div>
+        </div>
+
+        <!-- ===== FILTER BAR ===== -->
+        <div class="filter-bar">
+            <form method="get" class="d-flex flex-wrap w-100 gap-2 align-items-center" style="display:flex;flex-wrap:wrap;width:100%;gap:8px;align-items:center;">
+                <div class="filter-group">
+                    <select name="status" class="form-select" style="padding:8px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:white;min-width:140px;flex:1;">
+                        <option value="">All Statuses</option>
+                        {% for value, label in status_choices %}
+                        <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>
+                            {{ label|title }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <input type="date" name="date_from" class="form-control" placeholder="Date From" value="{{ request.GET.date_from }}" style="padding:8px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;flex:1;min-width:140px;">
+                    <input type="date" name="date_to" class="form-control" placeholder="Date To" value="{{ request.GET.date_to }}" style="padding:8px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;flex:1;min-width:140px;">
+                    <input type="text" name="search" class="form-control" placeholder="Search guest or property..." value="{{ request.GET.search }}" style="padding:8px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;flex:1;min-width:140px;">
+                </div>
+                <div class="d-flex gap-2" style="display:flex;gap:8px;">
+                    <button type="submit" class="btn-filter" style="padding:8px 20px;border-radius:8px;background:var(--primary);color:white;font-weight:500;border:none;display:flex;align-items:center;gap:6px;white-space:nowrap;transition:var(--transition);">
+                        <i class="fas fa-search"></i> Filter
+                    </button>
+                    {% if status_filter or request.GET.search or request.GET.date_from %}
+                    <a href="{% url 'property_bookings_manage' %}" class="btn-clear" style="padding:8px 16px;border-radius:8px;background:var(--light-gray);color:var(--gray);font-weight:500;border:none;display:flex;align-items:center;gap:6px;transition:var(--transition);">
+                        <i class="fas fa-times"></i> Clear
+                    </a>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+
+        <!-- ===== BOOKINGS TABLE ===== -->
+        <div class="table-wrap">
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Booking #</th>
+                            <th>Property</th>
+                            <th>Guest</th>
+                            <th>Dates</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th style="min-width: 180px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for booking in bookings %}
+                        <tr>
+                            <td>
+                                <strong>#{{ booking.id }}</strong>
+                                <br>
+                                <small class="text-muted">{{ booking.created_at|date:"M d, Y" }}</small>
+                            </td>
+                            <td>
+                                <strong>{{ booking.property.title|truncatechars:25 }}</strong>
+                                <br>
+                                <small class="text-muted">{{ booking.property.city }}</small>
+                                {% if booking.room %}
+                                <br>
+                                <small class="text-muted">Room: {{ booking.room.name }}</small>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <strong>{{ booking.guest.username }}</strong>
+                                <br>
+                                <small class="text-muted">{{ booking.guest.email }}</small>
+                            </td>
+                            <td>
+                                <div>{{ booking.check_in|date:"M d, Y" }}</div>
+                                <div><small>→ {{ booking.check_out|date:"M d, Y" }}</small></div>
+                                <div><small class="text-muted">{{ booking.get_duration }} nights</small></div>
+                            </td>
+                            <td>
+                                <strong>{{ booking.property.price_currency }} {{ booking.total_price|floatformat:0 }}</strong>
+                            </td>
+                            <td>
+                                <span class="status-badge {{ booking.status }}">
+                                    <i class="fas {% if booking.status == 'pending' %}fa-clock{% elif booking.status == 'confirmed' %}fa-check-circle{% elif booking.status == 'completed' %}fa-check-double{% elif booking.status == 'cancelled' %}fa-times-circle{% else %}fa-undo{% endif %}"></i>
+                                    {{ booking.get_status_display }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="action-btns">
+                                    <a href="{% url 'booking_detail' booking.id %}" class="btn-sm btn-outline" title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    {% if booking.status == 'pending' %}
+                                    <button class="btn-sm btn-success" onclick="updateBookingStatus({{ booking.id }}, 'confirmed')" title="Confirm">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    <button class="btn-sm btn-danger" onclick="updateBookingStatus({{ booking.id }}, 'cancelled')" title="Cancel">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                    {% endif %}
+                                    {% if booking.status == 'confirmed' %}
+                                    <button class="btn-sm btn-primary" onclick="updateBookingStatus({{ booking.id }}, 'completed')" title="Mark Complete">
+                                        <i class="fas fa-check-double"></i>
+                                    </button>
+                                    {% endif %}
+                                    <a href="mailto:{{ booking.guest.email }}" class="btn-sm btn-primary" title="Email Guest">
+                                        <i class="fas fa-envelope"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7">
+                                <div class="empty-state" style="border: none; padding: 40px 20px;">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <h4>No Bookings Found</h4>
+                                    <p>You don't have any bookings yet. When guests book your properties, they'll appear here.</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ===== PAGINATION ===== -->
+        {% if bookings.has_other_pages %}
+        <div class="pagination-wrap">
+            {% if bookings.has_previous %}
+            <a href="?page={{ bookings.previous_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" class="page-btn">
+                <i class="fas fa-chevron-left"></i> Previous
+            </a>
+            {% else %}
+            <span class="page-btn disabled"><i class="fas fa-chevron-left"></i> Previous</span>
+            {% endif %}
+
+            <span class="page-info">
+                Page {{ bookings.number }} of {{ bookings.paginator.num_pages }}
+            </span>
+
+            {% if bookings.has_next %}
+            <a href="?page={{ bookings.next_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" class="page-btn">
+                Next <i class="fas fa-chevron-right"></i>
+            </a>
+            {% else %}
+            <span class="page-btn disabled">Next <i class="fas fa-chevron-right"></i></span>
+            {% endif %}
+        </div>
+        {% endif %}
+
+    </div>
+
+    <!-- ===== MOBILE NAV ===== -->
+    <nav class="mobile-nav">
+        <a href="/admin-portal/">
+            <i class="fas fa-th-large"></i><span>Dashboard</span>
+        </a>
+        <a href="/properties/manage/">
+            <i class="fas fa-home"></i><span>Properties</span>
+        </a>
+        <a href="/properties/bookings/" class="active">
+            <i class="fas fa-calendar-check"></i><span>Bookings</span>
+        </a>
+        <a href="/admin-portal/jobs/">
+            <i class="fas fa-briefcase"></i><span>Jobs</span>
+        </a>
+        <a href="/profile/">
+            <i class="fas fa-user"></i><span>Profile</span>
+        </a>
+    </nav>
+
+    <!-- ===== TOAST CONTAINER ===== -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ===== TOGGLE DROPDOWN =====
+        function toggleDropdown(id) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            document.querySelectorAll('.dropdown-menu-custom.show').forEach(d => {
+                if (d.id !== id) d.classList.remove('show');
+            });
+            el.classList.toggle('show');
+        }
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.dropdown-container')) {
+                document.querySelectorAll('.dropdown-menu-custom.show').forEach(d => d.classList.remove('show'));
+            }
+        });
+
+        // ===== TOAST =====
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast-item ${type}`;
+            toast.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+                ${message}
+                <button class="close-toast" onclick="this.parentElement.remove()">&times;</button>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 5000);
+        }
+
+        // ===== GET CSRF TOKEN =====
+        function getCSRFToken() {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                const [name, value] = cookie.trim().split('=');
+                if (name === 'csrftoken') return decodeURIComponent(value);
+            }
+            return null;
+        }
+
+        // ===== UPDATE BOOKING STATUS =====
+        function updateBookingStatus(bookingId, status) {
+            const confirmMessage = {
+                'confirmed': 'Confirm this booking?',
+                'cancelled': 'Cancel this booking?',
+                'completed': 'Mark this booking as completed?'
+            };
+
+            if (!confirm(confirmMessage[status] || 'Update booking status?')) {
+                return;
+            }
+
+            const btn = event.target.closest('button');
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            btn.disabled = true;
+
+            fetch(`/api/bookings/${bookingId}/update-status/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken()
+                },
+                body: JSON.stringify({ status: status })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('Booking status updated successfully!', 'success');
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    btn.innerHTML = originalHtml;
+                    btn.disabled = false;
+                    showToast(data.error || 'Failed to update status', 'error');
+                }
+            })
+            .catch(() => {
+                btn.innerHTML = originalHtml;
+                btn.disabled = false;
+                showToast('Network error. Please try again.', 'error');
+            });
+        }
+    </script>
+
+  <script src="/static/hiring/js/notifications-global.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,3 @@
+-r requirements.txt
+# Optional CPU background-removal pipeline; provision the model before enabling.
+rembg[cpu]>=2.0.60,<3

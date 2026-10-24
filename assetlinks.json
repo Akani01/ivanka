@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "za.co.oppoglobe.twa",
+        "sha256_cert_fingerprints": ["20:80:FB:C2:1E:FF:8B:0E:D7:46:A9:28:2A:68:32:83:1C:7E:3E:9D:B7:B4:1C:B0:FA:FF:A3:28:14:72:08:59"]
+      }
+    }]

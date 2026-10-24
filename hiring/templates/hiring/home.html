@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Ivanka · Shop the market</title>
+
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1F6F5C">
+<link rel="apple-touch-icon" href="/static/hiring/icons/icon-192.png">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --ink:#16241F; --ink-soft:#5B6660; --ink-faint:#8B958F;
+  --paper:#F6F7F5; --surface:#FFFFFF;
+  --line:#E4E7E2; --line-soft:#EEF0ED;
+  --jade:#1F6F5C; --jade-deep:#154F41; --jade-wash:#E7F1EC;
+  --coral:#FF6B4A; --coral-deep:#E24E2F; --coral-wash:#FFEAE3;
+  --gold:#E8A93B; --gold-wash:#FBF0DA;
+  --danger:#D64545; --success:#2C9A5B;
+  --radius-sm:12px; --radius-md:16px; --radius-lg:22px; --radius-pill:999px;
+  --shadow-sm:0 1px 3px rgba(22,36,31,.06);
+  --shadow-md:0 8px 24px rgba(22,36,31,.08);
+  --shadow-lg:0 20px 48px rgba(22,36,31,.14);
+  --font-display:'Fraunces', Georgia, serif;
+  --font-body:'Inter', -apple-system, sans-serif;
+  --header-h:68px;
+  --bottom-h:calc(64px + env(safe-area-inset-bottom, 0px));
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth; -webkit-text-size-adjust:100%;}
+body{margin:0; background:var(--paper); color:var(--ink); font-family:var(--font-body);
+     font-size:15px; line-height:1.5; padding-top:var(--header-h);
+     padding-bottom:calc(var(--bottom-h) + 16px); min-height:100vh; overflow-x:hidden;}
+a{color:inherit; text-decoration:none;}
+img{max-width:100%; display:block;}
+h1,h2,h3,h4{font-family:var(--font-display); margin:0; letter-spacing:-.01em;}
+button{font-family:inherit;}
+:focus-visible{outline:2.5px solid var(--jade); outline-offset:2px; border-radius:6px;}
+
+/* ====== HEADER ====== */
+.iv-header{
+  position:fixed; inset:0 0 auto 0; height:var(--header-h);
+  background:rgba(255,255,255,.94); backdrop-filter:blur(18px) saturate(140%);
+  -webkit-backdrop-filter:blur(18px) saturate(140%);
+  border-bottom:1px solid var(--line); z-index:1000;
+}
+.iv-header-inner{
+  max-width:1360px; margin:0 auto; padding:0 16px; height:100%;
+  display:flex; align-items:center; gap:12px;
+}
+.iv-brand{display:flex; align-items:center; gap:8px; flex-shrink:0;}
+.iv-brand-mark{
+  width:36px; height:36px; border-radius:12px;
+  background:linear-gradient(135deg, var(--jade), var(--jade-deep));
+  display:flex; align-items:center; justify-content:center;
+  color:#fff; font-family:var(--font-display); font-weight:700; font-size:18px;
+}
+.iv-brand-word{
+  font-family:var(--font-display); font-weight:700; font-size:19px;
+  background:linear-gradient(90deg, var(--ink), var(--jade-deep));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.iv-search{flex:1; max-width:520px; position:relative;}
+.iv-search input{
+  width:100%; padding:10px 16px 10px 40px; border-radius:var(--radius-pill);
+  border:1px solid var(--line); background:var(--paper); font-size:14px;
+}
+.iv-search input:focus{
+  outline:none; border-color:var(--jade); background:#fff;
+  box-shadow:0 0 0 3px var(--jade-wash);
+}
+.iv-search i{position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--ink-faint); font-size:13px;}
+.iv-nav{display:flex; align-items:center; gap:4px;}
+.iv-nav a, .iv-nav button{
+  position:relative; width:40px; height:40px; border-radius:12px;
+  display:flex; align-items:center; justify-content:center;
+  color:var(--ink-soft); font-size:15px; background:transparent; border:none;
+  cursor:pointer; transition:background .15s, color .15s;
+}
+.iv-nav a:hover, .iv-nav button:hover{background:var(--jade-wash); color:var(--jade-deep);}
+.iv-nav a.active, .iv-nav button.active{background:var(--ink); color:#fff;}
+.iv-nav .iv-badge{
+  position:absolute; top:2px; right:2px; min-width:16px; height:16px;
+  padding:0 4px; border-radius:99px; background:var(--coral); color:#fff;
+  font-size:9px; font-weight:800; display:none; align-items:center;
+  justify-content:center; border:2px solid #fff;
+}
+.iv-nav .iv-badge.show{display:flex;}
+
+/* ====== MAIN ====== */
+.iv-main{max-width:1360px; margin:0 auto; padding:20px 16px;}
+.iv-view{display:none;}
+.iv-view.active{display:block; animation:fade .18s ease;}
+@keyframes fade{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;}}
+
+/* ====== HERO ====== */
+.iv-hero{
+  position:relative; border-radius:var(--radius-lg); overflow:hidden;
+  background:linear-gradient(135deg, var(--jade-deep), var(--jade));
+  color:#fff; padding:40px 32px; margin-bottom:24px; min-height:260px;
+  display:flex; flex-direction:column; justify-content:center;
+}
+.iv-hero::before{
+  content:''; position:absolute; inset:0;
+  background:
+    radial-gradient(circle at 85% 20%, rgba(232,169,59,.32), transparent 45%),
+    radial-gradient(circle at 15% 90%, rgba(255,107,74,.20), transparent 45%);
+  pointer-events:none;
+}
+.iv-hero-kicker{
+  font-size:11px; letter-spacing:.15em; text-transform:uppercase;
+  font-weight:800; color:rgba(255,255,255,.85); margin-bottom:10px;
+}
+.iv-hero h1{
+  font-size:clamp(26px, 5vw, 44px); line-height:1.08; margin-bottom:12px;
+  max-width:640px; color:#fff;
+}
+.iv-hero p{
+  font-size:clamp(13px, 1.8vw, 16px); line-height:1.55; max-width:540px;
+  color:rgba(255,255,255,.9); margin:0 0 20px;
+}
+.iv-hero-actions{display:flex; gap:10px; flex-wrap:wrap;}
+.iv-hero-btn{
+  padding:11px 22px; border-radius:var(--radius-pill); font-weight:700;
+  font-size:13.5px; border:none; cursor:pointer;
+}
+.iv-hero-btn-primary{background:#fff; color:var(--jade-deep);}
+.iv-hero-btn-primary:hover{background:var(--gold);}
+.iv-hero-btn-ghost{background:rgba(255,255,255,.14); color:#fff; border:1.5px solid rgba(255,255,255,.35);}
+.iv-hero-btn-ghost:hover{background:rgba(255,255,255,.22);}
+
+/* ====== CATEGORIES ====== */
+.iv-cats{
+  display:flex; gap:8px; overflow-x:auto; padding:2px 2px 14px;
+  scrollbar-width:none; margin-bottom:8px;
+}
+.iv-cats::-webkit-scrollbar{display:none;}
+.iv-cat{
+  flex-shrink:0; padding:8px 16px; border-radius:var(--radius-pill);
+  border:1px solid var(--line); background:var(--surface); color:var(--ink-soft);
+  font-size:12.5px; font-weight:600; cursor:pointer; white-space:nowrap;
+  transition:all .15s;
+}
+.iv-cat:hover{border-color:var(--jade); color:var(--jade-deep);}
+.iv-cat.active{background:var(--ink); color:#fff; border-color:var(--ink);}
+
+/* ====== SECTION HEAD ====== */
+.iv-sh{
+  display:flex; align-items:baseline; justify-content:space-between; gap:12px;
+  margin:6px 0 14px;
+}
+.iv-sh h2{font-size:clamp(18px,2.6vw,24px); font-weight:600;}
+.iv-sh a, .iv-sh button{
+  font-size:12.5px; font-weight:600; color:var(--jade-deep);
+  background:none; border:none; cursor:pointer; padding:0;
+}
+.iv-sh a:hover, .iv-sh button:hover{text-decoration:underline;}
+
+/* ====== PRODUCT GRID ====== */
+.iv-products{
+  display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr));
+  gap:14px; margin-bottom:28px;
+}
+.iv-product{
+  background:var(--surface); border:1px solid var(--line);
+  border-radius:var(--radius-md); overflow:hidden; cursor:pointer;
+  transition:transform .18s, box-shadow .18s;
+  display:flex; flex-direction:column;
+}
+.iv-product:hover{transform:translateY(-2px); box-shadow:var(--shadow-md);}
+.iv-product-img{
+  aspect-ratio:1; background:var(--jade-wash); overflow:hidden;
+  display:flex; align-items:center; justify-content:center; position:relative;
+}
+.iv-product-img img{width:100%; height:100%; object-fit:cover;}
+.iv-product-img i{font-size:40px; color:var(--jade); opacity:.22;}
+.iv-product-badge{
+  position:absolute; top:8px; right:8px; padding:2px 9px; border-radius:99px;
+  background:var(--gold); color:#3c2c05; font-size:9.5px; font-weight:800;
+  text-transform:uppercase; letter-spacing:.03em;
+}
+.iv-product-body{padding:11px 12px 12px; display:flex; flex-direction:column; gap:4px; flex:1;}
+.iv-product-title{
+  font-size:13px; font-weight:600; line-height:1.35;
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+}
+.iv-product-store{font-size:10.5px; color:var(--ink-faint);}
+.iv-product-price{
+  font-family:var(--font-display); font-weight:700; font-size:15.5px;
+  color:var(--coral-deep); margin-top:4px;
+}
+.iv-product-actions{display:flex; gap:5px; margin-top:auto; padding-top:8px;}
+.iv-product-actions button{
+  flex:1; padding:7px; border-radius:9px; border:none;
+  font-size:11.5px; font-weight:700; cursor:pointer;
+}
+.iv-btn-add{background:var(--jade); color:#fff;}
+.iv-btn-add:hover{background:var(--jade-deep);}
+.iv-btn-view{background:var(--paper); color:var(--ink); border:1px solid var(--line);}
+.iv-btn-view:hover{background:#fff;}
+
+/* ====== JOBS TEASER ====== */
+.iv-jobs-teaser{
+  padding:22px 22px; border-radius:var(--radius-lg);
+  background:linear-gradient(135deg, var(--coral-wash), var(--gold-wash));
+  border:1px solid var(--line);
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+  flex-wrap:wrap; margin-bottom:22px;
+}
+.iv-jobs-teaser h3{font-size:19px; margin-bottom:4px;}
+.iv-jobs-teaser p{font-size:13px; color:var(--ink-soft); margin:0;}
+.iv-jobs-teaser a{
+  padding:11px 20px; border-radius:var(--radius-pill); background:var(--ink);
+  color:#fff; font-weight:700; font-size:13px; white-space:nowrap; flex-shrink:0;
+}
+.iv-jobs-teaser a:hover{background:var(--jade-deep);}
+
+/* ====== QUICK GRID ====== */
+.iv-quick-grid{
+  display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr));
+  gap:10px; margin-bottom:22px;
+}
+.iv-quick{
+  padding:16px 14px; border-radius:var(--radius-md); background:var(--surface);
+  border:1px solid var(--line); display:flex; flex-direction:column; gap:8px;
+  transition:border-color .15s, box-shadow .15s; cursor:pointer; text-align:left;
+}
+.iv-quick:hover{border-color:var(--jade); box-shadow:var(--shadow-sm);}
+.iv-quick-icon{
+  width:38px; height:38px; border-radius:11px; display:flex;
+  align-items:center; justify-content:center;
+  background:var(--jade-wash); color:var(--jade-deep); font-size:15px;
+}
+.iv-quick h4{font-size:12.5px; font-family:var(--font-body); font-weight:700;}
+.iv-quick p{font-size:10.5px; color:var(--ink-faint); margin:0; line-height:1.35;}
+
+/* ====== EMPTY ====== */
+.iv-empty{
+  padding:56px 20px; text-align:center; background:var(--surface);
+  border:1px dashed var(--line); border-radius:var(--radius-md);
+}
+.iv-empty i{font-size:38px; color:var(--jade); opacity:.28; margin-bottom:12px; display:block;}
+.iv-empty h4{font-size:16px; margin-bottom:6px;}
+.iv-empty p{font-size:12.5px; color:var(--ink-faint); margin:0;}
+
+/* ====== CART ====== */
+.iv-cart-list{display:flex; flex-direction:column; gap:10px; margin-bottom:16px;}
+.iv-cart-item{
+  display:flex; gap:12px; padding:12px; background:var(--surface);
+  border:1px solid var(--line); border-radius:var(--radius-md); align-items:center;
+}
+.iv-cart-item-img{
+  width:64px; height:64px; border-radius:10px; overflow:hidden;
+  background:var(--jade-wash); flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+}
+.iv-cart-item-img img{width:100%; height:100%; object-fit:cover;}
+.iv-cart-item-img i{color:var(--jade); opacity:.35; font-size:22px;}
+.iv-cart-item-info{flex:1; min-width:0;}
+.iv-cart-item-info h4{font-size:13px; margin-bottom:2px; line-height:1.3;}
+.iv-cart-item-info p{font-size:11px; color:var(--ink-faint); margin:0;}
+.iv-cart-item-price{
+  font-family:var(--font-display); font-weight:700; font-size:14px;
+  color:var(--coral-deep); margin-top:4px;
+}
+.iv-cart-item-controls{
+  display:flex; flex-direction:column; align-items:flex-end; gap:6px;
+}
+.iv-qty{
+  display:flex; align-items:center; gap:0; border:1px solid var(--line);
+  border-radius:10px; overflow:hidden;
+}
+.iv-qty button{
+  width:28px; height:28px; background:var(--paper); border:none;
+  cursor:pointer; font-weight:700; font-size:12px; color:var(--ink);
+}
+.iv-qty button:hover{background:var(--jade-wash);}
+.iv-qty span{
+  min-width:26px; text-align:center; font-size:12px; font-weight:600;
+}
+.iv-cart-remove{
+  background:none; border:none; color:var(--danger); cursor:pointer;
+  font-size:11px; padding:2px 4px;
+}
+.iv-cart-summary{
+  padding:16px; background:var(--surface); border:1px solid var(--line);
+  border-radius:var(--radius-md); margin-bottom:14px;
+}
+.iv-cart-row{
+  display:flex; justify-content:space-between; font-size:13.5px;
+  padding:6px 0;
+}
+.iv-cart-row.total{
+  border-top:1px solid var(--line); margin-top:6px; padding-top:10px;
+  font-weight:700; font-size:15px;
+}
+.iv-cart-row.total strong{
+  font-family:var(--font-display); color:var(--coral-deep);
+}
+
+/* ====== CHECKOUT ====== */
+.iv-form-grid{display:grid; grid-template-columns:1fr; gap:12px; margin-bottom:16px;}
+.iv-form-field{display:flex; flex-direction:column; gap:5px;}
+.iv-form-field label{font-size:11.5px; font-weight:600; color:var(--ink-soft);}
+.iv-form-field input, .iv-form-field select, .iv-form-field textarea{
+  padding:10px 12px; border:1px solid var(--line); border-radius:10px;
+  font-size:13.5px; background:var(--paper);
+}
+.iv-form-field input:focus, .iv-form-field select:focus, .iv-form-field textarea:focus{
+  outline:none; border-color:var(--jade); background:#fff;
+  box-shadow:0 0 0 3px var(--jade-wash);
+}
+.iv-form-field.full{grid-column:1/-1;}
+
+/* ====== ORDERS ====== */
+.iv-order{
+  padding:14px; background:var(--surface); border:1px solid var(--line);
+  border-radius:var(--radius-md); margin-bottom:10px;
+  display:flex; flex-direction:column; gap:6px; cursor:pointer;
+  transition:border-color .15s;
+}
+.iv-order:hover{border-color:var(--jade);}
+.iv-order-head{display:flex; justify-content:space-between; align-items:center; gap:8px;}
+.iv-order-head h4{font-size:13.5px;}
+.iv-order-head span{
+  padding:2px 10px; border-radius:99px; font-size:10.5px; font-weight:700;
+  text-transform:uppercase;
+}
+.iv-order-status.pending{background:var(--gold-wash); color:#8b6516;}
+.iv-order-status.confirmed{background:var(--jade-wash); color:var(--jade-deep);}
+.iv-order-status.shipped{background:#e0eef8; color:#2E8BC0;}
+.iv-order-status.delivered{background:#dcf3e5; color:var(--success);}
+.iv-order-status.cancelled{background:#fbe1e1; color:var(--danger);}
+.iv-order-meta{font-size:11.5px; color:var(--ink-faint);}
+.iv-order-total{
+  font-family:var(--font-display); font-weight:700; color:var(--coral-deep);
+  font-size:14px;
+}
+
+/* ====== NOTIFICATIONS ====== */
+.iv-notif{
+  padding:12px 14px; background:var(--surface); border:1px solid var(--line);
+  border-radius:12px; margin-bottom:8px; display:flex; gap:12px;
+  align-items:flex-start;
+}
+.iv-notif.unread{border-left:3px solid var(--coral); background:#fffefb;}
+.iv-notif-icon{
+  width:34px; height:34px; border-radius:50%; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--jade-wash); color:var(--jade-deep); font-size:14px;
+}
+.iv-notif-body{flex:1; min-width:0;}
+.iv-notif-body h4{font-size:13px; margin-bottom:2px;}
+.iv-notif-body p{font-size:11.5px; color:var(--ink-soft); margin:0;}
+.iv-notif-body small{font-size:10.5px; color:var(--ink-faint); display:block; margin-top:4px;}
+
+/* ====== BOTTOM NAV (mobile) ====== */
+.iv-bottom-nav{
+  position:fixed; left:0; right:0; bottom:0; height:var(--bottom-h);
+  background:rgba(255,255,255,.96); backdrop-filter:blur(18px) saturate(140%);
+  -webkit-backdrop-filter:blur(18px) saturate(140%);
+  border-top:1px solid var(--line);
+  padding-bottom:env(safe-area-inset-bottom, 0px);
+  display:grid; grid-template-columns:repeat(5, 1fr);
+  z-index:999; padding-top:6px;
+}
+.iv-bnav-btn{
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:3px; background:none; border:none; color:var(--ink-faint);
+  font-size:10px; font-weight:600; cursor:pointer; padding:4px;
+  position:relative;
+}
+.iv-bnav-btn i{font-size:17px;}
+.iv-bnav-btn.active{color:var(--jade-deep);}
+.iv-bnav-btn.active::before{
+  content:''; position:absolute; top:0; left:50%; transform:translateX(-50%);
+  width:24px; height:2.5px; background:var(--jade); border-radius:0 0 3px 3px;
+}
+.iv-bnav-btn .iv-badge{
+  position:absolute; top:2px; right:calc(50% - 18px);
+  min-width:14px; height:14px; padding:0 3px; border-radius:99px;
+  background:var(--coral); color:#fff; font-size:8px; font-weight:800;
+  display:none; align-items:center; justify-content:center; border:2px solid #fff;
+}
+.iv-bnav-btn .iv-badge.show{display:flex;}
+
+/* ====== RESPONSIVE ====== */
+@media (min-width:760px){
+  .iv-bottom-nav{display:none;}
+  body{padding-bottom:24px;}
+  .iv-main{padding:24px 20px;}
+  .iv-products{grid-template-columns:repeat(auto-fill, minmax(220px, 1fr));}
+}
+@media (max-width:760px){
+  .iv-header-inner{padding:0 12px; gap:8px;}
+  .iv-brand-word{font-size:16px;}
+  .iv-brand-mark{width:32px; height:32px; font-size:16px;}
+  .iv-search input{font-size:16px; padding-top:9px; padding-bottom:9px;}
+  .iv-nav a, .iv-nav button{width:36px; height:36px; font-size:14px;}
+  .iv-nav .iv-nav-hide-sm{display:none;}
+  .iv-hero{padding:26px 20px; min-height:220px;}
+  .iv-hero h1{font-size:24px;}
+  .iv-hero p{font-size:13px;}
+  .iv-hero-btn{padding:9px 16px; font-size:12px;}
+  .iv-products{grid-template-columns:repeat(2, 1fr); gap:10px;}
+  .iv-product-body{padding:9px;}
+  .iv-product-title{font-size:12px;}
+  .iv-product-price{font-size:14px;}
+  .iv-quick-grid{grid-template-columns:repeat(2, 1fr);}
+  .iv-jobs-teaser{padding:16px; flex-direction:column; align-items:flex-start;}
+  .iv-jobs-teaser h3{font-size:16px;}
+  .iv-jobs-teaser a{width:100%; text-align:center;}
+  .iv-cart-item-img{width:56px; height:56px;}
+}
+@media (max-width:380px){
+  .iv-brand-word{display:none;}
+  .iv-products{grid-template-columns:1fr;}
+  .iv-quick-grid{grid-template-columns:1fr;}
+}
+
+/* ====== TOAST ====== */
+.iv-toast{
+  position:fixed; bottom:calc(var(--bottom-h) + 16px); left:50%;
+  transform:translateX(-50%); padding:11px 22px; border-radius:var(--radius-pill);
+  background:var(--jade); color:#fff; font-weight:600; font-size:13px;
+  z-index:9999; box-shadow:0 10px 30px rgba(0,0,0,.2);
+  animation:toastin .2s ease; max-width:90vw;
+}
+.iv-toast.error{background:var(--danger);}
+.iv-toast.info{background:#2E8BC0;}
+@keyframes toastin{from{transform:translate(-50%, 20px); opacity:0;} to{transform:translate(-50%, 0); opacity:1;}}
+
+/* ====== SPINNER ====== */
+.iv-spin{
+  display:inline-block; width:16px; height:16px;
+  border:2px solid var(--jade-wash); border-top-color:var(--jade);
+  border-radius:50%; animation:spin .7s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body data-user-logged-in="{% if user.is_authenticated %}true{% else %}false{% endif %}">
+
+<!-- ===== HEADER ===== -->
+<header class="iv-header">
+  <div class="iv-header-inner">
+    <a href="#" class="iv-brand" data-view="home" aria-label="Ivanka home">
+      <span class="iv-brand-mark">I</span>
+      <span class="iv-brand-word">Ivanka</span>
+    </a>
+
+    <form class="iv-search" id="searchForm" onsubmit="event.preventDefault(); ivSearch();">
+      <i class="fas fa-magnifying-glass"></i>
+      <input type="search" id="searchInput" placeholder="Search products…">
+    </form>
+
+    <nav class="iv-nav" aria-label="Main">
+      <button data-view="home" title="Home"><i class="fas fa-house"></i></button>
+      <button data-view="shop" title="Shop"><i class="fas fa-bag-shopping"></i></button>
+      <button data-view="wishlist" title="Wishlist" class="iv-nav-hide-sm"><i class="fas fa-heart"></i></button>
+      <button data-view="cart" title="Cart">
+        <i class="fas fa-cart-shopping"></i>
+        <span class="iv-badge" id="cartBadge">0</span>
+      </button>
+      <button data-view="orders" title="Orders" class="iv-nav-hide-sm"><i class="fas fa-receipt"></i></button>
+      <button data-view="notifications" title="Notifications">
+        <i class="fas fa-bell"></i>
+        <span class="iv-badge" id="notifBadge">0</span>
+      </button>
+      <button data-view="account" title="Account"><i class="fas fa-user"></i></button>
+    </nav>
+  </div>
+</header>
+
+<!-- ===== MAIN ===== -->
+<main class="iv-main">
+
+  <!-- ============ HOME ============ -->
+  <section class="iv-view active" data-view="home">
+    <div class="iv-hero">
+      <div class="iv-hero-kicker">Your neighbourhood, delivered</div>
+      <h1>Shop local. Support small. Get it delivered.</h1>
+      <p>Thousands of products from South African sellers. Pay securely with card or cash. Track every order from checkout to doorstep.</p>
+      <div class="iv-hero-actions">
+        <button class="iv-hero-btn iv-hero-btn-primary" data-view="shop">Start shopping <i class="fas fa-arrow-right"></i></button>
+        <button class="iv-hero-btn iv-hero-btn-ghost" data-view="seller">Become a seller</button>
+      </div>
+    </div>
+
+    <div class="iv-cats" id="homeCats">
+      <button class="iv-cat active" data-cat="">All</button>
+    </div>
+
+    <div class="iv-sh">
+      <h2>Featured products</h2>
+      <button data-view="shop">See all <i class="fas fa-arrow-right"></i></button>
+    </div>
+    <div class="iv-products" id="homeProducts">
+      <div class="iv-empty" style="grid-column:1/-1;"><i class="fas fa-spinner fa-spin"></i><h4>Loading products…</h4></div>
+    </div>
+
+    <div class="iv-jobs-teaser">
+      <div>
+        <h3>Looking for work too? <i class="fas fa-briefcase" style="color:var(--coral);"></i></h3>
+        <p>Browse jobs, apply to opportunities, and manage applications — all on OppoGlobe Hiring.</p>
+      </div>
+      <a href="/hiring/">Go to Hiring <i class="fas fa-arrow-right"></i></a>
+    </div>
+
+    <div class="iv-sh"><h2>Quick actions</h2></div>
+    <div class="iv-quick-grid">
+      <button class="iv-quick" data-view="shop"><div class="iv-quick-icon"><i class="fas fa-bag-shopping"></i></div><h4>Browse shop</h4><p>All products</p></button>
+      <button class="iv-quick" data-view="wishlist"><div class="iv-quick-icon" style="background:var(--coral-wash); color:var(--coral-deep);"><i class="fas fa-heart"></i></div><h4>Wishlist</h4><p>Saved for later</p></button>
+      <button class="iv-quick" data-view="cart"><div class="iv-quick-icon" style="background:var(--gold-wash); color:#8b6516;"><i class="fas fa-cart-shopping"></i></div><h4>Your cart</h4><p>Checkout</p></button>
+      <button class="iv-quick" data-view="orders"><div class="iv-quick-icon"><i class="fas fa-receipt"></i></div><h4>My orders</h4><p>Track purchases</p></button>
+      <button class="iv-quick" data-view="wallet"><div class="iv-quick-icon" style="background:var(--gold-wash); color:#8b6516;"><i class="fas fa-wallet"></i></div><h4>Wallet</h4><p>Payouts & balance</p></button>
+      <button class="iv-quick" data-view="seller"><div class="iv-quick-icon"><i class="fas fa-store"></i></div><h4>Seller hub</h4><p>Manage your store</p></button>
+      <button class="iv-quick" data-view="courier"><div class="iv-quick-icon" style="background:var(--coral-wash); color:var(--coral-deep);"><i class="fas fa-truck-fast"></i></div><h4>Courier</h4><p>Deliver & earn</p></button>
+      <a class="iv-quick" href="/hiring/"><div class="iv-quick-icon" style="background:var(--gold-wash); color:#8b6516;"><i class="fas fa-briefcase"></i></div><h4>Jobs</h4><p>Hiring on OppoGlobe</p></a>
+    </div>
+  </section>
+
+  <!-- ============ SHOP ============ -->
+  <section class="iv-view" data-view="shop">
+    <div class="iv-sh"><h2>All products</h2></div>
+    <div class="iv-cats" id="shopCats">
+      <button class="iv-cat active" data-cat="">All</button>
+    </div>
+    <div class="iv-products" id="shopProducts">
+      <div class="iv-empty" style="grid-column:1/-1;"><i class="fas fa-spinner fa-spin"></i><h4>Loading…</h4></div>
+    </div>
+  </section>
+
+  <!-- ============ CART ============ -->
+  <section class="iv-view" data-view="cart">
+    <div class="iv-sh"><h2>Your cart</h2></div>
+    <div id="cartContent">
+      <div class="iv-empty"><i class="fas fa-spinner fa-spin"></i><h4>Loading cart…</h4></div>
+    </div>
+  </section>
+
+  <!-- ============ CHECKOUT ============ -->
+  <section class="iv-view" data-view="checkout">
+    <div class="iv-sh"><h2>Checkout</h2></div>
+    <div id="checkoutContent">
+      <div class="iv-empty"><i class="fas fa-spinner fa-spin"></i><h4>Preparing checkout…</h4></div>
+    </div>
+  </section>
+
+  <!-- ============ ORDERS ============ -->
+  <section class="iv-view" data-view="orders">
+    <div class="iv-sh"><h2>My orders</h2></div>
+    <div id="ordersContent">
+      <div class="iv-empty"><i class="fas fa-spinner fa-spin"></i><h4>Loading orders…</h4></div>
+    </div>
+  </section>
+
+  <!-- ============ WISHLIST ============ -->
+  <section class="iv-view" data-view="wishlist">
+    <div class="iv-sh"><h2>Wishlist</h2></div>
+    <div class="iv-products" id="wishlistContent">
+      <div class="iv-empty" style="grid-column:1/-1;"><i class="fas fa-spinner fa-spin"></i><h4>Loading…</h4></div>
+    </div>
+  </section>
+
+  <!-- ============ WALLET ============ -->
+  <section class="iv-view" data-view="wallet">
+    <div class="iv-sh"><h2>Wallet</h2></div>
+    <div id="walletContent">
+      <div class="iv-empty"><i class="fas fa-spinner fa-spin"></i><h4>Loading wallet…</h4></div>
+    </div>
+  </section>
+
+  <!-- ============ SELLER ============ -->
+  <section class="iv-view" data-view="seller">
+    <div class="iv-sh"><h2>Seller dashboard</h2></div>
+    <div id="sellerContent">
+      <div class="iv-empty"><i class="fas fa-spinner fa-spin"></i><h4>Loading seller…</h4></div>
+    </div>
+  </section>
+
+  <!-- ============ NOTIFICATIONS ============ -->
+  <section class="iv-view" data-view="notifications">
+    <div class="iv-sh"><h2>Notifications</h2></div>
+    <div id="notifContent">
+      <div class="iv-empty"><i class="fas fa-spinner fa-spin"></i><h4>Loading…</h4></div>
+    </div>
+  </section>
+
+  <!-- ============ COURIER ============ -->
+  <section class="iv-view" data-view="courier">
+    <div class="iv-sh"><h2>Courier jobs</h2></div>
+    <div id="courierContent">
+      <div class="iv-empty"><i class="fas fa-spinner fa-spin"></i><h4>Loading…</h4></div>
+    </div>
+  </section>
+
+  <!-- ============ ACCOUNT ============ -->
+  <section class="iv-view" data-view="account">
+    <div class="iv-sh"><h2>My account</h2></div>
+    <div id="accountContent"></div>
+  </section>
+
+</main>
+
+<!-- ===== BOTTOM NAV (mobile) ===== -->
+<nav class="iv-bottom-nav" aria-label="Primary">
+  <button class="iv-bnav-btn active" data-view="home"><i class="fas fa-house"></i><span>Home</span></button>
+  <button class="iv-bnav-btn" data-view="shop"><i class="fas fa-bag-shopping"></i><span>Shop</span></button>
+  <button class="iv-bnav-btn" data-view="cart"><i class="fas fa-cart-shopping"></i><span>Cart</span><span class="iv-badge" id="cartBadgeMobile">0</span></button>
+  <button class="iv-bnav-btn" data-view="orders"><i class="fas fa-receipt"></i><span>Orders</span></button>
+  <button class="iv-bnav-btn" data-view="account"><i class="fas fa-user"></i><span>Me</span></button>
+</nav>
+
+<script>
+/* ============================================================
+   IVANKA ONE-PAGE APP
+   ============================================================ */
+(function(){
+  'use strict';
+
+  const API = '/api/store/';
+  const isLoggedIn = document.body.dataset.userLoggedIn === 'true';
+
+  // ---------- helpers ----------
+  function csrf(){
+    const m = document.cookie.match(/csrftoken=([^;]+)/);
+    return m ? decodeURIComponent(m[1]) : '';
+  }
+  function esc(s){
+    const d = document.createElement('div');
+    d.textContent = String(s == null ? '' : s);
+    return d.innerHTML;
+  }
+  function toast(msg, type){
+    const el = document.createElement('div');
+    el.className = 'iv-toast' + (type ? ' ' + type : '');
+    el.textContent = msg;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 2400);
+  }
+  function fmtPrice(v, currency){
+    const n = Number(v) || 0;
+    return (currency || 'ZAR') + ' ' + n.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+  }
+  async function api(path, opts){
+    opts = opts || {};
+    opts.headers = Object.assign({'Accept': 'application/json'}, opts.headers || {});
+    if (opts.method && opts.method !== 'GET'){
+      opts.headers['X-CSRFToken'] = csrf();
+      if (!opts.headers['Content-Type'] && !(opts.body instanceof FormData)){
+        opts.headers['Content-Type'] = 'application/json';
+      }
+    }
+    opts.credentials = 'same-origin';
+    const res = await fetch(API + path, opts);
+    let data = null;
+    try { data = await res.json(); } catch(e){}
+    if (!res.ok){
+      const msg = (data && (data.detail || data.error)) || ('HTTP ' + res.status);
+      throw new Error(msg);
+    }
+    return data;
+  }
+
+  // ---------- view switching ----------
+  const views = document.querySelectorAll('.iv-view');
+  const triggers = document.querySelectorAll('[data-view]');
+  const bnavBtns = document.querySelectorAll('.iv-bnav-btn');
+  const topBtns = document.querySelectorAll('.iv-nav button');
+
+  const viewLoaders = {
+    home: loadHome,
+    shop: loadShop,
+    cart: loadCart,
+    checkout: loadCheckout,
+    orders: loadOrders,
+    wishlist: loadWishlist,
+    wallet: loadWallet,
+    seller: loadSeller,
+    notifications: loadNotifications,
+    courier: loadCourier,
+    account: loadAccount
+  };
+
+  function showView(name){
+    if (!name || !viewLoaders[name]) name = 'home';
+    views.forEach(v => v.classList.toggle('active', v.dataset.view === name));
+    bnavBtns.forEach(b => b.classList.toggle('active', b.dataset.view === name));
+    topBtns.forEach(b => b.classList.toggle('active', b.dataset.view === name));
+    if (location.hash !== '#' + name) history.replaceState(null, '', '#' + name);
+    window.scrollTo({top: 0, behavior: 'instant'});
+    if (viewLoaders[name]) viewLoaders[name]();
+  }
+
+  triggers.forEach(t => {
+    t.addEventListener('click', e => {
+      if (t.closest('a') && t.tagName !== 'BUTTON') return; // let real links work
+      e.preventDefault();
+      showView(t.dataset.view);
+    });
+  });
+
+  window.addEventListener('hashchange', () => showView(location.hash.replace('#', '') || 'home'));
+
+  // ---------- search ----------
+  function ivSearch(){
+    showView('shop');
+    loadShop(document.getElementById('searchInput').value.trim());
+  }
+  window.ivSearch = ivSearch;
+
+  // ---------- categories ----------
+  let categoriesLoaded = false;
+  let cachedCategories = [];
+  async function loadCategories(){
+    if (categoriesLoaded) return cachedCategories;
+    try{
+      const cfg = await api('config/');
+      cachedCategories = cfg.categories || [];
+      categoriesLoaded = true;
+      return cachedCategories;
+    }catch(e){
+      return [];
+    }
+  }
+
+  function renderCategoryChips(boxId, currentCat, onPick){
+    const box = document.getElementById(boxId);
+    if (!box) return;
+    loadCategories().then(cats => {
+      const chips = ['<button class="iv-cat' + (!currentCat ? ' active' : '') + '" data-cat="">All</button>'];
+      cats.forEach(c => {
+        chips.push('<button class="iv-cat' + (String(currentCat) === String(c.id) ? ' active' : '') + '" data-cat="' + c.id + '">' + esc(c.name) + '</button>');
+      });
+      box.innerHTML = chips.join('');
+      box.querySelectorAll('.iv-cat').forEach(b => {
+        b.addEventListener('click', () => {
+          box.querySelectorAll('.iv-cat').forEach(x => x.classList.remove('active'));
+          b.classList.add('active');
+          onPick(b.dataset.cat || null);
+        });
+      });
+    });
+  }
+
+  // ---------- product card ----------
+  function productCardHTML(p){
+    const img = p.images && p.images[0] ? p.images[0].image : null;
+    const variant = p.variants && p.variants[0];
+    const price = variant ? (variant.display_price || variant.price) : 0;
+    return `<div class="iv-product" data-id="${p.id}">
+      <div class="iv-product-img">
+        ${img ? '<img src="' + esc(img) + '" alt="' + esc(p.name) + '" loading="lazy">' : '<i class="fas fa-image"></i>'}
+        ${p.featured ? '<span class="iv-product-badge">Featured</span>' : ''}
+      </div>
+      <div class="iv-product-body">
+        <div class="iv-product-title">${esc(p.name)}</div>
+        <div class="iv-product-store">${esc(p.store_name || '')}</div>
+        <div class="iv-product-price">${fmtPrice(price, p.currency)}</div>
+        <div class="iv-product-actions">
+          <button class="iv-btn-view" data-action="wishlist" data-product="${p.id}" title="Add to wishlist"><i class="far fa-heart"></i></button>
+          <button class="iv-btn-add" data-action="add" data-variant="${variant ? variant.id : ''}">Add</button>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  function wireProductCards(box){
+    box.querySelectorAll('.iv-product').forEach(card => {
+      card.addEventListener('click', e => {
+        if (e.target.closest('button')) return;
+        window.location.href = '/shop/' + card.dataset.id + '/';
+      });
+    });
+    box.querySelectorAll('[data-action="add"]').forEach(btn => {
+      btn.addEventListener('click', async e => {
+        e.stopPropagation();
+        if (!isLoggedIn){ toast('Please sign in first', 'info'); setTimeout(() => window.location.href = '/hiring/', 800); return; }
+        if (!btn.dataset.variant){ toast('No stock available', 'info'); return; }
+        btn.disabled = true; btn.textContent = '…';
+        try{
+          await api('cart/', {method: 'POST', body: JSON.stringify({variant: Number(btn.dataset.variant), quantity: 1})});
+          btn.textContent = '✓';
+          toast('Added to cart', 'success');
+          refreshBadges();
+          setTimeout(() => { btn.textContent = 'Add'; btn.disabled = false; }, 1200);
+        }catch(err){
+          toast(err.message, 'error');
+          btn.textContent = 'Add'; btn.disabled = false;
+        }
+      });
+    });
+    box.querySelectorAll('[data-action="wishlist"]').forEach(btn => {
+      btn.addEventListener('click', async e => {
+        e.stopPropagation();
+        if (!isLoggedIn){ toast('Please sign in first', 'info'); return; }
+        try{
+          const r = await api('wishlist/', {method: 'POST', body: JSON.stringify({product: Number(btn.dataset.product)})});
+          btn.innerHTML = r.saved ? '<i class="fas fa-heart" style="color:var(--coral);"></i>' : '<i class="far fa-heart"></i>';
+        }catch(err){ toast(err.message, 'error'); }
+      });
+    });
+  }
+
+  // ---------- HOME ----------
+  let homeLoaded = false;
+  async function loadHome(){
+    if (homeLoaded) return;
+    homeLoaded = true;
+    renderCategoryChips('homeCats', null, cat => loadHomeProducts(cat));
+    loadHomeProducts(null);
+  }
+  async function loadHomeProducts(catId){
+    const box = document.getElementById('homeProducts');
+    box.innerHTML = '<div class="iv-empty" style="grid-column:1/-1;"><i class="fas fa-spinner fa-spin"></i><h4>Loading…</h4></div>';
+    try{
+      const path = 'products/' + (catId ? '?category=' + encodeURIComponent(catId) : '');
+      const data = await api(path);
+      const list = Array.isArray(data) ? data : (data.results || []);
+      if (!list.length){
+        box.innerHTML = '<div class="iv-empty" style="grid-column:1/-1;"><i class="fas fa-bag-shopping"></i><h4>No products yet</h4><p>Sellers are still adding items.</p></div>';
+        return;
+      }
+      box.innerHTML = list.slice(0, 8).map(productCardHTML).join('');
+      wireProductCards(box);
+    }catch(e){
+      box.innerHTML = '<div class="iv-empty" style="grid-column:1/-1;"><i class="fas fa-triangle-exclamation"></i><h4>Could not load</h4></div>';
+    }
+  }
+
+  // ---------- SHOP ----------
+  let shopLoaded = false;
+  async function loadShop(query){
+    if (!shopLoaded){
+      shopLoaded = true;
+      renderCategoryChips('shopCats', null, cat => loadShopProducts(cat, query));
+    }
+    loadShopProducts(null, query);
+  }
+  async function loadShopProducts(catId, query){
+    const box = document.getElementById('shopProducts');
+    box.innerHTML = '<div class="iv-empty" style="grid-column:1/-1;"><i class="fas fa-spinner fa-spin"></i></div>';
+    try{
+      const params = new URLSearchParams();
+      if (catId) params.set('category', catId);
+      if (query) params.set('search', query);
+      const data = await api('products/?' + params.toString());
+      const list = Array.isArray(data) ? data : (data.results || []);
+      if (!list.length){
+        box.innerHTML = '<div class="iv-empty" style="grid-column:1/-1;"><i class="fas fa-magnifying-glass"></i><h4>No products found</h4><p>Try another search or category.</p></div>';
+        return;
+      }
+      box.innerHTML = list.map(productCardHTML).join('');
+      wireProductCards(box);
+    }catch(e){
+      box.innerHTML = '<div class="iv-empty" style="grid-column:1/-1;"><i class="fas fa-triangle-exclamation"></i><h4>Could not load</h4></div>';
+    }
+  }
+
+  // ---------- CART ----------
+  async function loadCart(){
+    const box = document.getElementById('cartContent');
+    if (!isLoggedIn){
+      box.innerHTML = '<div class="iv-empty"><i class="fas fa-user"></i><h4>Sign in to see your cart</h4><p>Your cart is saved to your account.</p><br><a href="/hiring/" class="iv-hero-btn iv-hero-btn-primary" style="display:inline-block; padding:10px 20px; background:var(--jade); color:#fff; border-radius:999px;">Sign in</a></div>';
+      return;
+    }
+    box.innerHTML = '<div class="iv-empty"><i class="fas fa-spinner fa-spin"></i><h4>Loading cart…</h4></div>';
+    try{
+      const data = await api('cart/');
+      const items = data.items || [];
+      if (!items.length){
+        box.innerHTML = '<div class="iv-empty"><i class="fas fa-cart-shopping"></i><h4>Your cart is empty</h4><p>Browse the shop and add something nice.</p><br><button class="iv-hero-btn iv-hero-btn-primary" data-view="shop" onclick="document.querySelector(\'[data-view=shop]\').click()" style="padding:10px 20px; background:var(--jade); color:#fff; border:none; border-radius:999px; cursor:pointer;">Browse shop</button></div>';
+        return;
+      }
+      box.innerHTML = `
+        <div class="iv-cart-list">${items.map(it => `
+          <div class="iv-cart-item" data-variant="${it.variant}">
+            <div class="iv-cart-item-img">${it.image ? '<img src="' + esc(it.image) + '" alt="">' : '<i class="fas fa-image"></i>'}</div>
+            <div class="iv-cart-item-info">
+              <h4>${esc(it.name)}</h4>
+              <p>${esc(it.label || '')} · ${esc(it.store_name || '')}</p>
+              <div class="iv-cart-item-price">${fmtPrice(it.price, data.currency)}</div>
+            </div>
+            <div class="iv-cart-item-controls">
+              <div class="iv-qty">
+                <button data-delta="-1">−</button>
+                <span>${it.quantity}</span>
+                <button data-delta="1">+</button>
+              </div>
+              <button class="iv-cart-remove">Remove</button>
+            </div>
+          </div>
+        `).join('')}</div>
+        <div class="iv-cart-summary">
+          <div class="iv-cart-row"><span>Subtotal</span><span>${fmtPrice(data.subtotal, data.currency)}</span></div>
+          <div class="iv-cart-row total"><span>Total</span><strong>${fmtPrice(data.subtotal, data.currency)}</strong></div>
+        </div>
+        <button class="iv-hero-btn iv-hero-btn-primary" id="goCheckout" style="width:100%; padding:13px;">Continue to checkout <i class="fas fa-arrow-right"></i></button>
+      `;
+      box.querySelectorAll('.iv-cart-item').forEach(row => {
+        const variantId = Number(row.dataset.variant);
+        row.querySelectorAll('.iv-qty button').forEach(b => {
+          b.addEventListener('click', () => updateQty(variantId, Number(b.dataset.delta)));
+        });
+        row.querySelector('.iv-cart-remove').addEventListener('click', () => updateQty(variantId, -999));
+      });
+      document.getElementById('goCheckout').addEventListener('click', () => showView('checkout'));
+    }catch(err){
+      box.innerHTML = '<div class="iv-empty"><i class="fas fa-triangle-exclamation"></i><h4>' + esc(err.message) + '</h4></div>';
+    }
+  }
+  async function updateQty(variantId, delta){
+    try{
+      // fetch current qty
+      const data = await api('cart/');
+      const item = (data.items || []).find(x => Number(x.variant) === variantId);
+      const current = item ? item.quantity : 0;
+      const next = delta === -999 ? 0 : Math.max(0, Math.min(99, current + delta));
+      await api('cart/', {method: 'POST', body: JSON.stringify({variant: variantId, quantity: next})});
+      loadCart();
+      refreshBadges();
+    }catch(err){ toast(err.message, 'error'); }
+  }
+
+  // ---------- CHECKOUT ----------
+  async function loadCheckout(){
+    const box = document.getElementById('checkoutContent');
+    if (!isLoggedIn){
+      box.innerHTML = '<div class="iv-empty"><i class="fas fa-user"></i><h4>Sign in to checkout</h4></div>';
+      return;
+    }
+    try{
+      const cart = await api('cart/');
+      const items = cart.items || [];
+      if (!items.length){
+        box.innerHTML = '<div class="iv-empty"><i class="fas fa-cart-shopping"></i><h4>Your cart is empty</h4></div>';
+        return;
+      }
+      // fetch addresses
+      let addresses = [];
+      try{
+        const r = await fetch(API + 'addresses/', {credentials: 'same-origin', headers: {'Accept': 'application/json'}});
+        if (r.ok){
+          const d = await r.json();
+          addresses = Array.isArray(d) ? d : (d.results || []);
+        }
+      }catch(e){}
+      box.innerHTML = `
+        <div class="iv-cart-summary">
+          ${items.map(it => `<div class="iv-cart-row"><span>${esc(it.name)} × ${it.quantity}</span><span>${fmtPrice(Number(it.price) * it.quantity, cart.currency)}</span></div>`).join('')}
+          <div class="iv-cart-row total"><span>Total</span><strong>${fmtPrice(cart.subtotal, cart.currency)}</strong></div>
+        </div>
+        <div class="iv-form-grid">
+          <div class="iv-form-field full">
+            <label>Delivery address</label>
+            <select id="coAddress">
+              <option value="">— select an address —</option>
+              ${addresses.map(a => `<option value="${a.id}">${esc(a.recipient)} · ${esc(a.line1)}, ${esc(a.city)}</option>`).join('')}
+            </select>
+          </div>
+          <div class="iv-form-field full">
+            <label>Or add a new address</label>
+            <input id="coNewAddr" placeholder="Recipient, street, city, province, postal code" />
+          </div>
+          <div class="iv-form-field">
+            <label>Coupon code</label>
+            <input id="coCoupon" placeholder="Optional">
+          </div>
+          <div class="iv-form-field">
+            <label>Currency</label>
+            <select id="coCurrency">
+              <option value="ZAR">ZAR</option>
+              <option value="USD">USD</option>
+              <option value="EUR">EUR</option>
+              <option value="GBP">GBP</option>
+            </select>
+          </div>
+        </div>
+        <button class="iv-hero-btn iv-hero-btn-primary" id="placeOrder" style="width:100%; padding:13px;">Place order</button>
+      `;
+      document.getElementById('placeOrder').addEventListener('click', async () => {
+        const addrId = document.getElementById('coAddress').value;
+        if (!addrId){ toast('Choose an address', 'error'); return; }
+        const idem = crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random();
+        const btn = document.getElementById('placeOrder');
+        btn.disabled = true; btn.innerHTML = '<span class="iv-spin"></span> Placing…';
+        try{
+          const d = await api('checkout/', {
+            method: 'POST',
+            body: JSON.stringify({
+              address_id: Number(addrId),
+              idempotency_key: idem,
+              currency: document.getElementById('coCurrency').value,
+              coupon: document.getElementById('coCoupon').value.trim()
+            })
+          });
+          toast('Order placed!', 'success');
+          refreshBadges();
+          showView('orders');
+        }catch(err){
+          toast(err.message, 'error');
+          btn.disabled = false; btn.innerHTML = 'Place order';
+        }
+      });
+    }catch(err){
+      box.innerHTML = '<div class="iv-empty"><i class="fas fa-triangle-exclamation"></i><h4>' + esc(err.message) + '</h4></div>';
+    }
+  }
+
+  // ---------- ORDERS ----------
+  async function loadOrders(){
+    const box = document.getElementById('ordersContent');
+    if (!isLoggedIn){
+      box.innerHTML = '<div class="iv-empty"><i class="fas fa-user"></i><h4>Sign in to see orders</h4></div>';
+      return;
+    }
+    box.innerHTML = '<div class="iv-empty"><i class="fas fa-spinner fa-spin"></i></div>';
+    try{
+      const r = await fetch(API + 'orders/', {credentials: 'same-origin', headers: {'Accept': 'application/json'}});
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const data = await r.json();
+      const orders = Array.isArray(data) ? data : (data.results || []);
+      if (!orders.length){
+        box.innerHTML = '<div class="iv-empty"><i class="fas fa-receipt"></i><h4>No orders yet</h4><p>Your orders will appear here after checkout.</p></div>';
+        return;
+      }
+      box.innerHTML = orders.map(o => `
+        <div class="iv-order" onclick="window.location.href='/hiring/'">
+          <div class="iv-order-head">
+            <h4>Order ${esc(String(o.id).slice(0, 8))}</h4>
+            <span class="iv-order-status ${esc(o.status)}">${esc(o.status)}</span>
+          </div>
+          <div class="iv-order-meta">${esc(o.store_name || '')} · ${new Date(o.created_at).toLocaleDateString()}</div>
+          <div class="iv-order-total">${fmtPrice(o.total, o.currency)}</div>
+        </div>
+      `).join('');
+    }catch(err){
+      box.innerHTML = '<div class="iv-empty"><i class="fas fa-triangle-exclamation"></i><h4>' + esc(err.message) + '</h4></div>';
+    }
+  }
+
+  // ---------- WISHLIST ----------
+  async function loadWishlist(){
+    const box = document.getElementById('wishlistContent');
+    if (!isLoggedIn){
+      box.innerHTML = '<div class="iv-empty" style="grid-column:1/-1;"><i class="fas fa-user"></i><h4>Sign in to see wishlist</h4></div>';
+      return;
+    }
+    box.innerHTML = '<div class="iv-empty" style="grid-column:1/-1;"><i class="fas fa-spinner fa-spin"></i></div>';
+    try{
+      const data = await api('wishlist/');
+      const list = Array.isArray(data) ? data : (data.results || []);
+      if (!list.length){
+        box.innerHTML = '<div class="iv-empty" style="grid-column:1/-1;"><i class="fas fa-heart"></i><h4>No saved products</h4><p>Tap the heart on a product to save it.</p></div>';
+        return;
+      }
+      box.innerHTML = list.map(productCardHTML).join('');
+      wireProductCards(box);
+    }catch(err){
+      box.innerHTML = '<div class="iv-empty" style="grid-column:1/-1;"><i class="fas fa-triangle-exclamation"></i><h4>' + esc(err.message) + '</h4></div>';
+    }
+  }
+
+  // ---------- WALLET ----------
+  async function loadWallet(){
+    const box = document.getElementById('walletContent');
+    if (!isLoggedIn){
+      box.innerHTML = '<div class="iv-empty"><i class="fas fa-user"></i><h4>Sign in to see wallet</h4></div>';
+      return;
+    }
+    box.innerHTML = '<div class="iv-empty"><i class="fas fa-spinner fa-spin"></i></div>';
+    try{
+      const data = await api('wallet/');
+      const balances = data.balances || [];
+      const entries = data.entries || [];
+      box.innerHTML = `
+        <div class="iv-cart-summary">
+          <h4 style="font-size:14px; margin:0 0 10px;">Balances</h4>
+          ${balances.length ? balances.map(b => `<div class="iv-cart-row"><span>${esc(b.currency)} · ${esc(b.kind)}</span><span>${fmtPrice(b.amount, b.currency)}</span></div>`).join('') : '<p style="font-size:12px; color:var(--ink-faint);">No balances yet.</p>'}
+        </div>
+        <div class="iv-cart-summary">
+          <h4 style="font-size:14px; margin:0 0 10px;">Recent entries</h4>
+          ${entries.length ? entries.map(e => `<div class="iv-cart-row"><span>${esc(e.kind)} · ${esc(String(e.order_id).slice(0, 8))}</span><span>${fmtPrice(e.amount, e.currency)}</span></div>`).join('') : '<p style="font-size:12px; color:var(--ink-faint);">No entries yet.</p>'}
+        </div>
+        <p style="font-size:11px; color:var(--ink-faint); padding:8px 4px;">${esc(data.note || '')}</p>
+      `;
+    }catch(err){
+      box.innerHTML = '<div class="iv-empty"><i class="fas fa-triangle-exclamation"></i><h4>' + esc(err.message) + '</h4></div>';
+    }
+  }
+
+  // ---------- SELLER ----------
+  async function loadSeller(){
+    const box = document.getElementById('sellerContent');
+    if (!isLoggedIn){
+      box.innerHTML = '<div class="iv-empty"><i class="fas fa-store"></i><h4>Sign in to sell</h4><p>Create an account and start selling on Ivanka.</p></div>';
+      return;
+    }
+    box.innerHTML = '<div class="iv-empty"><i class="fas fa-spinner fa-spin"></i></div>';
+    try{
+      const store = await api('seller/');
+      if (!store){
+        box.innerHTML = `
+          <div class="iv-empty"><i class="fas fa-store"></i><h4>You don't have a store yet</h4><p>Create your seller profile to start listing products.</p></div>
+          <div class="iv-form-grid" style="margin-top:16px;">
+            <div class="iv-form-field full"><label>Store name</label><input id="sellerName" placeholder="e.g. Akani's Crafts"></div>
+            <div class="iv-form-field full"><label>Address</label><input id="sellerAddr" placeholder="Your business address"></div>
+            <div class="iv-form-field full"><label>Description</label><textarea id="sellerDesc" rows="3" placeholder="What do you sell?"></textarea></div>
+          </div>
+          <button class="iv-hero-btn iv-hero-btn-primary" id="createStore" style="width:100%; padding:13px;">Create my store</button>
+        `;
+        document.getElementById('createStore').addEventListener('click', async () => {
+          const name = document.getElementById('sellerName').value.trim();
+          const addr = document.getElementById('sellerAddr').value.trim();
+          const desc = document.getElementById('sellerDesc').value.trim();
+          if (!name || !addr){ toast('Name and address required', 'error'); return; }
+          try{
+            await api('seller/', {method: 'POST', body: JSON.stringify({name, address: addr, description: desc})});
+            toast('Store created! Awaiting approval.', 'success');
+            loadSeller();
+          }catch(err){ toast(err.message, 'error'); }
+        });
+        return;
+      }
+      box.innerHTML = `
+        <div class="iv-cart-summary">
+          <div class="iv-cart-row"><span>Store</span><strong>${esc(store.name)}</strong></div>
+          <div class="iv-cart-row"><span>Status</span><span>${store.approved ? '✓ Approved' : '⏳ Pending approval'}</span></div>
+          <div class="iv-cart-row"><span>Commission</span><span>${store.commission_percent}%</span></div>
+          <div class="iv-cart-row"><span>Shipping fee</span><span>${fmtPrice(store.shipping_fee, 'ZAR')}</span></div>
+        </div>
+        <a href="/hiring/admin-portal/" class="iv-hero-btn iv-hero-btn-primary" style="display:block; width:100%; padding:13px; text-align:center;">Open full seller dashboard (Hiring portal) <i class="fas fa-arrow-right"></i></a>
+      `;
+    }catch(err){
+      box.innerHTML = '<div class="iv-empty"><i class="fas fa-triangle-exclamation"></i><h4>' + esc(err.message) + '</h4></div>';
+    }
+  }
+
+  // ---------- NOTIFICATIONS ----------
+  async function loadNotifications(){
+    const box = document.getElementById('notifContent');
+    if (!isLoggedIn){
+      box.innerHTML = '<div class="iv-empty"><i class="fas fa-bell"></i><h4>Sign in to see notifications</h4></div>';
+      return;
+    }
+    box.innerHTML = '<div class="iv-empty"><i class="fas fa-spinner fa-spin"></i></div>';
+    try{
+      const data = await api('notifications/');
+      const list = Array.isArray(data) ? data : (data.results || []);
+      if (!list.length){
+        box.innerHTML = '<div class="iv-empty"><i class="fas fa-bell"></i><h4>No notifications</h4><p>Order updates will show up here.</p></div>';
+        return;
+      }
+      box.innerHTML = list.map(n => `
+        <div class="iv-notif ${n.read ? '' : 'unread'}">
+          <div class="iv-notif-icon"><i class="fas fa-bell"></i></div>
+          <div class="iv-notif-body">
+            <h4>${esc(n.title)}</h4>
+            <small>${new Date(n.created_at).toLocaleString()}</small>
+          </div>
+        </div>
+      `).join('');
+    }catch(err){
+      box.innerHTML = '<div class="iv-empty"><i class="fas fa-triangle-exclamation"></i><h4>' + esc(err.message) + '</h4></div>';
+    }
+  }
+
+  // ---------- COURIER ----------
+  async function loadCourier(){
+    const box = document.getElementById('courierContent');
+    try{
+      const r = await fetch(API + 'courier/jobs/', {credentials: 'same-origin', headers: {'Accept': 'application/json'}});
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const data = await r.json();
+      const jobs = Array.isArray(data) ? data : (data.results || []);
+      if (!jobs.length){
+        box.innerHTML = '<div class="iv-empty"><i class="fas fa-truck-fast"></i><h4>No courier jobs available</h4><p>Check back soon.</p></div>';
+        return;
+      }
+      box.innerHTML = jobs.map(j => `
+        <div class="iv-order">
+          <div class="iv-order-head"><h4>${esc(j.title || 'Delivery job')}</h4><span class="iv-order-status pending">${esc(j.status || 'open')}</span></div>
+          <div class="iv-order-meta">${esc(j.city || '')} · ${esc(j.description || '')}</div>
+          <div class="iv-order-total">${fmtPrice(j.fee, 'ZAR')}</div>
+        </div>
+      `).join('');
+    }catch(err){
+      box.innerHTML = '<div class="iv-empty"><i class="fas fa-truck-fast"></i><h4>Courier jobs</h4><p>Sign up as a courier to start delivering.</p><br><a href="/hiring/" class="iv-hero-btn iv-hero-btn-primary" style="padding:10px 20px; background:var(--jade); color:#fff; border-radius:999px; display:inline-block;">Learn more</a></div>';
+    }
+  }
+
+  // ---------- ACCOUNT ----------
+  function loadAccount(){
+    const box = document.getElementById('accountContent');
+    if (!isLoggedIn){
+      box.innerHTML = `
+        <div class="iv-empty">
+          <i class="fas fa-user"></i>
+          <h4>Welcome to Ivanka</h4>
+          <p>Sign in or create an account to shop, sell, and track orders.</p>
+        </div>
+        <div style="display:flex; gap:10px; margin-top:16px;">
+          <a href="/hiring/" class="iv-hero-btn iv-hero-btn-primary" style="flex:1; text-align:center; padding:13px; background:var(--jade); color:#fff; border-radius:999px;">Sign in</a>
+          <a href="/hiring/" class="iv-hero-btn iv-hero-btn-ghost" style="flex:1; text-align:center; padding:13px; border:1.5px solid var(--jade); color:var(--jade-deep); border-radius:999px;">Register</a>
+        </div>
+      `;
+      return;
+    }
+    box.innerHTML = `
+      <div class="iv-cart-summary">
+        <div class="iv-cart-row"><span>Signed in as</span><strong>{{ user.username|default:'User' }}</strong></div>
+        <div class="iv-cart-row"><span>Type</span><span>{{ user.user_type|default:'customer' }}</span></div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(140px, 1fr)); gap:8px; margin-top:12px;">
+        <button class="iv-quick" data-view="orders"><div class="iv-quick-icon"><i class="fas fa-receipt"></i></div><h4>My orders</h4></button>
+        <button class="iv-quick" data-view="wishlist"><div class="iv-quick-icon" style="background:var(--coral-wash); color:var(--coral-deep);"><i class="fas fa-heart"></i></div><h4>Wishlist</h4></button>
+        <button class="iv-quick" data-view="wallet"><div class="iv-quick-icon" style="background:var(--gold-wash); color:#8b6516;"><i class="fas fa-wallet"></i></div><h4>Wallet</h4></button>
+        <button class="iv-quick" data-view="seller"><div class="iv-quick-icon"><i class="fas fa-store"></i></div><h4>Seller</h4></button>
+      </div>
+      <a href="/hiring/" class="iv-hero-btn iv-hero-btn-ghost" style="display:block; margin-top:16px; padding:12px; text-align:center; border:1.5px solid var(--jade); color:var(--jade-deep); border-radius:999px;">Account settings (Hiring)</a>
+      <a href="/hiring/logout/" style="display:block; margin-top:8px; padding:12px; text-align:center; color:var(--danger); font-weight:600; font-size:13px;">Sign out</a>
+    `;
+  }
+
+  // ---------- BADGES ----------
+  async function refreshBadges(){
+    try{
+      const cart = await api('cart/');
+      const count = (cart.items || []).reduce((s, i) => s + i.quantity, 0);
+      document.querySelectorAll('#cartBadge, #cartBadgeMobile').forEach(b => {
+        if (count > 0){ b.textContent = count; b.classList.add('show'); }
+        else b.classList.remove('show');
+      });
+    }catch(e){}
+    try{
+      const notifs = await api('notifications/');
+      const list = Array.isArray(notifs) ? notifs : (notifs.results || []);
+      const unread = list.filter(n => !n.read).length;
+      const b = document.getElementById('notifBadge');
+      if (b){
+        if (unread > 0){ b.textContent = unread; b.classList.add('show'); }
+        else b.classList.remove('show');
+      }
+    }catch(e){}
+  }
+
+  // ---------- INIT ----------
+  function boot(){
+    const initial = (location.hash || '#home').replace('#', '') || 'home';
+    showView(initial);
+    refreshBadges();
+    setInterval(refreshBadges, 60000);
+  }
+
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+
+  // expose for debugging
+  window.ivShow = showView;
+  window.ivToast = toast;
+})();
+</script>
+</body>
+</html>

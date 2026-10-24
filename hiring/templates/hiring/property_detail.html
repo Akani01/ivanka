@@ -1,0 +1,3542 @@
+<!-- hiring/templates/hiring/property_detail.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>OppoGlobe - {{ property.title }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --primary-dark: #1557b0;
+            --primary-light: #e8f0fe;
+            --secondary: #34a853;
+            --accent: #ea4335;
+            --warning: #fbbc04;
+            --dark: #202124;
+            --gray: #5f6368;
+            --light-gray: #f1f3f4;
+            --border: #dadce0;
+            --shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            --shadow-hover: 0 4px 12px rgba(0,0,0,0.15);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f8f9fa;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            padding-top: 72px;
+            padding-bottom: 40px;
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        button {
+            cursor: pointer;
+            border: none;
+            background: none;
+        }
+        img {
+            max-width: 100%;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 16px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        @media (min-width: 768px) {
+            .header {
+                padding: 0 24px;
+                height: 64px;
+            }
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--primary);
+        }
+
+        @media (min-width: 768px) {
+            .header-brand {
+                font-size: 20px;
+                gap: 10px;
+            }
+        }
+
+        .header-brand img {
+            height: 28px;
+        }
+        @media (min-width: 768px) {
+            .header-brand img {
+                height: 36px;
+            }
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        @media (min-width: 768px) {
+            .header-actions {
+                gap: 8px;
+            }
+        }
+
+        .header-actions .btn-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray);
+            transition: var(--transition);
+            position: relative;
+            font-size: 14px;
+        }
+
+        @media (min-width: 768px) {
+            .header-actions .btn-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+        }
+
+        .header-actions .btn-icon:hover {
+            background: var(--light-gray);
+            color: var(--primary);
+        }
+
+        .user-badge {
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
+            background: #fce8e6;
+            color: var(--accent);
+            display: none;
+        }
+
+        @media (min-width: 576px) {
+            .user-badge {
+                display: inline-block;
+                padding: 4px 14px;
+                font-size: 12px;
+            }
+        }
+
+        .avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 12px;
+            color: white;
+            background: linear-gradient(135deg, var(--primary), #4285f4);
+            cursor: pointer;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+
+        @media (min-width: 768px) {
+            .avatar {
+                width: 36px;
+                height: 36px;
+                font-size: 14px;
+            }
+        }
+
+        .avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(26, 115, 232, 0.3);
+        }
+
+        .avatar.business {
+            background: linear-gradient(135deg, #ea4335, #fbbc04);
+        }
+
+        /* ===== DROPDOWNS ===== */
+        .dropdown-container {
+            position: relative;
+        }
+
+        .dropdown-menu-custom {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            min-width: 200px;
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            padding: 8px 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px) scale(0.98);
+            transition: var(--transition);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+
+        @media (min-width: 768px) {
+            .dropdown-menu-custom {
+                min-width: 220px;
+            }
+        }
+
+        .dropdown-menu-custom.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+        .dropdown-menu-custom .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            color: var(--dark);
+            font-size: 13px;
+            transition: var(--transition);
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        @media (min-width: 768px) {
+            .dropdown-menu-custom .dropdown-item {
+                padding: 10px 20px;
+                font-size: 14px;
+                gap: 12px;
+            }
+        }
+
+        .dropdown-menu-custom .dropdown-item:hover {
+            background: var(--light-gray);
+            color: var(--primary);
+        }
+
+        .dropdown-menu-custom .dropdown-item i {
+            width: 18px;
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        @media (min-width: 768px) {
+            .dropdown-menu-custom .dropdown-item i {
+                width: 20px;
+                font-size: 16px;
+            }
+        }
+
+        .dropdown-menu-custom .dropdown-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 4px 12px;
+        }
+
+        @media (min-width: 768px) {
+            .dropdown-menu-custom .dropdown-divider {
+                margin: 6px 16px;
+            }
+        }
+
+        /* ===== SIDEBAR NAV ===== */
+        .sidebar-nav {
+            display: none;
+            position: fixed;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            background: white;
+            border-radius: 0 var(--radius) var(--radius) 0;
+            box-shadow: var(--shadow);
+            padding: 12px 8px;
+            flex-direction: column;
+            gap: 4px;
+            z-index: 900;
+            border: 1px solid var(--border);
+            border-left: none;
+        }
+
+        @media (min-width: 992px) {
+            .sidebar-nav {
+                display: flex !important;
+            }
+            body {
+                padding-left: 80px;
+            }
+        }
+
+        .sidebar-nav .nav-link {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray);
+            transition: var(--transition);
+            position: relative;
+            font-size: 16px;
+            text-decoration: none;
+        }
+
+        .sidebar-nav .nav-link:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .sidebar-nav .nav-link.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .sidebar-nav .nav-link .tooltip-text {
+            display: none;
+            position: absolute;
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--dark);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            white-space: nowrap;
+            margin-left: 8px;
+        }
+
+        .sidebar-nav .nav-link:hover .tooltip-text {
+            display: block;
+        }
+
+        /* ===== MAIN LAYOUT ===== */
+        .main-layout {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 12px;
+        }
+
+        @media (min-width: 768px) {
+            .main-layout {
+                padding: 0 20px;
+            }
+        }
+
+        /* ===== PAGE HEADER ===== */
+        .page-header {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        @media (min-width: 768px) {
+            .page-header {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 24px;
+                gap: 12px;
+            }
+        }
+
+        .page-header h1 {
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            margin: 0;
+        }
+
+        @media (min-width: 576px) {
+            .page-header h1 {
+                font-size: 20px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .page-header h1 {
+                font-size: 24px;
+                gap: 12px;
+            }
+        }
+
+        .page-header h1 i {
+            color: var(--primary);
+        }
+        .page-header .subtitle {
+            color: var(--gray);
+            font-size: 12px;
+            font-weight: 400;
+            display: block;
+            width: 100%;
+        }
+
+        @media (min-width: 768px) {
+            .page-header .subtitle {
+                font-size: 14px;
+                display: inline;
+                width: auto;
+            }
+        }
+
+        .page-header .btn-back {
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            background: var(--light-gray);
+            color: var(--dark);
+            font-size: 13px;
+            font-weight: 500;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: none;
+            width: 100%;
+            justify-content: center;
+        }
+
+        @media (min-width: 576px) {
+            .page-header .btn-back {
+                width: auto;
+            }
+        }
+
+        .page-header .btn-back:hover {
+            background: #e8eaed;
+        }
+
+/* ===== PROPERTY GALLERY — RESPONSIVE, NO-STRETCH ===== */
+        .property-gallery {
+            position: relative;
+            display: grid;
+            grid-template-columns: minmax(0, 2fr) minmax(220px, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+            width: 100%;
+            min-width: 0;
+        }
+
+        .property-gallery .main-image {
+            position: relative;
+            min-width: 0;
+            width: 100%;
+            height: clamp(280px, 42vw, 520px);
+            min-height: 280px;
+            background: #eef1f5;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            cursor: zoom-in;
+            isolation: isolate;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* A soft backdrop makes portrait/landscape photos look intentional
+           while the real image always keeps its original aspect ratio. */
+        .property-gallery .main-image::before {
+            content: "";
+            position: absolute;
+            inset: -12px;
+            background: var(--gallery-backdrop, #eef1f5);
+            filter: blur(22px);
+            transform: scale(1.06);
+            opacity: .55;
+            z-index: -1;
+        }
+
+        .property-gallery .main-image::after {
+            content: '\f065';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            right: 14px;
+            bottom: 14px;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,.55);
+            color: #fff;
+            font-size: 15px;
+            opacity: 0;
+            transform: scale(.9);
+            transition: var(--transition);
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        .property-gallery .main-image:hover::after,
+        .property-gallery .main-image:focus-visible::after {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .property-gallery .main-image img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain; /* IMPORTANT: never distort the source image */
+            object-position: center;
+            user-select: none;
+            -webkit-user-drag: none;
+            transition: opacity .2s ease, transform .35s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .property-gallery .main-image img.is-changing {
+            opacity: .25;
+        }
+
+        .gallery-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,.58);
+            color: #fff;
+            z-index: 4;
+            opacity: 0;
+            transition: var(--transition);
+            box-shadow: 0 4px 16px rgba(0,0,0,.18);
+        }
+
+        .main-image:hover .gallery-arrow,
+        .main-image:focus-within .gallery-arrow {
+            opacity: 1;
+        }
+
+        .gallery-arrow:hover {
+            background: rgba(0,0,0,.78);
+            transform: translateY(-50%) scale(1.06);
+        }
+
+        .gallery-arrow.prev { left: 14px; }
+        .gallery-arrow.next { right: 14px; }
+
+        .gallery-count {
+            position: absolute;
+            left: 14px;
+            bottom: 14px;
+            z-index: 4;
+            padding: 6px 11px;
+            border-radius: 999px;
+            background: rgba(0,0,0,.58);
+            color: #fff;
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            pointer-events: none;
+        }
+
+        .gallery-open-btn {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            z-index: 4;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,.88);
+            color: var(--dark);
+            box-shadow: 0 4px 16px rgba(0,0,0,.16);
+            transition: var(--transition);
+        }
+
+        .gallery-open-btn:hover {
+            background: #fff;
+            color: var(--primary);
+            transform: scale(1.06);
+        }
+
+        .property-gallery .thumb-grid {
+            min-width: 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-auto-rows: minmax(0, 1fr);
+            gap: 12px;
+        }
+
+        .property-gallery .thumb-grid .thumb {
+            position: relative;
+            min-width: 0;
+            min-height: 0;
+            background: #eef1f5;
+            border: 2px solid transparent;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .property-gallery .thumb-grid .thumb img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            transition: transform .3s ease, opacity .2s ease;
+        }
+
+        .property-gallery .thumb-grid .thumb:hover img {
+            transform: scale(1.04);
+        }
+
+        .property-gallery .thumb-grid .thumb:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .property-gallery .thumb-grid .thumb.active {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(26,115,232,.15);
+        }
+
+        .property-gallery .thumb-grid .thumb.more::after {
+            content: attr(data-more);
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,.52);
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .gallery-empty {
+            width: 100%;
+            height: 100%;
+            min-height: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 10px;
+            color: #9aa0a6;
+        }
+
+        /* ===== LIGHTBOX / FULLSCREEN VIEWER ===== */
+        .lightbox-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(7,10,16,.96);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity .2s ease;
+            padding: 12px;
+            touch-action: none;
+        }
+
+        .lightbox-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .lightbox-overlay .lightbox-close,
+        .lightbox-overlay .lightbox-nav {
+            position: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            background: rgba(255,255,255,.12);
+            border: 1px solid rgba(255,255,255,.12);
+            box-shadow: 0 8px 28px rgba(0,0,0,.25);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 10002;
+            transition: var(--transition);
+        }
+
+        .lightbox-overlay .lightbox-close {
+            top: max(14px, env(safe-area-inset-top));
+            right: max(14px, env(safe-area-inset-right));
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            font-size: 20px;
+        }
+
+        .lightbox-overlay .lightbox-nav {
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 20px;
+        }
+
+        .lightbox-overlay .lightbox-nav.prev { left: max(12px, env(safe-area-inset-left)); }
+        .lightbox-overlay .lightbox-nav.next { right: max(12px, env(safe-area-inset-right)); }
+
+        .lightbox-overlay .lightbox-close:hover,
+        .lightbox-overlay .lightbox-nav:hover {
+            background: rgba(255,255,255,.24);
+            transform: scale(1.06);
+        }
+
+        .lightbox-overlay .lightbox-nav:hover {
+            transform: translateY(-50%) scale(1.06);
+        }
+
+        .lightbox-overlay .lightbox-image-wrap {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 58px 64px 74px;
+            overflow: hidden;
+        }
+
+        .lightbox-overlay .lightbox-image-wrap img {
+            display: block;
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 6px;
+            box-shadow: 0 14px 55px rgba(0,0,0,.55);
+            user-select: none;
+            -webkit-user-drag: none;
+            transform-origin: center center;
+            transition: transform .18s ease, opacity .15s ease;
+            cursor: zoom-in;
+        }
+
+        .lightbox-overlay.zoomed .lightbox-image-wrap img {
+            max-width: none;
+            max-height: none;
+            cursor: zoom-out;
+        }
+
+        .lightbox-overlay .lightbox-counter {
+            position: fixed;
+            left: 50%;
+            bottom: max(14px, env(safe-area-inset-bottom));
+            transform: translateX(-50%);
+            color: rgba(255,255,255,.9);
+            font-size: 13px;
+            font-weight: 600;
+            background: rgba(0,0,0,.55);
+            padding: 7px 14px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,.1);
+            z-index: 10002;
+            pointer-events: none;
+        }
+
+        .lightbox-hint {
+            position: fixed;
+            top: max(16px, env(safe-area-inset-top));
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255,255,255,.62);
+            font-size: 11px;
+            pointer-events: none;
+            z-index: 10001;
+        }
+
+        @media (max-width: 767px) {
+            .property-gallery {
+                display: block;
+                margin-bottom: 18px;
+            }
+
+            .property-gallery .main-image {
+                height: clamp(250px, 68vw, 430px);
+                min-height: 250px;
+                border-radius: var(--radius);
+            }
+
+            .gallery-arrow {
+                opacity: 1;
+                width: 40px;
+                height: 40px;
+            }
+
+            .gallery-open-btn {
+                width: 38px;
+                height: 38px;
+                top: 10px;
+                right: 10px;
+            }
+
+            .gallery-count {
+                left: 10px;
+                bottom: 10px;
+            }
+
+            .property-gallery .thumb-grid {
+                display: flex;
+                overflow-x: auto;
+                gap: 8px;
+                padding: 8px 2px 2px;
+                scroll-snap-type: x mandatory;
+                scrollbar-width: thin;
+            }
+
+            .property-gallery .thumb-grid .thumb {
+                flex: 0 0 92px;
+                width: 92px;
+                height: 68px;
+                min-height: 68px;
+                scroll-snap-align: start;
+            }
+
+            .lightbox-overlay .lightbox-image-wrap {
+                padding: 60px 12px 70px;
+            }
+
+            .lightbox-overlay .lightbox-nav {
+                width: 42px;
+                height: 42px;
+                font-size: 16px;
+            }
+
+            .lightbox-overlay .lightbox-nav.prev { left: 8px; }
+            .lightbox-overlay .lightbox-nav.next { right: 8px; }
+
+            .lightbox-hint {
+                display: none;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .property-gallery .main-image {
+                height: 235px;
+                min-height: 235px;
+            }
+
+            .property-gallery .thumb-grid .thumb {
+                flex-basis: 78px;
+                width: 78px;
+                height: 58px;
+                min-height: 58px;
+            }
+        }
+
+        @media (min-width: 1400px) {
+            .property-gallery .main-image {
+                height: min(520px, 38vw);
+            }
+        }
+
+        /* ===== INFO CARDS ===== */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        @media (min-width: 768px) {
+            .info-grid {
+                gap: 20px;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .info-grid {
+                grid-template-columns: 2fr 1fr;
+                gap: 24px;
+            }
+        }
+
+        .info-card {
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        @media (min-width: 768px) {
+            .info-card {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .info-card {
+                padding: 24px;
+            }
+        }
+
+        .info-card .card-title {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        @media (min-width: 768px) {
+            .info-card .card-title {
+                font-size: 18px;
+                margin-bottom: 16px;
+                gap: 10px;
+            }
+        }
+
+        .info-card .card-title i {
+            color: var(--primary);
+        }
+
+        .info-card .info-row {
+            display: flex;
+            flex-direction: column;
+            padding: 6px 0;
+            border-bottom: 1px solid var(--border);
+            gap: 2px;
+        }
+
+        @media (min-width: 576px) {
+            .info-card .info-row {
+                flex-direction: row;
+                padding: 8px 0;
+                gap: 0;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .info-card .info-row {
+                padding: 10px 0;
+            }
+        }
+
+        .info-card .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-card .info-row .label {
+            font-weight: 500;
+            color: var(--gray);
+            font-size: 13px;
+        }
+
+        @media (min-width: 576px) {
+            .info-card .info-row .label {
+                width: 130px;
+                flex-shrink: 0;
+                font-size: 14px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .info-card .info-row .label {
+                width: 140px;
+            }
+        }
+
+        .info-card .info-row .value {
+            flex: 1;
+            font-size: 13px;
+            word-break: break-word;
+        }
+
+        @media (min-width: 576px) {
+            .info-card .info-row .value {
+                font-size: 14px;
+            }
+        }
+
+        .info-card .info-row .value .badge-status {
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        @media (min-width: 768px) {
+            .info-card .info-row .value .badge-status {
+                padding: 4px 14px;
+                font-size: 12px;
+            }
+        }
+
+        .badge-status.available {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        .badge-status.booked {
+            background: #fff3e0;
+            color: #e65100;
+        }
+        .badge-status.pending {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+        .badge-status.sold {
+            background: #fce4ec;
+            color: #c62828;
+        }
+        .badge-status.maintenance {
+            background: #f5f5f5;
+            color: #616161;
+        }
+
+        .feature-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 4px;
+        }
+
+        @media (min-width: 768px) {
+            .feature-tags {
+                gap: 8px;
+                margin-top: 8px;
+            }
+        }
+
+        .feature-tags .tag {
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: var(--primary-light);
+            color: var(--primary);
+            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            border: 1px solid rgba(26, 115, 232, 0.15);
+        }
+
+        @media (min-width: 768px) {
+            .feature-tags .tag {
+                padding: 5px 16px;
+                font-size: 13px;
+            }
+        }
+
+        .feature-tags .tag i {
+            font-size: 10px;
+            color: var(--secondary);
+        }
+
+        /* ===== LOCATION MAP ===== */
+        .location-map-container {
+            width: 100%;
+            height: 200px;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            background: var(--light-gray);
+            margin-top: 8px;
+            position: relative;
+        }
+
+        @media (min-width: 576px) {
+            .location-map-container {
+                height: 250px;
+                margin-top: 10px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .location-map-container {
+                height: 300px;
+                margin-top: 12px;
+            }
+        }
+
+        .location-map-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .location-map-container .map-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            background: var(--light-gray);
+            padding: 16px;
+            text-align: center;
+        }
+
+        .location-map-container .map-placeholder i {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        @media (min-width: 768px) {
+            .location-map-container .map-placeholder i {
+                font-size: 48px;
+                margin-bottom: 12px;
+            }
+        }
+
+        .location-map-container .map-placeholder .address-text {
+            font-size: 12px;
+            color: var(--gray);
+            max-width: 90%;
+        }
+
+        @media (min-width: 768px) {
+            .location-map-container .map-placeholder .address-text {
+                font-size: 14px;
+                max-width: 80%;
+            }
+        }
+
+        .map-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        @media (min-width: 576px) {
+            .map-actions {
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 10px;
+                margin-top: 12px;
+            }
+        }
+
+        .map-actions .btn-map {
+            padding: 6px 14px;
+            border-radius: var(--radius-sm);
+            font-weight: 500;
+            font-size: 12px;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            border: none;
+            width: 100%;
+        }
+
+        @media (min-width: 576px) {
+            .map-actions .btn-map {
+                width: auto;
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .map-actions .btn-map {
+                padding: 8px 20px;
+            }
+        }
+
+        .btn-map-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-map-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(26, 115, 232, 0.3);
+        }
+
+        .btn-map-secondary {
+            background: var(--light-gray);
+            color: var(--dark);
+        }
+
+        .btn-map-secondary:hover {
+            background: #e8eaed;
+        }
+
+        .btn-map-success {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-map-success:hover {
+            background: #2d9248;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(52, 168, 83, 0.3);
+        }
+
+        /* ===== SIDEBAR CARD ===== */
+        .sidebar-card {
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        @media (min-width: 768px) {
+            .sidebar-card {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .sidebar-card {
+                padding: 24px;
+                position: sticky;
+                top: 80px;
+            }
+        }
+
+        .sidebar-card .price {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        @media (min-width: 576px) {
+            .sidebar-card .price {
+                font-size: 28px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .sidebar-card .price {
+                font-size: 32px;
+            }
+        }
+
+        .sidebar-card .price small {
+            font-size: 14px;
+            font-weight: 400;
+            color: var(--gray);
+        }
+
+        @media (min-width: 768px) {
+            .sidebar-card .price small {
+                font-size: 16px;
+            }
+        }
+
+        .sidebar-card .action-btns {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        @media (min-width: 768px) {
+            .sidebar-card .action-btns {
+                gap: 10px;
+                margin-top: 16px;
+            }
+        }
+
+        .sidebar-card .action-btns .btn {
+            padding: 10px 16px;
+            border-radius: var(--radius-sm);
+            font-weight: 500;
+            font-size: 13px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            border: none;
+            width: 100%;
+        }
+
+        @media (min-width: 768px) {
+            .sidebar-card .action-btns .btn {
+                padding: 12px 20px;
+                font-size: 14px;
+                gap: 8px;
+            }
+        }
+
+        .sidebar-card .action-btns .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .sidebar-card .action-btns .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .sidebar-card .action-btns .btn-secondary {
+            background: var(--light-gray);
+            color: var(--dark);
+        }
+
+        .sidebar-card .action-btns .btn-secondary:hover {
+            background: #e8eaed;
+        }
+
+        .sidebar-card .action-btns .btn-danger {
+            background: var(--accent);
+            color: white;
+        }
+
+        .sidebar-card .action-btns .btn-danger:hover {
+            background: #d33426;
+        }
+
+        .sidebar-card .action-btns .btn-success {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .sidebar-card .action-btns .btn-success:hover {
+            background: #2d9248;
+        }
+
+        /* ============================================================
+           SOCIAL BUTTONS FOR AGENT CONTACT
+           ============================================================ */
+        .social-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 13px;
+            border: none;
+            font-weight: 500;
+            width: 100%;
+        }
+
+        .social-btn:hover {
+            transform: translateY(-2px);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .social-btn.message {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            font-weight: 600;
+            padding: 12px 16px;
+        }
+
+        .social-btn.message:hover {
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .social-btn.message .badge-internal {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 9px;
+            font-weight: 600;
+            margin-left: 4px;
+        }
+
+        .social-btn.whatsapp {
+            background: #25D366;
+        }
+        .social-btn.whatsapp:hover {
+            background: #1da851;
+        }
+
+        .social-btn.phone {
+            background: #34a853;
+        }
+        .social-btn.phone:hover {
+            background: #2d9248;
+        }
+
+        .social-btn.email {
+            background: #ea4335;
+        }
+        .social-btn.email:hover {
+            background: #d33426;
+        }
+
+        .social-btn.telegram {
+            background: #0088cc;
+        }
+        .social-btn.telegram:hover {
+            background: #006699;
+        }
+
+        .social-btn.linkedin {
+            background: #0A66C2;
+        }
+        .social-btn.linkedin:hover {
+            background: #0853a0;
+        }
+
+        .social-btn.facebook {
+            background: #1877F2;
+        }
+        .social-btn.facebook:hover {
+            background: #0d65d9;
+        }
+
+        .social-btn.instagram {
+            background: #E4405F;
+        }
+        .social-btn.instagram:hover {
+            background: #c1354a;
+        }
+
+        .social-btn.twitter {
+            background: #000000;
+        }
+        .social-btn.twitter:hover {
+            background: #1a1a1a;
+        }
+
+        .social-btn.youtube {
+            background: #FF0000;
+        }
+        .social-btn.youtube:hover {
+            background: #cc0000;
+        }
+
+        .social-btn.tiktok {
+            background: #000000;
+        }
+        .social-btn.tiktok:hover {
+            background: #1a1a1a;
+        }
+
+        .social-btn.property24 {
+            background: #ff6b00;
+        }
+        .social-btn.property24:hover {
+            background: #e55e00;
+        }
+
+        .social-btn.privateproperty {
+            background: #004d99;
+        }
+        .social-btn.privateproperty:hover {
+            background: #003366;
+        }
+
+        .social-btn.zillow {
+            background: #006aff;
+        }
+        .social-btn.zillow:hover {
+            background: #0055cc;
+        }
+
+        .social-btn.realtor {
+            background: #d2222a;
+        }
+        .social-btn.realtor:hover {
+            background: #b01a22;
+        }
+
+        .social-btn.signal {
+            background: #3a76f0;
+        }
+        .social-btn.signal:hover {
+            background: #2a5fd4;
+        }
+
+        .social-btn.viber {
+            background: #7360f2;
+        }
+        .social-btn.viber:hover {
+            background: #5a4ad4;
+        }
+
+        .social-btn.wechat {
+            background: #07C160;
+        }
+        .social-btn.wechat:hover {
+            background: #06a854;
+        }
+
+        .social-btn.line {
+            background: #00b900;
+        }
+        .social-btn.line:hover {
+            background: #009900;
+        }
+
+        .social-btn.kakao {
+            background: #FEE500;
+            color: #000;
+        }
+        .social-btn.kakao:hover {
+            background: #e6cc00;
+            color: #000;
+        }
+
+        .contact-methods {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .social-links-mini {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 6px;
+        }
+
+        .social-links-mini .social-btn {
+            width: auto;
+            padding: 4px 10px;
+            font-size: 11px;
+            min-width: auto;
+        }
+
+        .social-links-mini .social-btn i {
+            font-size: 13px;
+        }
+
+        @media (max-width: 576px) {
+            .social-btn {
+                font-size: 11px;
+                padding: 6px 10px;
+            }
+            .social-btn .badge-internal {
+                font-size: 7px;
+                padding: 1px 6px;
+            }
+            .social-links-mini .social-btn {
+                font-size: 10px;
+                padding: 3px 8px;
+            }
+            .social-links-mini .social-btn i {
+                font-size: 11px;
+            }
+        }
+
+        /* ===== QUICK STATS ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        @media (min-width: 576px) {
+            .stats-grid {
+                gap: 10px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .stats-grid {
+                gap: 12px;
+            }
+        }
+
+        .stats-grid .stat-item {
+            text-align: center;
+            padding: 10px;
+            background: var(--light-gray);
+            border-radius: var(--radius-sm);
+        }
+
+        @media (min-width: 768px) {
+            .stats-grid .stat-item {
+                padding: 12px;
+            }
+        }
+
+        .stats-grid .stat-item .stat-number {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        @media (min-width: 768px) {
+            .stats-grid .stat-item .stat-number {
+                font-size: 24px;
+            }
+        }
+
+        .stats-grid .stat-item .stat-label {
+            font-size: 11px;
+            color: var(--gray);
+        }
+
+        @media (min-width: 768px) {
+            .stats-grid .stat-item .stat-label {
+                font-size: 12px;
+            }
+        }
+
+        .stat-number.primary {
+            color: var(--primary);
+        }
+        .stat-number.success {
+            color: var(--secondary);
+        }
+        .stat-number.warning {
+            color: var(--warning);
+        }
+        .stat-number.accent {
+            color: var(--accent);
+        }
+
+        /* ===== TOAST ===== */
+        .toast-container {
+            position: fixed;
+            top: 72px;
+            right: 12px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-width: calc(100vw - 24px);
+        }
+
+        @media (min-width: 768px) {
+            .toast-container {
+                top: 80px;
+                right: 20px;
+                max-width: 400px;
+            }
+        }
+
+        .toast-item {
+            padding: 10px 16px;
+            border-radius: var(--radius-sm);
+            color: white;
+            font-size: 13px;
+            animation: slideIn 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: auto;
+            width: 100%;
+            box-shadow: var(--shadow-hover);
+        }
+
+        @media (min-width: 768px) {
+            .toast-item {
+                padding: 12px 20px;
+                font-size: 14px;
+                gap: 10px;
+                min-width: 280px;
+                width: auto;
+            }
+        }
+
+        .toast-item.success {
+            background: var(--secondary);
+        }
+        .toast-item.error {
+            background: var(--accent);
+        }
+        .toast-item.info {
+            background: var(--primary);
+        }
+        .toast-item.warning {
+            background: var(--warning);
+            color: var(--dark);
+        }
+
+        .toast-item .close-toast {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        @media (min-width: 768px) {
+            .toast-item .close-toast {
+                font-size: 18px;
+            }
+        }
+
+        .toast-item .close-toast:hover {
+            color: white;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(60px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* ===== MOBILE BOTTOM NAV ===== */
+        .mobile-nav {
+            display: flex;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid var(--border);
+            padding: 4px 0 env(safe-area-inset-bottom);
+            z-index: 999;
+            justify-content: space-around;
+            align-items: center;
+            height: 56px;
+        }
+
+        @media (min-width: 992px) {
+            .mobile-nav {
+                display: none;
+            }
+            body {
+                padding-bottom: 40px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .mobile-nav {
+                height: 60px;
+                padding: 6px 0;
+            }
+        }
+
+        .mobile-nav a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1px;
+            font-size: 9px;
+            color: var(--gray);
+            padding: 2px 8px;
+            transition: var(--transition);
+            border: none;
+            background: none;
+            text-decoration: none;
+        }
+
+        @media (min-width: 576px) {
+            .mobile-nav a {
+                font-size: 10px;
+                padding: 4px 12px;
+                gap: 2px;
+            }
+        }
+
+        .mobile-nav a i {
+            font-size: 18px;
+        }
+        @media (min-width: 576px) {
+            .mobile-nav a i {
+                font-size: 20px;
+            }
+        }
+        .mobile-nav a.active {
+            color: var(--primary);
+        }
+        .mobile-nav a:hover {
+            color: var(--primary);
+        }
+
+        /* ===== RESPONSIVE FINE-TUNING ===== */
+        @media (max-width: 575px) {
+            .header-brand span {
+                display: none;
+            }
+            .header-actions .btn-icon.hide-mobile {
+                display: none;
+            }
+            .avatar {
+                width: 26px;
+                height: 26px;
+                font-size: 10px;
+            }
+            .page-header h1 {
+                font-size: 16px;
+            }
+            .page-header .subtitle {
+                font-size: 11px;
+            }
+            .info-card .card-title {
+                font-size: 14px;
+            }
+            .sidebar-card .price {
+                font-size: 20px;
+            }
+            .sidebar-card .price small {
+                font-size: 12px;
+            }
+            .stats-grid .stat-item .stat-number {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .property-gallery .main-image {
+                height: 160px;
+            }
+            .property-gallery .thumb-grid .thumb {
+                height: 60px;
+            }
+            .info-card {
+                padding: 12px;
+            }
+            .sidebar-card {
+                padding: 12px;
+            }
+            .mobile-nav a {
+                font-size: 8px;
+                padding: 2px 4px;
+            }
+            .mobile-nav a i {
+                font-size: 14px;
+            }
+        }
+
+        @media (min-width: 768px) and (max-width: 991px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            .sidebar-card {
+                position: relative;
+                top: 0;
+            }
+        }
+
+
+        /* ===== 2026 PROPERTY DETAIL POLISH ===== */
+        .main-layout {
+            max-width: 1360px;
+            padding-left: clamp(12px, 2vw, 28px);
+            padding-right: clamp(12px, 2vw, 28px);
+        }
+
+        /* Critical gallery fix: gallery height is now bounded regardless of photo count. */
+        .property-gallery {
+            grid-template-columns: minmax(0, 1fr) 300px;
+            align-items: stretch;
+            height: clamp(390px, 46vw, 560px);
+            max-height: 560px;
+            min-height: 390px;
+            gap: 12px;
+            margin-bottom: 22px;
+        }
+
+        .property-gallery .main-image {
+            height: 100%;
+            min-height: 0;
+            border-radius: 18px;
+            box-shadow: 0 8px 28px rgba(32,33,36,.10);
+        }
+
+        .property-gallery .main-image img {
+            object-fit: cover;
+        }
+
+        .property-gallery .thumb-grid {
+            height: 100%;
+            min-height: 0;
+            grid-template-columns: 1fr 1fr;
+            grid-auto-rows: 132px;
+            align-content: start;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-right: 3px;
+            scrollbar-width: thin;
+            overscroll-behavior: contain;
+        }
+
+        .property-gallery .thumb-grid::-webkit-scrollbar { width: 6px; }
+        .property-gallery .thumb-grid::-webkit-scrollbar-thumb { background: #cfd3d8; border-radius: 999px; }
+        .property-gallery .thumb-grid .thumb { height: 132px; min-height: 132px; }
+
+        .info-grid {
+            align-items: start;
+            grid-template-columns: minmax(0, 1.65fr) minmax(310px, .75fr);
+            gap: 24px;
+        }
+
+        .info-card,
+        .sidebar-card {
+            border-radius: 16px;
+            box-shadow: 0 4px 18px rgba(32,33,36,.05);
+        }
+
+        .info-card .card-title,
+        .sidebar-card .card-title {
+            font-weight: 700;
+            letter-spacing: -.01em;
+        }
+
+        /* Cleaner action card */
+        .sidebar-card .action-btns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 9px;
+        }
+        .sidebar-card .action-btns .btn:first-child { grid-column: 1 / -1; }
+        .sidebar-card .action-btns .btn-danger {
+            background: #fff1f0;
+            color: #c5221f;
+            border: 1px solid #ffd4d1;
+        }
+        .sidebar-card .action-btns .btn-danger:hover {
+            background: #c5221f;
+            color: #fff;
+        }
+
+        /* Agent card redesign */
+        .agent-card {
+            overflow: hidden;
+            padding: 0;
+        }
+        .agent-card > .card-title {
+            margin: 0;
+            padding: 18px 20px 14px;
+            border-bottom: 1px solid var(--border);
+            background: linear-gradient(180deg, #fbfdff 0%, #fff 100%);
+        }
+        .agent-card > .d-flex {
+            margin: 0 !important;
+            padding: 18px 20px 12px;
+            align-items: center !important;
+        }
+        .agent-card > .d-flex > div:first-child {
+            width: 58px !important;
+            height: 58px !important;
+            border-radius: 16px !important;
+            font-size: 22px !important;
+            box-shadow: 0 6px 18px rgba(102,126,234,.24);
+        }
+        .agent-card > .d-flex > div:last-child { min-width: 0; }
+        .agent-card > .d-flex > div:last-child > div:first-child {
+            font-size: 16px !important;
+            font-weight: 750 !important;
+            line-height: 1.25;
+            overflow-wrap: anywhere;
+        }
+        .agent-card > div[style*="margin-bottom:10px"] { margin: 0 20px 10px !important; }
+        .agent-card > div[style*="max-height:60px"] {
+            margin: 0 20px 14px !important;
+            max-height: none !important;
+            padding: 11px 12px !important;
+            border-radius: 10px !important;
+        }
+        .agent-card > .mb-3 { margin: 0 20px 14px !important; }
+        .agent-card .contact-methods {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            padding: 0 20px 18px;
+        }
+        .agent-card .contact-methods .social-btn.message {
+            grid-column: 1 / -1;
+            min-height: 48px;
+            justify-content: center;
+            background: linear-gradient(135deg, #1a73e8, #6c63ff);
+        }
+        .agent-card .contact-methods .social-btn {
+            min-height: 42px;
+            border-radius: 10px;
+            padding: 9px 10px;
+            font-size: 12px;
+            box-shadow: none;
+        }
+        .agent-card .social-links-mini {
+            gap: 7px;
+            padding: 0 20px 16px;
+            margin-top: 0;
+        }
+        .agent-card .social-links-mini .social-btn {
+            width: 36px;
+            height: 36px;
+            min-height: 36px;
+            padding: 0;
+            border-radius: 50%;
+        }
+        .agent-card > div[style*="text-align:center"] {
+            padding: 14px 20px 18px !important;
+            margin: 0 !important;
+        }
+
+        /* Map: full interactive Google Maps surface + property overlay. */
+        .location-map-container {
+            height: 360px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,.35);
+        }
+        .detail-property-map {
+            width: 100%;
+            height: 100%;
+        }
+        .map-property-overlay {
+            position: absolute;
+            left: 14px;
+            right: 14px;
+            bottom: 14px;
+            z-index: 5;
+            display: grid;
+            grid-template-columns: 42px minmax(0,1fr) 38px;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: rgba(255,255,255,.94);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(218,220,224,.9);
+            border-radius: 13px;
+            box-shadow: 0 8px 28px rgba(0,0,0,.14);
+        }
+        .map-property-overlay-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 11px;
+            background: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .map-property-overlay-copy { min-width: 0; }
+        .map-property-overlay-copy strong,
+        .map-property-overlay-copy span {
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .map-property-overlay-copy strong { font-size: 13px; }
+        .map-property-overlay-copy span { font-size: 11px; color: var(--gray); margin-top: 1px; }
+        .map-property-overlay-link {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary);
+            color: #fff;
+        }
+        .map-property-overlay-link:hover { color:#fff; background:var(--primary-dark); }
+        .map-actions { display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); }
+        .map-actions .btn-map { width:100%; min-height:42px; }
+
+        @media (max-width: 1100px) {
+            .property-gallery { grid-template-columns: minmax(0,1fr) 250px; }
+            .property-gallery .thumb-grid { grid-template-columns: 1fr; grid-auto-rows: 105px; }
+            .property-gallery .thumb-grid .thumb { height:105px; min-height:105px; }
+            .info-grid { grid-template-columns: 1fr; }
+            .sidebar-card { position:relative !important; top:auto !important; }
+        }
+
+        @media (max-width: 767px) {
+            .main-layout { padding-left: 10px; padding-right:10px; }
+            .property-gallery {
+                display:block;
+                height:auto;
+                min-height:0;
+                max-height:none;
+                margin-bottom:16px;
+            }
+            .property-gallery .main-image {
+                height: min(68vw, 430px);
+                min-height: 250px;
+                border-radius:14px;
+            }
+            .property-gallery .thumb-grid {
+                display:flex;
+                height:auto;
+                overflow-x:auto;
+                overflow-y:hidden;
+                padding:8px 2px 3px;
+            }
+            .property-gallery .thumb-grid .thumb {
+                flex:0 0 96px;
+                width:96px;
+                height:70px;
+                min-height:70px;
+            }
+            .sidebar-card .action-btns { grid-template-columns:1fr; }
+            .sidebar-card .action-btns .btn:first-child { grid-column:auto; }
+            .agent-card .contact-methods { grid-template-columns:1fr 1fr; }
+            .map-actions { grid-template-columns:1fr; }
+            .location-map-container { height: 300px; }
+        }
+
+        @media (max-width: 480px) {
+            .agent-card .contact-methods { grid-template-columns:1fr; }
+            .agent-card .contact-methods .social-btn.message { grid-column:auto; }
+            .map-property-overlay { left:8px; right:8px; bottom:8px; }
+        }
+
+
+        /* ===== PURPOSE-AWARE DETAIL + BOOKING ===== */
+        .purpose-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:999px;background:#e8f5e9;color:#1f7a3f;font-size:11px;font-weight:700;margin-top:8px}
+        .purpose-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
+        .purpose-tile{padding:12px;border:1px solid var(--border);border-radius:12px;background:#fbfcfd;min-width:0}
+        .purpose-tile small{display:block;color:var(--gray);font-size:10px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+        .purpose-tile strong{display:block;font-size:13px;overflow-wrap:anywhere}
+        .price-context{display:block;margin-top:4px;color:var(--gray);font-size:12px;font-weight:500}
+        .customer-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:16px}
+        .customer-actions .btn{min-height:46px;border-radius:11px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:7px}
+        .customer-actions .btn-main{grid-column:1/-1;background:linear-gradient(135deg,#1a73e8,#1557b0);color:#fff}
+        .customer-actions .btn-chat{background:#eef4ff;color:#1557b0;border:1px solid #d8e6ff}
+        .customer-actions .btn-map-action{background:#eaf7ee;color:#24783c;border:1px solid #ccebd5}
+        .owner-tools-note{font-size:11px;color:var(--gray);margin-top:10px;line-height:1.5}
+        .booking-overlay{position:fixed;inset:0;background:rgba(10,15,25,.58);z-index:10050;display:none;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+        .booking-overlay.show{display:flex}
+        .booking-sheet{width:min(560px,100%);max-height:min(88vh,760px);overflow:auto;background:#fff;border-radius:22px;box-shadow:0 24px 80px rgba(0,0,0,.28);padding:20px}
+        .booking-sheet-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:16px}
+        .booking-sheet-head h3{font-size:19px;font-weight:800;margin:0 0 4px}
+        .booking-sheet-head p{font-size:12px;color:var(--gray);margin:0}
+        .booking-close{width:38px;height:38px;border-radius:50%;background:var(--light-gray);display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+        .booking-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+        .booking-field{display:flex;flex-direction:column;gap:6px}
+        .booking-field.full{grid-column:1/-1}
+        .booking-field label{font-size:11px;font-weight:700;color:var(--gray)}
+        .booking-field input,.booking-field textarea{width:100%;border:1px solid var(--border);border-radius:11px;padding:11px 12px;font-size:13px;outline:none;background:#fff}
+        .booking-field input:focus,.booking-field textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(26,115,232,.1)}
+        .payment-choice{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
+        .pay-choice{border:1px solid var(--border);border-radius:13px;padding:13px;text-align:left;background:#fff;transition:.2s ease}
+        .pay-choice.active{border-color:var(--primary);box-shadow:0 0 0 3px rgba(26,115,232,.1);background:#f8fbff}
+        .pay-choice strong{display:flex;align-items:center;gap:7px;font-size:13px}
+        .pay-choice span{display:block;font-size:10.5px;color:var(--gray);margin-top:4px;line-height:1.4}
+        .booking-summary{margin-top:14px;padding:13px;border-radius:13px;background:#f7f9fb;border:1px solid var(--border);font-size:12px}
+        .booking-summary-row{display:flex;justify-content:space-between;gap:12px;margin:5px 0}
+        .booking-summary-row.total{padding-top:9px;margin-top:9px;border-top:1px solid var(--border);font-weight:800;font-size:14px}
+        .booking-submit{width:100%;min-height:48px;margin-top:14px;border-radius:12px;background:linear-gradient(135deg,#1a73e8,#1557b0);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px}
+        .booking-note{margin-top:9px;font-size:10.5px;color:var(--gray);text-align:center;line-height:1.45}
+        @media(max-width:575px){.purpose-grid,.booking-form-grid,.payment-choice,.customer-actions{grid-template-columns:1fr}.booking-field.full,.customer-actions .btn-main{grid-column:auto}.booking-sheet{padding:16px;border-radius:18px}}
+
+    </style>
+</head>
+<body data-user-logged-in="{% if user.is_authenticated %}true{% else %}false{% endif %}"
+data-user-id="{% if user.is_authenticated %}{{ user.id }}{% else %}0{% endif %}"
+data-username="{% if user.is_authenticated %}{{ user.username }}{% else %}{% endif %}"
+data-property-id="{{ property.id }}"
+data-owner-id="{% if property.owner %}{{ property.owner.id }}{% else %}0{% endif %}"
+data-agent-profile-id="{% if agent_profile %}{{ agent_profile.id }}{% else %}0{% endif %}">
+
+    <!-- ===== SIDEBAR NAV ===== -->
+    <nav class="sidebar-nav">
+        <a href="/admin-portal/" class="nav-link" title="Dashboard">
+            <i class="fas fa-th-large"></i>
+            <span class="tooltip-text">Dashboard</span>
+        </a>
+        <a href="/properties/manage/" class="nav-link" title="Properties">
+            <i class="fas fa-home"></i>
+            <span class="tooltip-text">Properties</span>
+        </a>
+        <a href="/properties/add/" class="nav-link" title="Add Property">
+            <i class="fas fa-plus-circle"></i>
+            <span class="tooltip-text">Add Property</span>
+        </a>
+        <a href="/properties/bookings/" class="nav-link" title="Bookings">
+            <i class="fas fa-calendar-check"></i>
+            <span class="tooltip-text">Bookings</span>
+        </a>
+        <a href="/properties/analytics/" class="nav-link" title="Analytics">
+            <i class="fas fa-chart-bar"></i>
+            <span class="tooltip-text">Analytics</span>
+        </a>
+        <a href="/property-map/?property={{ property.id }}" class="nav-link" title="Map View">
+            <i class="fas fa-map"></i>
+            <span class="tooltip-text">Map View</span>
+        </a>
+    </nav>
+
+    <!-- ===== HEADER ===== -->
+    <header class="header">
+        <a href="/" class="header-brand">
+            <img src="/static/images/logo.png" alt="OppoGlobe" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\'font-weight:700;color:#191919;font-size:20px;font-family:Space Grotesk;\'>OppoGlobe</span>'">
+            <span>OppoGlobe</span>
+        </a>
+
+        <div class="header-actions">
+            <span class="user-badge"><i class="fas fa-building me-1"></i>Business</span>
+            <a href="/messaging/" class="btn-icon hide-mobile"><i class="fas fa-comment-dots"></i></a>
+
+            <div class="dropdown-container">
+                <div class="avatar business" onclick="toggleDropdown('profileMenu')">
+                    {{ user.username|first|upper }}
+                </div>
+                <div class="dropdown-menu-custom" id="profileMenu">
+                    <a href="/admin-portal/" class="dropdown-item"><i class="fas fa-th-large"></i> Dashboard</a>
+                    <a href="/properties/manage/" class="dropdown-item"><i class="fas fa-home"></i> Properties</a>
+                    <a href="/properties/add/" class="dropdown-item"><i class="fas fa-plus-circle"></i> Add Property</a>
+                    <a href="/properties/bookings/" class="dropdown-item"><i class="fas fa-calendar-check"></i> Bookings</a>
+                    <a href="/properties/analytics/" class="dropdown-item"><i class="fas fa-chart-bar"></i> Analytics</a>
+                    <a href="/property-map/" class="dropdown-item"><i class="fas fa-map"></i> Map View</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="/logout/" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+
+            <div class="dropdown-container">
+                <button class="btn-icon" onclick="toggleDropdown('moreMenu')">
+                    <i class="bi bi-three-dots-vertical"></i>
+                </button>
+                <div class="dropdown-menu-custom" id="moreMenu">
+                    <a href="/properties/reports/" class="dropdown-item"><i class="fas fa-file-pdf"></i> Reports</a>
+                    <a href="/admin-portal/settings/" class="dropdown-item"><i class="fas fa-cog"></i> Settings</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="main-layout">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div>
+                <h1>
+                    <i class="fas fa-home"></i>
+                    {{ property.title }}
+                    <span class="subtitle">Property Details</span>
+                </h1>
+            </div>
+            <a href="/properties/manage/" class="btn-back">
+                <i class="fas fa-arrow-left"></i> Back
+            </a>
+        </div>
+
+        <!-- ===== INTERACTIVE PROPERTY GALLERY ===== -->
+        <section class="property-gallery"
+                 id="propertyGallery"
+                 aria-label="Property photo gallery">
+
+            <div class="main-image"
+                 id="galleryMain"
+                 tabindex="0"
+                 role="button"
+                 aria-label="Open property photos">
+
+                {% if main_image %}
+                <img src="{{ main_image }}"
+                     alt="{{ property.title }}"
+                     id="galleryMainImg"
+                     decoding="async"
+                     fetchpriority="high">
+                {% else %}
+                <div class="gallery-empty">
+                    <i class="fas fa-home" style="font-size:48px;"></i>
+                    <span>No property image available</span>
+                </div>
+                {% endif %}
+
+                <button type="button"
+                        class="gallery-arrow prev"
+                        id="galleryPrev"
+                        aria-label="Previous property photo">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+
+                <button type="button"
+                        class="gallery-arrow next"
+                        id="galleryNext"
+                        aria-label="Next property photo">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+
+                <button type="button"
+                        class="gallery-open-btn"
+                        id="galleryOpen"
+                        aria-label="Open photos fullscreen"
+                        title="View fullscreen">
+                    <i class="fas fa-expand"></i>
+                </button>
+
+                <span class="gallery-count" id="galleryCount" aria-live="polite">1 / 1</span>
+            </div>
+
+            <div class="thumb-grid" id="thumbGrid" aria-label="Property photo thumbnails">
+                {% for image in property_images %}
+                <button type="button"
+                        class="thumb{% if forloop.first %} active{% endif %}"
+                        data-index="{{ forloop.counter0 }}"
+                        aria-label="View property photo {{ forloop.counter }}">
+                    <img src="{{ image }}"
+                         alt="Property photo {{ forloop.counter }}"
+                         loading="lazy"
+                         decoding="async">
+                </button>
+                {% empty %}
+                <div class="thumb"
+                     aria-hidden="true"
+                     style="color:#9aa0a6;">
+                    <i class="fas fa-image"></i>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Info Grid -->
+        <div class="info-grid">
+
+            <!-- Left Column -->
+            <div>
+
+                <!-- Description -->
+                <div class="info-card">
+                    <div class="card-title"><i class="fas fa-align-left"></i> Description</div>
+                    <p style="line-height:1.8;color:var(--gray);font-size:14px;">{{ property.description|default:"No description provided." }}</p>
+                </div>
+
+                <!-- Property Details — purpose-aware -->
+                <div class="info-card">
+                    <div class="card-title"><i class="fas fa-info-circle"></i> Property Details</div>
+
+                    <span class="purpose-chip"><i class="fas fa-layer-group"></i> {{ property.get_purpose_display|default:"Property listing" }}</span>
+
+                    <div class="info-row">
+                        <span class="label">Property Type</span>
+                        <span class="value">{{ property.property_type.name|default:"Not specified" }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Purpose</span>
+                        <span class="value">{{ property.get_purpose_display|default:"Not specified" }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Listing Type</span>
+                        <span class="value">{{ property.get_listing_type_display|default:"Not specified" }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Status</span>
+                        <span class="value"><span class="badge-status {{ property.status }}">{{ property.get_status_display }}</span></span>
+                    </div>
+
+                    {% if property.is_short_stay %}
+                    <div class="info-row">
+                        <span class="label">Minimum Stay</span>
+                        <span class="value">{{ property.minimum_stay|default:"1" }} day(s)</span>
+                    </div>
+                    {% if property.maximum_stay %}
+                    <div class="info-row"><span class="label">Maximum Stay</span><span class="value">{{ property.maximum_stay }} day(s)</span></div>
+                    {% endif %}
+                    {% if property.stay_type %}<div class="info-row"><span class="label">Stay Type</span><span class="value">{{ property.get_stay_type_display }}</span></div>{% endif %}
+                    {% endif %}
+
+                    {% if property.is_long_stay %}
+                    {% if property.deposit_amount %}<div class="info-row"><span class="label">Deposit</span><span class="value">{{ property.price_currency|default:"ZAR" }} {{ property.deposit_amount|floatformat:0 }}</span></div>{% endif %}
+                    {% if property.lease_duration_months %}<div class="info-row"><span class="label">Lease Duration</span><span class="value">{{ property.lease_duration_months }} month(s)</span></div>{% endif %}
+                    {% if property.notice_period_days %}<div class="info-row"><span class="label">Notice Period</span><span class="value">{{ property.notice_period_days }} day(s)</span></div>{% endif %}
+                    <div class="info-row"><span class="label">Utilities</span><span class="value">{% if property.utilities_included %}Included{% else %}Not included / ask owner{% endif %}</span></div>
+                    {% endif %}
+
+                    {% if property.is_student_accommodation %}
+                    {% if property.student_accommodation_type %}<div class="info-row"><span class="label">Accommodation</span><span class="value">{{ property.student_accommodation_type }}</span></div>{% endif %}
+                    {% if property.is_per_student_pricing and property.per_student_price %}<div class="info-row"><span class="label">Per Student</span><span class="value">{{ property.price_currency|default:"ZAR" }} {{ property.per_student_price|floatformat:0 }}</span></div>{% endif %}
+                    {% if property.semester_duration_months %}<div class="info-row"><span class="label">Semester</span><span class="value">{{ property.semester_duration_months }} month(s)</span></div>{% endif %}
+                    <div class="purpose-grid">
+                        <div class="purpose-tile"><small>Internet</small><strong>{% if property.includes_internet %}Included{% else %}Not included{% endif %}</strong></div>
+                        <div class="purpose-tile"><small>Study area</small><strong>{% if property.includes_study_area %}Available{% else %}Not listed{% endif %}</strong></div>
+                    </div>
+                    {% endif %}
+
+                    {% if property.is_land_sale %}
+                    {% if property.land_size_hectares %}<div class="info-row"><span class="label">Land Size</span><span class="value">{{ property.land_size_hectares }} ha</span></div>{% elif property.land_size_acres %}<div class="info-row"><span class="label">Land Size</span><span class="value">{{ property.land_size_acres }} acres</span></div>{% endif %}
+                    {% if property.zoning %}<div class="info-row"><span class="label">Zoning</span><span class="value">{{ property.zoning }}</span></div>{% endif %}
+                    {% if property.land_use %}<div class="info-row"><span class="label">Land Use</span><span class="value">{{ property.land_use }}</span></div>{% endif %}
+                    {% if property.topography %}<div class="info-row"><span class="label">Topography</span><span class="value">{{ property.topography }}</span></div>{% endif %}
+                    {% if property.road_access %}<div class="info-row"><span class="label">Road Access</span><span class="value">{{ property.road_access }}</span></div>{% endif %}
+                    <div class="purpose-grid">
+                        <div class="purpose-tile"><small>Water</small><strong>{% if property.water_access %}Available{% else %}Not confirmed{% endif %}</strong></div>
+                        <div class="purpose-tile"><small>Electricity</small><strong>{% if property.electricity_access %}Available{% else %}Not confirmed{% endif %}</strong></div>
+                    </div>
+                    {% if property.development_potential %}<div class="info-row"><span class="label">Development Potential</span><span class="value">{{ property.development_potential }}</span></div>{% endif %}
+                    {% endif %}
+
+                    {% if property.is_commercial %}
+                    {% if property.commercial_type %}<div class="info-row"><span class="label">Commercial Type</span><span class="value">{{ property.commercial_type }}</span></div>{% endif %}
+                    {% if property.floor_area %}<div class="info-row"><span class="label">Floor Area</span><span class="value">{{ property.floor_area }} m²</span></div>{% endif %}
+                    {% if property.parking_available %}<div class="info-row"><span class="label">Parking</span><span class="value">{{ property.parking_available }} space(s)</span></div>{% endif %}
+                    {% if property.loading_bays %}<div class="info-row"><span class="label">Loading Bays</span><span class="value">{{ property.loading_bays }}</span></div>{% endif %}
+                    {% if property.commercial_zone %}<div class="info-row"><span class="label">Commercial Zone</span><span class="value">{{ property.commercial_zone }}</span></div>{% endif %}
+                    {% endif %}
+
+                    {% if property.is_for_sale and not property.is_land_sale %}
+                    {% if property.levies %}<div class="info-row"><span class="label">Levies</span><span class="value">{{ property.price_currency|default:"ZAR" }} {{ property.levies|floatformat:0 }}</span></div>{% endif %}
+                    {% if property.rates_taxes %}<div class="info-row"><span class="label">Rates & Taxes</span><span class="value">{{ property.price_currency|default:"ZAR" }} {{ property.rates_taxes|floatformat:0 }}</span></div>{% endif %}
+                    <div class="info-row"><span class="label">Bond</span><span class="value">{% if property.bond_available %}Bond options indicated{% else %}Ask owner / agent{% endif %}</span></div>
+                    {% endif %}
+                </div>
+
+                <!-- ============================================================
+                     FEATURES & AMENITIES — MOVED HERE (below Property Details)
+                     ============================================================ -->
+                <div class="info-card">
+                    <div class="card-title"><i class="fas fa-star"></i> Features & Amenities</div>
+                    <div class="feature-tags">
+                        {% if property_features %}
+                        {% for feature in property_features %}
+                        <span class="tag">
+                            {% if feature.icon %}<i class="{{ feature.icon }}"></i>{% else %}<i class="fas fa-check-circle"></i>{% endif %}
+                            {{ feature.name }}
+                        </span>
+                        {% endfor %}
+                        {% else %}
+                        <div class="info-row">
+                            <span class="label">Status</span>
+                            <span class="value">
+                                <span class="badge-status {{ property.status }}">
+                                    {{ property.get_status_display }}
+                                </span>
+                            </span>
+                        </div>
+
+                        <div class="info-row">
+                            <span class="label">Bedrooms</span>
+                            <span class="value">
+                                {{ property.bedrooms|default:"0" }}
+                            </span>
+                        </div>
+
+                        <div class="info-row">
+                            <span class="label">Bathrooms</span>
+                            <span class="value">
+                                {{ property.bathrooms|default:"0" }}
+                            </span>
+                        </div>
+
+                        <div class="info-row">
+                            <span class="label">Garages</span>
+                            <span class="value">
+                                {{ property.garages|default:"0" }}
+                            </span>
+                        </div>
+
+                        <div class="info-row">
+                            <span class="label">Total Area</span>
+                            <span class="value">
+                                {{ property.total_area|default:"N/A" }} m²
+                            </span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Location with Map -->
+                <div class="info-card">
+                    <div class="card-title"><i class="fas fa-map-marker-alt"></i> Location & Map</div>
+
+                    <div class="info-row">
+                        <span class="label">Address</span>
+                        <span class="value">{{ property.address|default:"Not specified" }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">City</span>
+                        <span class="value">{{ property.city|default:"Not specified" }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">State/Province</span>
+                        <span class="value">{{ property.state|default:"Not specified" }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Country</span>
+                        <span class="value">{{ property.country|default:"South Africa" }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Postal Code</span>
+                        <span class="value">{{ property.postal_code|default:"Not specified" }}</span>
+                    </div>
+                    {% if property.neighborhood %}
+                    <div class="info-row">
+                        <span class="label">Neighborhood</span>
+                        <span class="value">{{ property.neighborhood }}</span>
+                    </div>
+                    {% endif %}
+                    {% if property.landmark %}
+                    <div class="info-row">
+                        <span class="label">Landmark</span>
+                        <span class="value">{{ property.landmark }}</span>
+                    </div>
+                    {% endif %}
+
+                    <!-- Map -->
+                    <div class="location-map-container">
+                        {% if property.latitude and property.longitude %}
+                        <div id="detailPropertyMap" class="detail-property-map" aria-label="Map showing {{ property.title|escape }}"></div>
+                        <div class="map-property-overlay">
+                            <div class="map-property-overlay-icon"><i class="fas fa-home"></i></div>
+                            <div class="map-property-overlay-copy">
+                                <strong>{{ property.title }}</strong>
+                                <span>{{ property.address|default:property.city }}</span>
+                            </div>
+                            <a href="/property-map/?property={{ property.id }}" class="map-property-overlay-link" title="Open full property map">
+                                <i class="fas fa-up-right-from-square"></i>
+                            </a>
+                        </div>
+                        {% elif property.address %}
+                        <div class="map-placeholder">
+                            <i class="fas fa-map-pin" style="color:var(--primary);"></i>
+                            <div class="address-text">
+                                <strong>{{ property.title }}</strong><br>
+                                {{ property.address }}<br>
+                                {{ property.city }}, {{ property.country }}
+                            </div>
+                            <div style="margin-top:8px;color:#999;font-size:11px;">
+                                <i class="fas fa-info-circle"></i> Click "View on Google Maps"
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="map-placeholder">
+                            <i class="fas fa-map-marker-alt" style="color:#ccc;"></i>
+                            <div class="address-text">No location information available</div>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Map Actions -->
+                    <div class="map-actions">
+                        {% if property.latitude and property.longitude %}
+                        <a href="https://www.google.com/maps/dir/?api=1&destination={{ property.latitude }},{{ property.longitude }}" target="_blank" class="btn-map btn-map-success">
+                            <i class="fas fa-directions"></i> Get Directions
+                        </a>
+                        <a href="https://www.google.com/maps/place/{{ property.latitude }},{{ property.longitude }}" target="_blank" class="btn-map btn-map-primary">
+                            <i class="fas fa-external-link-alt"></i> View on Maps
+                        </a>
+                        {% elif property.address %}
+                        <a href="https://www.google.com/maps/search/?api=1&query={{ property.address|urlencode }},{{ property.city|urlencode }},{{ property.country|urlencode }}" target="_blank" class="btn-map btn-map-primary">
+                            <i class="fas fa-external-link-alt"></i> View on Maps
+                        </a>
+                        {% endif %}
+                        <a href="/property-map/?property={{ property.id }}" class="btn-map btn-map-secondary">
+                            <i class="fas fa-map"></i> Open Map View
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Column - Sidebar -->
+            <div>
+
+                <!-- Price Card -->
+                <div class="sidebar-card">
+                    <div class="price">
+                        {{ property.price_currency|default:"ZAR" }} {{ property.base_price|floatformat:0 }}
+                        {% if property.is_short_stay %}
+                        <small>/{{ property.get_booking_unit_display|default:"night" }}</small>
+                        {% elif property.is_long_stay %}
+                        <small>/{{ property.get_booking_unit_display|default:"month" }}</small>
+                        {% elif property.is_student_accommodation %}
+                        <small>{% if property.is_per_student_pricing %}/student{% else %}/{{ property.get_booking_unit_display|default:"term" }}{% endif %}</small>
+                        {% endif %}
+                    </div>
+                    <span class="price-context">
+                        {% if property.is_land_sale or property.is_for_sale %}Sale price{% elif property.is_commercial %}Commercial asking price / rent{% elif property.is_short_stay %}Stay rate{% elif property.is_student_accommodation %}Student accommodation rate{% else %}Rental rate{% endif %}
+                    </span>
+
+                    <div style="margin-top:10px;padding:10px 0;border-top:1px solid var(--border);">
+                        <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--gray);">
+                            <span>Status</span>
+                            <span class="badge-status {{ property.status }}" style="font-size:11px;">
+                                {{ property.get_status_display }}
+                            </span>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--gray);margin-top:4px;">
+                            <span>Listing ID</span>
+                            <span style="font-weight:500;font-size:12px;">{{ property.property_reference|default:property.id }}</span>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--gray);margin-top:4px;">
+                            <span>Created</span>
+                            <span style="font-size:12px;">{{ property.created_at|date:"M d, Y" }}</span>
+                        </div>
+                        {% if property.latitude and property.longitude %}
+                        <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--gray);margin-top:4px;">
+                            <span>Coordinates</span>
+                            <span style="font-size:10px;color:#999;max-width:120px;word-break:break-all;">
+                                {{ property.latitude|floatformat:6 }}, {{ property.longitude|floatformat:6 }}
+                            </span>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    {% if is_owner or user_can_edit %}
+                    <div class="action-btns">
+                        <a href="{% url 'property_edit' property.id %}" class="btn btn-primary"><i class="fas fa-edit"></i> Edit Property</a>
+                        <a href="{% url 'property_rooms_manage' property.id %}" class="btn btn-secondary"><i class="fas fa-door-open"></i> Manage Rooms</a>
+                        <button onclick="deleteProperty('{{ property.id }}')" class="btn btn-danger"><i class="fas fa-trash"></i> Delete Property</button>
+                    </div>
+                    <div class="owner-tools-note"><i class="fas fa-shield-halved"></i> Management controls are only visible to the property owner / authorised manager.</div>
+                    {% else %}
+                    <div class="customer-actions">
+                        {% if property.is_land_sale or property.is_for_sale or property.is_commercial %}
+                        <button type="button" class="btn btn-main" onclick="messagePropertyOwner('{{ property.id }}','{{ property.title|escapejs }}')"><i class="fas fa-comments"></i> Enquire about this property</button>
+                        {% else %}
+                            {% if property.is_bookable and property.status == 'available' %}
+                            <button type="button" class="btn btn-main" onclick="openPropertyBooking()"><i class="fas fa-calendar-check"></i> Book this property</button>
+                            {% else %}
+                            <button type="button" class="btn btn-main" onclick="messagePropertyOwner('{{ property.id }}','{{ property.title|escapejs }}')"><i class="fas fa-comments"></i> Ask about availability</button>
+                            {% endif %}
+                        {% endif %}
+                        <button type="button" class="btn btn-chat" onclick="messagePropertyOwner('{{ property.id }}','{{ property.title|escapejs }}')"><i class="fas fa-comment-dots"></i> Discuss</button>
+                        <a class="btn btn-map-action" href="/property-map/?property={{ property.id }}"><i class="fas fa-location-dot"></i> Map</a>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- ============================================================
+                     AGENT / OWNER CARD
+                     ============================================================ -->
+                <div class="sidebar-card agent-card">
+                    <div class="card-title"><i class="fas fa-user-tie"></i> Agent / Owner</div>
+
+                    <!-- Agent Info -->
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div style="width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,#667eea,#764ba2);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px;flex-shrink:0;">
+                            {{ owner_name|default:"U"|first|upper }}
+                        </div>
+                        <div>
+                            <div style="font-weight:600;font-size:14px;">
+                                {{ owner_name|default:"Unknown Agent" }}
+                                {% if is_owner %}
+                                <span class="badge bg-primary" style="font-size:9px;margin-left:4px;">You</span>
+                                {% endif %}
+                            </div>
+                            <div style="font-size:11px;color:var(--gray);">
+                                {% if owner_badge == 'owner' %}
+                                <i class="fas fa-home"></i> Property Owner
+                                {% elif owner_badge == 'admin' or owner_badge == 'business' %}
+                                <i class="fas fa-building"></i> Business Account
+                                {% else %}
+                                <i class="fas fa-user-tie"></i> Agent
+                                {% endif %}
+                            </div>
+                            {% if agent_profile and agent_profile.is_verified %}
+                            <span class="badge bg-success" style="font-size:9px;margin-top:2px;"><i class="fas fa-check-circle"></i> Verified</span>
+                            {% endif %}
+                            {% if agent_profile and agent_profile.is_featured %}
+                            <span class="badge bg-warning text-dark" style="font-size:9px;margin-top:2px;"><i class="fas fa-star"></i> Featured</span>
+                            {% endif %}
+                            {% if agent_profile and agent_profile.years_experience > 0 %}
+                            <span class="badge bg-info" style="font-size:9px;margin-top:2px;">
+                                <i class="fas fa-calendar-alt"></i> {{ agent_profile.years_experience }} years
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Agent Rating -->
+                    {% if agent_profile and agent_profile.average_rating > 0 %}
+                    <div style="margin-bottom:10px;font-size:13px;">
+                        <span style="color:var(--warning);">
+                            {% for i in "12345"|make_list %}
+                            {% if forloop.counter <= agent_profile.average_rating %}
+                            <i class="fas fa-star"></i>
+                            {% elif forloop.counter <= agent_profile.average_rating|add:0.5 %}
+                            <i class="fas fa-star-half-alt"></i>
+                            {% else %}
+                            <i class="far fa-star"></i>
+                            {% endif %}
+                            {% endfor %}
+                        </span>
+                        <span style="color:var(--gray);font-size:12px;margin-left:4px;">
+                            {{ agent_profile.average_rating|floatformat:1 }} ({{ agent_profile.total_reviews }} reviews)
+                        </span>
+                    </div>
+                    {% endif %}
+
+                    <!-- Agent Bio Preview -->
+                    {% if agent_profile and agent_profile.bio %}
+                    <div style="font-size:12px;color:var(--gray);margin-bottom:10px;padding:8px 12px;background:var(--light-gray);border-radius:6px;max-height:60px;overflow:hidden;position:relative;">
+                        {{ agent_profile.bio|truncatechars:120 }}
+                        {% if agent_profile.bio|length > 120 %}
+                        <span style="position:absolute;bottom:0;right:0;background:linear-gradient(to right, transparent, var(--light-gray));padding-left:20px;">
+                            <a href="{% url 'agent_profile_view' agent_profile.id %}" style="color:var(--primary);font-weight:500;">...read more</a>
+                        </span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Edit Agent Profile -->
+                    {% if is_owner %}
+                    <div class="mb-3">
+                        <a href="{% if agent_profile %}{% url 'agent_profile_edit' agent_profile.id %}?property_id={{ property.id }}{% else %}{% url 'agent_profile_create' %}?property_id={{ property.id }}{% endif %}" class="btn btn-success w-100" style="font-size:14px;padding:10px;border-radius:8px;font-weight:600;">
+                            <i class="fas fa-user-edit me-2"></i>
+                            {% if agent_profile %}Edit Your Agent Profile{% else %}Create Your Agent Profile{% endif %}
+                        </a>
+                        <div style="font-size:10px;color:var(--gray);text-align:center;margin-top:4px;">
+                            <i class="fas fa-info-circle"></i>
+                            {% if agent_profile %}Update your professional details to help clients connect with you{% else %}Set up your professional profile to attract more clients{% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Contact Methods -->
+                    <div class="contact-methods">
+                        <button onclick="messagePropertyOwner('{{ property.id }}', '{{ property.title|escapejs }}')" class="social-btn message">
+                            <i class="fas fa-comment"></i> Message {{ owner_name|default:"Agent" }}
+                            <span class="badge-internal">Stay on OppoGlobe</span>
+                        </button>
+
+                        {% if agent_profile and agent_profile.whatsapp_number %}
+                        <a href="{{ agent_profile.get_whatsapp_link }}" target="_blank" class="social-btn whatsapp">
+                            <i class="fab fa-whatsapp"></i> WhatsApp
+                        </a>
+                        {% endif %}
+
+                        {% if agent_profile and agent_profile.phone_primary %}
+                        <a href="tel:{{ agent_profile.phone_primary }}" class="social-btn phone">
+                            <i class="fas fa-phone"></i> Call
+                            {% if agent_profile.get_phone_display %}
+                            <span style="font-size:10px;opacity:0.8;">{{ agent_profile.get_phone_display }}</span>
+                            {% endif %}
+                        </a>
+                        {% endif %}
+
+                        {% if agent_profile and agent_profile.email_primary %}
+                        <a href="mailto:{{ agent_profile.email_primary }}" class="social-btn email">
+                            <i class="fas fa-envelope"></i> Email
+                        </a>
+                        {% endif %}
+
+                        {% if agent_profile and agent_profile.telegram_username %}
+                        <a href="{{ agent_profile.get_telegram_link }}" target="_blank" class="social-btn telegram">
+                            <i class="fab fa-telegram-plane"></i> Telegram
+                        </a>
+                        {% endif %}
+
+                        {% if agent_profile and agent_profile.signal_number %}
+                        <a href="{{ agent_profile.get_signal_link }}" target="_blank" class="social-btn signal">
+                            <i class="fas fa-lock"></i> Signal
+                        </a>
+                        {% endif %}
+
+                        {% if agent_profile and agent_profile.viber_number %}
+                        <a href="{{ agent_profile.get_viber_link }}" target="_blank" class="social-btn viber">
+                            <i class="fab fa-viber"></i> Viber
+                        </a>
+                        {% endif %}
+
+                        {% if agent_profile and agent_profile.wechat_id %}
+                        <a href="#" onclick="showToast('WeChat ID: {{ agent_profile.wechat_id }}', 'info')" class="social-btn wechat">
+                            <i class="fab fa-weixin"></i> WeChat
+                        </a>
+                        {% endif %}
+
+                        {% if agent_profile and agent_profile.line_id %}
+                        <a href="{{ agent_profile.get_line_link }}" target="_blank" class="social-btn line">
+                            <i class="fab fa-line"></i> LINE
+                        </a>
+                        {% endif %}
+
+                        {% if agent_profile and agent_profile.kakao_id %}
+                        <a href="{{ agent_profile.get_kakao_link }}" target="_blank" class="social-btn kakao">
+                            <i class="fas fa-comment"></i> KakaoTalk
+                        </a>
+                        {% endif %}
+
+                        {% if agent_profile and agent_profile.website %}
+                        <a href="{{ agent_profile.clean_url|default:agent_profile.website }}" target="_blank" class="social-btn" style="background:var(--dark);">
+                            <i class="fas fa-globe"></i> Website
+                        </a>
+                        {% endif %}
+                    </div>
+
+                    <!-- Social Media Links -->
+                    {% if agent_profile and agent_profile.get_active_social_links %}
+                    <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);">
+                        <div style="font-size:12px;font-weight:600;color:var(--gray);margin-bottom:6px;">
+                            <i class="fas fa-share-alt"></i> Connect on Social Media
+                        </div>
+                        <div class="social-links-mini">
+                            {% if agent_profile.linkedin_url %}
+                            <a href="{{ agent_profile.linkedin_url }}" target="_blank" class="social-btn linkedin" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                            {% endif %}
+                            {% if agent_profile.facebook_url %}
+                            <a href="{{ agent_profile.facebook_url }}" target="_blank" class="social-btn facebook" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                            {% endif %}
+                            {% if agent_profile.instagram_url %}
+                            <a href="{{ agent_profile.instagram_url }}" target="_blank" class="social-btn instagram" title="Instagram"><i class="fab fa-instagram"></i></a>
+                            {% endif %}
+                            {% if agent_profile.twitter_url %}
+                            <a href="{{ agent_profile.twitter_url }}" target="_blank" class="social-btn twitter" title="Twitter/X"><i class="fab fa-twitter"></i></a>
+                            {% endif %}
+                            {% if agent_profile.youtube_url %}
+                            <a href="{{ agent_profile.youtube_url }}" target="_blank" class="social-btn youtube" title="YouTube"><i class="fab fa-youtube"></i></a>
+                            {% endif %}
+                            {% if agent_profile.tiktok_url %}
+                            <a href="{{ agent_profile.tiktok_url }}" target="_blank" class="social-btn tiktok" title="TikTok"><i class="fab fa-tiktok"></i></a>
+                            {% endif %}
+                            {% if agent_profile.pinterest_url %}
+                            <a href="{{ agent_profile.pinterest_url }}" target="_blank" class="social-btn" style="background:#E60023;" title="Pinterest"><i class="fab fa-pinterest-p"></i></a>
+                            {% endif %}
+                            {% if agent_profile.snapchat_url %}
+                            <a href="{{ agent_profile.snapchat_url }}" target="_blank" class="social-btn" style="background:#FFFC00;color:#000;" title="Snapchat"><i class="fab fa-snapchat-ghost"></i></a>
+                            {% endif %}
+                            {% if agent_profile.reddit_url %}
+                            <a href="{{ agent_profile.reddit_url }}" target="_blank" class="social-btn" style="background:#FF4500;" title="Reddit"><i class="fab fa-reddit-alien"></i></a>
+                            {% endif %}
+                            {% if agent_profile.discord_username %}
+                            <a href="#" onclick="showToast('Discord: {{ agent_profile.discord_username }}', 'info')" class="social-btn" style="background:#5865F2;" title="Discord"><i class="fab fa-discord"></i></a>
+                            {% endif %}
+                            {% if agent_profile.property24_url %}
+                            <a href="{{ agent_profile.property24_url }}" target="_blank" class="social-btn property24" title="Property24"><i class="fas fa-building"></i></a>
+                            {% endif %}
+                            {% if agent_profile.privateproperty_url %}
+                            <a href="{{ agent_profile.privateproperty_url }}" target="_blank" class="social-btn privateproperty" title="PrivateProperty"><i class="fas fa-home"></i></a>
+                            {% endif %}
+                            {% if agent_profile.zillow_url %}
+                            <a href="{{ agent_profile.zillow_url }}" target="_blank" class="social-btn zillow" title="Zillow"><i class="fas fa-home"></i></a>
+                            {% endif %}
+                            {% if agent_profile.realtor_url %}
+                            <a href="{{ agent_profile.realtor_url }}" target="_blank" class="social-btn realtor" title="Realtor.com"><i class="fas fa-building"></i></a>
+                            {% endif %}
+                            {% if agent_profile.rightmove_url %}
+                            <a href="{{ agent_profile.rightmove_url }}" target="_blank" class="social-btn" style="background:#0055a4;" title="Rightmove"><i class="fas fa-home"></i></a>
+                            {% endif %}
+                            {% if agent_profile.zoopla_url %}
+                            <a href="{{ agent_profile.zoopla_url }}" target="_blank" class="social-btn" style="background:#1a1a2e;" title="Zoopla"><i class="fas fa-building"></i></a>
+                            {% endif %}
+                            {% if agent_profile.onthemarket_url %}
+                            <a href="{{ agent_profile.onthemarket_url }}" target="_blank" class="social-btn" style="background:#ff6b00;" title="OnTheMarket"><i class="fas fa-home"></i></a>
+                            {% endif %}
+                            {% if agent_profile.realestatecomau_url %}
+                            <a href="{{ agent_profile.realestatecomau_url }}" target="_blank" class="social-btn" style="background:#e31e24;" title="realestate.com.au"><i class="fas fa-building"></i></a>
+                            {% endif %}
+                            {% if agent_profile.domaincomau_url %}
+                            <a href="{{ agent_profile.domaincomau_url }}" target="_blank" class="social-btn" style="background:#003366;" title="domain.com.au"><i class="fas fa-home"></i></a>
+                            {% endif %}
+                            {% if agent_profile.propertyfinder_url %}
+                            <a href="{{ agent_profile.propertyfinder_url }}" target="_blank" class="social-btn" style="background:#E81932;" title="Property Finder"><i class="fas fa-search"></i></a>
+                            {% endif %}
+                            {% if agent_profile.bayut_url %}
+                            <a href="{{ agent_profile.bayut_url }}" target="_blank" class="social-btn" style="background:#0051a3;" title="Bayut"><i class="fas fa-home"></i></a>
+                            {% endif %}
+                            {% if agent_profile.dubizzle_url %}
+                            <a href="{{ agent_profile.dubizzle_url }}" target="_blank" class="social-btn" style="background:#ff6b00;" title="Dubizzle"><i class="fas fa-building"></i></a>
+                            {% endif %}
+                            {% if agent_profile.propertyguru_url %}
+                            <a href="{{ agent_profile.propertyguru_url }}" target="_blank" class="social-btn" style="background:#00a651;" title="PropertyGuru"><i class="fas fa-home"></i></a>
+                            {% endif %}
+                            {% if agent_profile.indeed_url %}
+                            <a href="{{ agent_profile.indeed_url }}" target="_blank" class="social-btn" style="background:#2163f3;" title="Indeed"><i class="fas fa-briefcase"></i></a>
+                            {% endif %}
+                            {% if agent_profile.glassdoor_url %}
+                            <a href="{{ agent_profile.glassdoor_url }}" target="_blank" class="social-btn" style="background:#00a162;" title="Glassdoor"><i class="fas fa-door-open"></i></a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if agent_profile %}
+                    <div style="margin-top:10px;text-align:center;padding-top:10px;border-top:1px solid var(--border);">
+                        <a href="{% url 'agent_profile_view' agent_profile.id %}" class="btn btn-outline-primary btn-sm" style="font-size:12px;padding:4px 16px;border-radius:20px;">
+                            <i class="fas fa-user"></i> View Full Agent Profile
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="info-card">
+                    <div class="card-title"><i class="fas fa-chart-bar"></i> Quick Stats</div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-number primary">{{ total_rooms|default:0 }}</div>
+                            <div class="stat-label">Total Rooms</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number success">{{ available_rooms|default:0 }}</div>
+                            <div class="stat-label">Available Rooms</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number warning">{{ total_bookings|default:0 }}</div>
+                            <div class="stat-label">Total Bookings</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number primary">{{ total_views|default:0 }}</div>
+                            <div class="stat-label">Total Views</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ===== PROPERTY BOOKING / PAYMENT ===== -->
+    {% if not is_owner and not property.is_land_sale and not property.is_for_sale and not property.is_commercial %}
+    <div class="booking-overlay" id="propertyBookingOverlay" aria-hidden="true">
+        <div class="booking-sheet" role="dialog" aria-modal="true" aria-labelledby="bookingTitle">
+            <div class="booking-sheet-head">
+                <div><h3 id="bookingTitle">Book {{ property.title }}</h3><p>Choose your dates, then pay with cash or securely by card through Yoco.</p></div>
+                <button type="button" class="booking-close" onclick="closePropertyBooking()" aria-label="Close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="booking-form-grid">
+                <div class="booking-field"><label>Check-in</label><input id="bookingCheckIn" type="datetime-local"></div>
+                <div class="booking-field"><label>Check-out</label><input id="bookingCheckOut" type="datetime-local"></div>
+                <div class="booking-field"><label>Guests</label><input id="bookingGuests" type="number" min="1" max="{{ property.max_occupancy|default:50 }}" value="1"></div>
+                <div class="booking-field full"><label>Special requests</label><textarea id="bookingSpecialRequests" rows="3" placeholder="Anything the host/business should know?"></textarea></div>
+                <div class="booking-field full"><label>Payment method</label>
+                    <div class="payment-choice">
+                        <button type="button" class="pay-choice active" data-payment="cash" onclick="selectPropertyPayment('cash',this)"><strong><i class="fas fa-money-bill-wave"></i> Cash</strong><span>Pay according to the business arrangement. The booking is still recorded in OppoGlobe.</span></button>
+                        <button type="button" class="pay-choice" data-payment="card" onclick="selectPropertyPayment('card',this)"><strong><i class="fas fa-credit-card"></i> Card · Yoco</strong><span>Secure hosted checkout. OppoGlobe does not store your card number or CVV.</span></button>
+                    </div>
+                </div>
+            </div>
+            <div class="booking-summary">
+                {% if property.is_short_stay %}<div class="booking-summary-row"><span>Minimum stay</span><strong>{{ property.minimum_stay|default:1 }} day(s)</strong></div>{% endif %}
+                <div class="booking-summary-row"><span>Rate</span><strong>{{ property.price_currency|default:"ZAR" }} {{ property.base_price|floatformat:2 }}{% if property.booking_unit %} / {{ property.get_booking_unit_display }}{% endif %}</strong></div>
+                <div class="booking-summary-row"><span>Duration</span><strong id="bookingDuration">Choose dates</strong></div>
+                <div class="booking-summary-row total"><span>Estimated total</span><strong id="bookingEstimatedTotal">—</strong></div>
+            </div>
+            <button type="button" class="booking-submit" id="bookingSubmitBtn" onclick="submitPropertyBooking()"><i class="fas fa-lock"></i> Confirm booking</button>
+            <div class="booking-note">Card payments continue on Yoco's secure checkout. Cash bookings remain pending until the business confirms the arrangement.</div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ===== FULLSCREEN PHOTO VIEWER ===== -->
+    <div class="lightbox-overlay"
+         id="lightboxOverlay"
+         role="dialog"
+         aria-modal="true"
+         aria-label="Property photo viewer"
+         aria-hidden="true">
+        <button type="button" class="lightbox-close" id="lightboxClose" aria-label="Close photo viewer">
+            <i class="fas fa-times"></i>
+        </button>
+
+        <div class="lightbox-hint">Click/tap photo to zoom · Swipe or use arrows to navigate</div>
+
+        <button type="button" class="lightbox-nav prev" id="lightboxPrev" aria-label="Previous photo">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+
+        <button type="button" class="lightbox-nav next" id="lightboxNext" aria-label="Next photo">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+
+        <div class="lightbox-image-wrap" id="lightboxImageWrap">
+            <img id="lightboxImg" src="" alt="Property photo fullscreen">
+        </div>
+
+        <div class="lightbox-counter" id="lightboxCounter">1 / 1</div>
+    </div>
+
+    <!-- ===== MOBILE NAV ===== -->
+    <nav class="mobile-nav">
+        <a href="/admin-portal/"><i class="fas fa-th-large"></i><span>Dashboard</span></a>
+        <a href="/properties/manage/"><i class="fas fa-home"></i><span>Properties</span></a>
+        <a href="/properties/add/"><i class="fas fa-plus"></i><span>Add</span></a>
+        <a href="/properties/bookings/"><i class="fas fa-calendar-check"></i><span>Bookings</span></a>
+        <a href="/profile/"><i class="fas fa-user"></i><span>Profile</span></a>
+    </nav>
+
+    <!-- ===== TOAST CONTAINER ===== -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js">
+    </script>
+    <script>
+        // ============================================================
+        // TOGGLE DROPDOWN
+        // ============================================================
+        function toggleDropdown(id) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            document.querySelectorAll('.dropdown-menu-custom.show').forEach(d => {
+                if (d.id !== id) d.classList.remove('show');
+            });
+            el.classList.toggle('show');
+        }
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.dropdown-container')) {
+                document.querySelectorAll('.dropdown-menu-custom.show').forEach(d => d.classList.remove('show'));
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.dropdown-menu-custom.show').forEach(d => d.classList.remove('show'));
+            }
+        });
+
+        // ============================================================
+        // TOAST
+        // ============================================================
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast-item ${type}`;
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                info: 'fa-info-circle',
+                warning: 'fa-exclamation-triangle'
+            };
+            toast.innerHTML = `
+                <i class="fas ${icons[type] || icons.info}"></i>
+                ${message}
+                <button class="close-toast" onclick="this.parentElement.remove()">&times;</button>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 5000);
+        }
+
+        // ============================================================
+        // GET CSRF TOKEN
+        // ============================================================
+        function getCSRFToken() {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                const [name, value] = cookie.trim().split('=');
+                if (name === 'csrftoken') return decodeURIComponent(value);
+            }
+            return null;
+        }
+
+        // ============================================================
+        // GET CURRENT USER INFO
+        // ============================================================
+        const currentUserId = parseInt(document.body.dataset.userId || '0');
+        const currentUsername = document.body.dataset.username || '';
+        const isLoggedIn = document.body.dataset.userLoggedIn === 'true';
+        const ownerId = parseInt(document.body.dataset.ownerId || '0');
+        const agentProfileId = parseInt(document.body.dataset.agentProfileId || '0');
+
+        // ============================================================
+        // MESSAGE PROPERTY OWNER - INTERNAL MESSAGING
+        // ============================================================
+        function messagePropertyOwner(propertyId, propertyTitle) {
+            if (!isLoggedIn) {
+                showToast('Please login to message the owner', 'warning');
+                return;
+            }
+            if (ownerId === currentUserId) {
+                showToast('You are the owner of this property', 'info');
+                return;
+            }
+            if (!ownerId || ownerId === 0) {
+                showToast('Owner not available', 'warning');
+                return;
+            }
+            const encodedProperty = encodeURIComponent(propertyTitle || 'Property');
+            window.location.href = `/messaging/?user_id=${ownerId}&property=${encodedProperty}`;
+        }
+
+        // ============================================================
+        // DELETE PROPERTY
+        // ============================================================
+        function deleteProperty(propertyId) {
+            if (!confirm('Are you sure you want to delete this property? This action cannot be undone.')) {
+                return;
+            }
+            const btn = event.target.closest('button');
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
+            btn.disabled = true;
+
+            fetch(`/api/properties/${propertyId}/delete/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCSRFToken()
+                    }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast('Property deleted successfully', 'success');
+                        setTimeout(() => {
+                            window.location.href = '/properties/manage/';
+                        }, 1500);
+                    } else {
+                        btn.innerHTML = originalHtml;
+                        btn.disabled = false;
+                        showToast(data.error || 'Failed to delete property', 'error');
+                    }
+                })
+                .catch(() => {
+                    btn.innerHTML = originalHtml;
+                    btn.disabled = false;
+                    showToast('Network error. Please try again.', 'error');
+                });
+        }
+
+        // ============================================================
+        // INTERACTIVE PROPERTY GALLERY + FULLSCREEN VIEWER
+        // ============================================================
+        (function() {
+            const gallery = document.getElementById('propertyGallery');
+            const main = document.getElementById('galleryMain');
+            const mainImg = document.getElementById('galleryMainImg');
+            const thumbGrid = document.getElementById('thumbGrid');
+            const thumbs = Array.from(document.querySelectorAll('#thumbGrid .thumb[data-index]'));
+
+            const overlay = document.getElementById('lightboxOverlay');
+            const lightboxImg = document.getElementById('lightboxImg');
+            const counter = document.getElementById('lightboxCounter');
+            const closeBtn = document.getElementById('lightboxClose');
+            const prevBtn = document.getElementById('lightboxPrev');
+            const nextBtn = document.getElementById('lightboxNext');
+
+            const galleryPrev = document.getElementById('galleryPrev');
+            const galleryNext = document.getElementById('galleryNext');
+            const galleryOpen = document.getElementById('galleryOpen');
+            const galleryCount = document.getElementById('galleryCount');
+
+            // Build a unique list from the Django data already rendered by the template.
+            const imageUrls = [];
+            if (mainImg && mainImg.src) imageUrls.push(mainImg.src);
+
+            thumbs.forEach(thumb => {
+                const img = thumb.querySelector('img');
+                if (img && img.src && !imageUrls.includes(img.src)) {
+                    imageUrls.push(img.src);
+                }
+            });
+
+            let currentIndex = 0;
+            let previousFocusedElement = null;
+            let touchStartX = 0;
+            let touchStartY = 0;
+            let touchMoved = false;
+            let zoomed = false;
+
+            function safeIndex(index) {
+                if (!imageUrls.length) return 0;
+                return (index + imageUrls.length) % imageUrls.length;
+            }
+
+            function setBackdrop(url) {
+                if (!main) return;
+                main.style.setProperty('--gallery-backdrop', `url("${url}") center / cover no-repeat`);
+            }
+
+            function scrollThumbIntoView(index) {
+                const thumb = thumbs.find(t => Number(t.dataset.index) === index);
+                if (thumb) {
+                    thumb.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'nearest',
+                        inline: 'center'
+                    });
+                }
+            }
+
+            function updateGallery(index, animate = true) {
+                if (!imageUrls.length || !mainImg) return;
+
+                currentIndex = safeIndex(index);
+                const url = imageUrls[currentIndex];
+
+                if (animate) mainImg.classList.add('is-changing');
+
+                const reveal = () => {
+                    mainImg.src = url;
+                    mainImg.onload = () => {
+                        mainImg.classList.remove('is-changing');
+                        setBackdrop(url);
+                    };
+                };
+
+                // Give the fade a moment before swapping the source.
+                if (animate) {
+                    setTimeout(reveal, 90);
+                } else {
+                    reveal();
+                }
+
+                mainImg.alt = `Property photo ${currentIndex + 1}`;
+                if (galleryCount) {
+                    galleryCount.textContent = `${currentIndex + 1} / ${imageUrls.length}`;
+                }
+
+                thumbs.forEach(thumb => {
+                    const active = Number(thumb.dataset.index) === currentIndex;
+                    thumb.classList.toggle('active', active);
+                    thumb.setAttribute('aria-current', active ? 'true' : 'false');
+                });
+
+                scrollThumbIntoView(currentIndex);
+            }
+
+            function resetZoom() {
+                zoomed = false;
+                overlay.classList.remove('zoomed');
+                lightboxImg.style.transform = '';
+            }
+
+            function openLightbox(index = currentIndex) {
+                if (!imageUrls.length || !overlay || !lightboxImg) return;
+
+                currentIndex = safeIndex(index);
+                previousFocusedElement = document.activeElement;
+                resetZoom();
+
+                lightboxImg.src = imageUrls[currentIndex];
+                lightboxImg.alt = `Property photo ${currentIndex + 1}`;
+                counter.textContent = `${currentIndex + 1} / ${imageUrls.length}`;
+
+                overlay.classList.add('active');
+                overlay.setAttribute('aria-hidden', 'false');
+                document.body.style.overflow = 'hidden';
+                closeBtn?.focus();
+            }
+
+            function closeLightbox() {
+                if (!overlay) return;
+
+                overlay.classList.remove('active', 'zoomed');
+                overlay.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = '';
+                resetZoom();
+
+                if (previousFocusedElement && typeof previousFocusedElement.focus === 'function') {
+                    previousFocusedElement.focus();
+                }
+            }
+
+            function showLightboxImage(index) {
+                currentIndex = safeIndex(index);
+                lightboxImg.style.opacity = '.35';
+
+                const nextSrc = imageUrls[currentIndex];
+                const preload = new Image();
+
+                preload.onload = () => {
+                    lightboxImg.src = nextSrc;
+                    lightboxImg.alt = `Property photo ${currentIndex + 1}`;
+                    counter.textContent = `${currentIndex + 1} / ${imageUrls.length}`;
+                    lightboxImg.style.opacity = '1';
+                    resetZoom();
+                    updateGallery(currentIndex, false);
+                };
+
+                preload.onerror = () => {
+                    lightboxImg.style.opacity = '1';
+                };
+
+                preload.src = nextSrc;
+            }
+
+            function previousImage() {
+                if (imageUrls.length > 1) showLightboxImage(currentIndex - 1);
+            }
+
+            function nextImage() {
+                if (imageUrls.length > 1) showLightboxImage(currentIndex + 1);
+            }
+
+            function toggleZoom() {
+                if (!lightboxImg || !overlay) return;
+
+                zoomed = !zoomed;
+                overlay.classList.toggle('zoomed', zoomed);
+                lightboxImg.style.transform = zoomed ? 'scale(1.35)' : '';
+            }
+
+            // Main gallery interactions.
+            galleryPrev?.addEventListener('click', e => {
+                e.stopPropagation();
+                updateGallery(currentIndex - 1);
+            });
+
+            galleryNext?.addEventListener('click', e => {
+                e.stopPropagation();
+                updateGallery(currentIndex + 1);
+            });
+
+            galleryOpen?.addEventListener('click', e => {
+                e.stopPropagation();
+                openLightbox(currentIndex);
+            });
+
+            main?.addEventListener('click', e => {
+                if (e.target.closest('button')) return;
+                openLightbox(currentIndex);
+            });
+
+            main?.addEventListener('keydown', e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    openLightbox(currentIndex);
+                } else if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    updateGallery(currentIndex - 1);
+                } else if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    updateGallery(currentIndex + 1);
+                }
+            });
+
+            thumbs.forEach(thumb => {
+                thumb.addEventListener('click', () => {
+                    updateGallery(Number(thumb.dataset.index));
+                });
+            });
+
+            // Fullscreen viewer controls.
+            closeBtn?.addEventListener('click', closeLightbox);
+            prevBtn?.addEventListener('click', e => {
+                e.stopPropagation();
+                previousImage();
+            });
+            nextBtn?.addEventListener('click', e => {
+                e.stopPropagation();
+                nextImage();
+            });
+
+            lightboxImg?.addEventListener('click', e => {
+                e.stopPropagation();
+                toggleZoom();
+            });
+
+            overlay?.addEventListener('click', e => {
+                if (e.target === overlay || e.target === document.getElementById('lightboxImageWrap')) {
+                    closeLightbox();
+                }
+            });
+
+            // Keyboard navigation.
+            document.addEventListener('keydown', e => {
+                if (!overlay?.classList.contains('active')) return;
+
+                if (e.key === 'Escape') {
+                    e.preventDefault();
+                    closeLightbox();
+                } else if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    previousImage();
+                } else if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    nextImage();
+                } else if (e.key === ' ' || e.key === 'Enter') {
+                    if (document.activeElement === lightboxImg) {
+                        e.preventDefault();
+                        toggleZoom();
+                    }
+                }
+            });
+
+            // Touch swipe navigation — works on phones and tablets.
+            overlay?.addEventListener('touchstart', e => {
+                if (!e.changedTouches.length) return;
+                touchStartX = e.changedTouches[0].clientX;
+                touchStartY = e.changedTouches[0].clientY;
+                touchMoved = false;
+            }, { passive: true });
+
+            overlay?.addEventListener('touchmove', e => {
+                if (!e.changedTouches.length) return;
+
+                const dx = e.changedTouches[0].clientX - touchStartX;
+                const dy = e.changedTouches[0].clientY - touchStartY;
+
+                if (Math.abs(dx) > 12 || Math.abs(dy) > 12) {
+                    touchMoved = true;
+                }
+            }, { passive: true });
+
+            overlay?.addEventListener('touchend', e => {
+                if (!e.changedTouches.length) return;
+
+                const dx = e.changedTouches[0].clientX - touchStartX;
+                const dy = e.changedTouches[0].clientY - touchStartY;
+
+                if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+                    if (dx < 0) nextImage();
+                    else previousImage();
+                }
+
+                touchMoved = false;
+            }, { passive: true });
+
+            // Keep the current image ready and avoid an empty viewer.
+            if (imageUrls.length) {
+                updateGallery(0, false);
+            } else if (galleryCount) {
+                galleryCount.textContent = '0 / 0';
+            }
+
+            window.openLightbox = openLightbox;
+            window.closeLightbox = closeLightbox;
+
+            console.log('Gallery initialized:', imageUrls.length, 'unique image(s)');
+        })();
+    </script>
+
+    <script>
+        const PROPERTY_BOOKING = {
+            id: '{{ property.id|escapejs }}',
+            purpose: '{{ property.property_purpose|default:""|escapejs }}',
+            unit: '{{ property.booking_unit|default:"day"|escapejs }}',
+            price: Number('{{ property.base_price|default:0|escapejs }}') || 0,
+            currency: '{{ property.price_currency|default:"ZAR"|escapejs }}',
+            minimumStay: Number('{{ property.minimum_stay|default:1|escapejs }}') || 1,
+            paymentMethod: 'cash'
+        };
+
+        function openPropertyBooking(){
+            if(!isLoggedIn){ showToast('Please sign in before booking this property','warning'); return; }
+            const overlay=document.getElementById('propertyBookingOverlay');
+            if(!overlay){ messagePropertyOwner(PROPERTY_BOOKING.id, '{{ property.title|escapejs }}'); return; }
+            overlay.classList.add('show'); overlay.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden';
+            const now=new Date(); const local=new Date(now.getTime()-now.getTimezoneOffset()*60000).toISOString().slice(0,16);
+            const cin=document.getElementById('bookingCheckIn'); const cout=document.getElementById('bookingCheckOut');
+            if(cin && !cin.value){ cin.min=local; cin.value=local; }
+            if(cout && !cout.value){ const d=new Date(now.getTime()+86400000); cout.min=local; cout.value=new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16); }
+            updatePropertyBookingEstimate();
+        }
+        function closePropertyBooking(){ const o=document.getElementById('propertyBookingOverlay'); if(o){o.classList.remove('show');o.setAttribute('aria-hidden','true')} document.body.style.overflow=''; }
+        function selectPropertyPayment(method,el){ PROPERTY_BOOKING.paymentMethod=method; document.querySelectorAll('.pay-choice').forEach(x=>x.classList.remove('active')); el?.classList.add('active'); }
+        function bookingUnits(start,end){
+            const ms=end-start; const days=Math.max(1,Math.ceil(ms/86400000)); const unit=PROPERTY_BOOKING.unit;
+            if(unit==='hour') return Math.max(1,Math.ceil(ms/3600000));
+            if(unit==='week') return Math.max(1,Math.ceil(days/7));
+            if(unit==='month') return Math.max(1,Math.ceil(days/30));
+            if(unit==='semester') return Math.max(1,Math.ceil(days/180));
+            if(unit==='year') return Math.max(1,Math.ceil(days/365));
+            if(unit==='once_off') return 1;
+            return days;
+        }
+        function updatePropertyBookingEstimate(){
+            const a=new Date(document.getElementById('bookingCheckIn')?.value||''); const b=new Date(document.getElementById('bookingCheckOut')?.value||'');
+            const duration=document.getElementById('bookingDuration'); const total=document.getElementById('bookingEstimatedTotal');
+            if(!Number.isFinite(a.getTime())||!Number.isFinite(b.getTime())||b<=a){ if(duration)duration.textContent='Choose valid dates'; if(total)total.textContent='—'; return; }
+            const days=Math.max(1,Math.ceil((b-a)/86400000)); const units=bookingUnits(a,b); if(duration)duration.textContent=`${days} day${days===1?'':'s'} · ${units} billing unit${units===1?'':'s'}`;
+            if(total)total.textContent=`${PROPERTY_BOOKING.currency} ${(PROPERTY_BOOKING.price*units).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}`;
+        }
+        document.getElementById('bookingCheckIn')?.addEventListener('change',updatePropertyBookingEstimate);
+        document.getElementById('bookingCheckOut')?.addEventListener('change',updatePropertyBookingEstimate);
+        document.getElementById('propertyBookingOverlay')?.addEventListener('click',e=>{if(e.target.id==='propertyBookingOverlay')closePropertyBooking()});
+
+        async function submitPropertyBooking(){
+            if(!isLoggedIn){ showToast('Please sign in before booking','warning'); return; }
+            const checkIn=document.getElementById('bookingCheckIn')?.value; const checkOut=document.getElementById('bookingCheckOut')?.value;
+            if(!checkIn||!checkOut){ showToast('Choose check-in and check-out','warning'); return; }
+            const a=new Date(checkIn), b=new Date(checkOut); if(!Number.isFinite(a.getTime())||!Number.isFinite(b.getTime())||b<=a){ showToast('Check-out must be after check-in','warning'); return; }
+            const days=Math.max(1,Math.ceil((b-a)/86400000));
+            if((PROPERTY_BOOKING.purpose==='short_stay'||PROPERTY_BOOKING.purpose==='vacation_rental') && days<PROPERTY_BOOKING.minimumStay){ showToast(`Minimum stay is ${PROPERTY_BOOKING.minimumStay} day(s)`,'warning'); return; }
+            const btn=document.getElementById('bookingSubmitBtn'); const original=btn?.innerHTML; if(btn){btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Creating booking…'}
+            try{
+                const res=await fetch(`/api/properties/${encodeURIComponent(PROPERTY_BOOKING.id)}/book/`,{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':getCSRFToken(),'Accept':'application/json'},credentials:'same-origin',body:JSON.stringify({check_in:new Date(checkIn).toISOString(),check_out:new Date(checkOut).toISOString(),number_of_guests:Number(document.getElementById('bookingGuests')?.value||1),special_requests:document.getElementById('bookingSpecialRequests')?.value||'',payment_method:PROPERTY_BOOKING.paymentMethod})});
+                const data=await res.json().catch(()=>({})); if(!res.ok||!data.success)throw new Error(data.error||data.detail||'Could not create booking.');
+                if(data.payment_method==='card'&&data.redirect_url){ showToast('Opening secure Yoco checkout…','success'); window.location.href=data.redirect_url; return; }
+                closePropertyBooking(); showToast(data.message||'Booking created.','success');
+                setTimeout(()=>{ window.location.href='/bookings/'; },1100);
+            }catch(err){ showToast(err.message||'Booking failed','error'); }
+            finally{ if(btn){btn.disabled=false;btn.innerHTML=original||'<i class="fas fa-lock"></i> Confirm booking';} }
+        }
+    </script>
+
+    {% if property.latitude and property.longitude %}
+    <script>
+        function initDetailPropertyMap() {
+            const el = document.getElementById('detailPropertyMap');
+            if (!el || !window.google || !google.maps) return;
+
+            const propertyPosition = {
+                lat: Number('{{ property.latitude|escapejs }}'),
+                lng: Number('{{ property.longitude|escapejs }}')
+            };
+
+            if (!Number.isFinite(propertyPosition.lat) || !Number.isFinite(propertyPosition.lng)) return;
+
+            const detailMap = new google.maps.Map(el, {
+                center: propertyPosition,
+                zoom: 16,
+                mapTypeControl: true,
+                fullscreenControl: true,
+                streetViewControl: true,
+                gestureHandling: 'cooperative',
+                clickableIcons: false,
+                styles: [{ featureType: 'poi.business', stylers: [{ visibility: 'off' }] }]
+            });
+
+            const marker = new google.maps.Marker({
+                map: detailMap,
+                position: propertyPosition,
+                title: '{{ property.title|escapejs }}',
+                animation: google.maps.Animation.DROP
+            });
+
+            const infoWindow = new google.maps.InfoWindow({
+                content: `
+                    <div style="font-family:Segoe UI,system-ui,sans-serif;max-width:240px;padding:4px 2px;">
+                        <div style="font-weight:700;font-size:14px;margin-bottom:4px;">{{ property.title|escapejs }}</div>
+                        <div style="font-size:11px;color:#5f6368;margin-bottom:8px;">{{ property.address|default:property.city|escapejs }}</div>
+                        <div style="font-weight:700;color:#1a73e8;font-size:13px;">{{ property.price_currency|default:"ZAR" }} {{ property.base_price|floatformat:0 }}</div>
+                    </div>`
+            });
+
+            marker.addListener('click', () => infoWindow.open({ map: detailMap, anchor: marker }));
+        }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&libraries=places&callback=initDetailPropertyMap" async defer></script>
+    {% endif %}
+
+
+  <script src="/static/hiring/js/notifications-global.js" defer></script>
+</body>
+</html>

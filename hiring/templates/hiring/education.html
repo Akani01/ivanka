@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Education - JobPortal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <style>
+        /* Top Navbar */
+        .header-area {
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+        }
+        .main-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 0;
+        }
+        .logo img {
+            max-height: 40px;
+        }
+
+        /* Desktop Sidebar */
+        .desktop-sidebar {
+            width: 250px;
+            background: white;
+            height: calc(100vh - 80px);
+            position: fixed;
+            top: 80px;
+            left: 0;
+            padding: 20px;
+            border-right: 1px solid #eee;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+            overflow-y: auto;
+        }
+
+        .desktop-sidebar a {
+            display: block;
+            padding: 12px 10px;
+            color: #333;
+            text-decoration: none;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .desktop-sidebar a:hover,
+        .desktop-sidebar a.active {
+            background-color: rgba(255, 88, 158, 0.1);
+            color: #ff589e;
+        }
+
+        /* Hide sidebar on mobile */
+        @media (max-width: 991px) {
+            .desktop-sidebar {
+                display: none;
+            }
+        }
+
+        /* Push page content right on desktop */
+        @media (min-width: 992px) {
+            body {
+                padding-left: 270px !important;
+            }
+        }
+
+        /* Mobile Bottom Navbar */
+        .mobile-bottom-nav {
+            display: none;
+        }
+
+        @media (max-width: 991px) {
+            .mobile-bottom-nav {
+                display: flex;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 65px;
+                background: white;
+                border-top: 1px solid #ddd;
+                justify-content: space-around;
+                align-items: center;
+                z-index: 9999;
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+            .mobile-bottom-nav a {
+                text-align: center;
+                color: #333;
+                font-size: 14px;
+                text-decoration: none;
+                flex: 1;
+                padding: 10px 5px;
+            }
+            .mobile-bottom-nav i {
+                font-size: 20px;
+                display: block;
+                margin-bottom: 3px;
+            }
+            .mobile-bottom-nav a.active {
+                color: #ff589e;
+            }
+        }
+
+        /* Body padding adjustments */
+        body {
+            padding-top: 80px;
+            background-color: #f8f9fa;
+            padding-bottom: 80px;
+        }
+
+        /* Top Right Navigation */
+        .nav-icons {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-icons a {
+            font-size: 20px;
+            color: #555;
+            transition: 0.2s;
+            text-decoration: none;
+        }
+
+        .nav-icons a:hover {
+            color: #ff589e;
+            transform: translateY(-2px);
+        }
+
+        /* Profile Dropdown */
+        .profile-dropdown {
+            position: relative;
+        }
+
+        .profile-avatar-small {
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, #ff589e 0%, #ff136f 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .profile-menu {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            width: 220px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            padding: 10px 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.25s ease;
+            z-index: 1000;
+        }
+
+        .profile-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0px);
+        }
+
+        .profile-menu a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            color: #444;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .profile-menu a:hover {
+            background: #f5f7fa;
+            color: #ff589e;
+        }
+
+        .profile-divider {
+            height: 1px;
+            background: #eee;
+            margin: 8px 0;
+        }
+
+        /* Fixed Three Dot Menu */
+        .three-dot-menu {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .three-dot-menu i {
+            font-size: 22px;
+            color: #555;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .three-dot-menu i:hover {
+            background-color: #f0f0f0;
+            color: #ff589e;
+        }
+
+        .three-dot-menu .menu-content {
+            position: absolute;
+            right: 0;
+            top: 45px;
+            background: #fff;
+            width: 200px;
+            padding: 8px 0;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .three-dot-menu:hover .menu-content {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .three-dot-menu .menu-content a {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            text-decoration: none;
+            color: #444;
+            transition: all 0.2s ease;
+            border: none;
+            background: none;
+            width: 100%;
+        }
+
+        .three-dot-menu .menu-content a:hover {
+            background: rgba(255, 88, 158, 0.1);
+            color: #ff589e;
+        }
+
+        .three-dot-menu .menu-content a i {
+            margin-right: 10px;
+            font-size: 16px;
+            width: 16px;
+            text-align: center;
+            padding: 0;
+            background: none;
+        }
+
+        /* Education-specific styles */
+        .education-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .education-card:hover {
+            transform: translateY(-2px);
+        }
+        .education-item {
+            border-left: 4px solid #007bff;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .business-preference-item {
+            border-left: 4px solid #28a745;
+        }
+        .match-item {
+            border-left: 4px solid #ffc107;
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+        }
+        .btn-add {
+            background: linear-gradient(135deg, #ff589e 0%, #ff136f 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 10px 20px;
+        }
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 88, 158, 0.3);
+            color: white;
+        }
+        .match-badge {
+            background-color: #28a745;
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 8px;
+        }
+        .business-section {
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8f4ff 100%);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 1px solid #e3f2fd;
+        }
+        .progress {
+            height: 8px;
+        }
+        .match-progress {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+        .degree-badge {
+            background: #007bff;
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    {% load api_utils %}
+    {% api_js_functions %}
+    <!-- Top Navigation -->
+    <header class="header-area">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <nav class="main-nav">
+                        <a href="/" class="logo">
+                            <img src="/static/images/logo.png" alt="JobPortal" style="max-height: 40px;">
+                        </a>
+
+                        <!-- Top Right Icons -->
+                        <ul class="nav-icons">
+                            <li>
+                                <a href="/" title="Home">
+                                    <i class="fas fa-home"></i>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="/#job-listings" title="Browse Jobs">
+                                    <i class="fas fa-search"></i>
+                                </a>
+                            </li>
+
+                            {% if user.is_authenticated %}
+                            <li>
+                                <a href="/dashboard" title="Dashboard">
+                                    <i class="fas fa-th-large"></i>
+                                </a>
+                            </li>
+
+                            <!-- Profile Dropdown Icon -->
+                            <li class="profile-dropdown">
+                                <div class="profile-avatar-small" onclick="toggleProfileDropdown()">
+                                    {{ user.username|first|upper }}
+                                </div>
+
+                                <div class="profile-menu" id="profileMenu">
+                                    <a href="/profile/"><i class="fas fa-user"></i> Profile</a>
+                                    {% if user.user_type == 'applicant' %}
+                                    <a href="/applications/"><i class="fas fa-file-alt"></i> Applications</a>
+                                    {% else %}
+                                    <a href="/admin-portal/jobs/"><i class="fas fa-briefcase"></i> Manage Jobs</a>
+                                    <a href="/admin-portal/applications/"><i class="fas fa-users"></i> Applications</a>
+                                    {% endif %}
+                                    <div class="profile-divider"></div>
+
+                                    <a href="/api/alerts/"><i class="fas fa-bell"></i> Alerts</a>
+                                    <a href="/preferences/"><i class="fas fa-cog"></i> Preferences</a>
+
+                                    <div class="profile-divider"></div>
+
+                                    <a href="/logout/"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                                </div>
+                            </li>
+                            <li>
+                              <a href="/messaging/">
+                                <i class="fas fa-comment-dots"></i>
+                              </a>
+                            </li>  
+                            <li>
+                                <div class="three-dot-menu">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                    <div class="menu-content">
+                                        {% if user.user_type == 'applicant' %}
+                                        <a href="/profile/skills/"><i class="fas fa-cogs"></i> Skills</a>
+                                        <a href="/profile/employment/"><i class="fas fa-briefcase"></i> Employment</a>
+                                        <a href="/profile/education/" class="active"><i class="fas fa-graduation-cap"></i> Education</a>
+                                        <a href="/profile/documents/"><i class="fas fa-file-upload"></i> Documents</a>
+                                        {% else %}
+                                        <a href="/admin-portal/jobs/"><i class="fas fa-briefcase"></i> Jobs</a>
+                                        <a href="/admin-portal/applications/"><i class="fas fa-users"></i> Applications</a>
+                                        <a href="/admin-portal/analytics/"><i class="fas fa-chart-bar"></i> Analytics</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </li>
+
+                            {% else %}
+                            <li>
+                                <a href="#" onclick="showLogin()" title="Login">
+                                    <i class="fas fa-sign-in-alt"></i>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="#" onclick="showSignup()" title="Sign Up">
+                                    <i class="fas fa-user-plus"></i>
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Desktop Sidebar -->
+    {% if user.user_type == 'applicant' %}
+    <div class="desktop-sidebar">
+        <a href="/profile/"><i class="fas fa-user"></i> My Profile</a>
+        <a href="/applications/"><i class="fas fa-file-alt"></i> Applications</a>
+        <a href="/profile/skills/"><i class="fas fa-cogs"></i> Skills</a>
+        <a href="/profile/employment/"><i class="fas fa-briefcase"></i> Employment</a>
+        <a href="/profile/education/" class="active"><i class="fas fa-graduation-cap"></i> Education</a>
+        <a href="/profile/documents/"><i class="fas fa-file-upload"></i> Documents</a>
+    </div>
+    {% else %}
+    <div class="desktop-sidebar">
+        <a href="/admin-portal/"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+        <a href="/admin-portal/jobs/"><i class="fas fa-briefcase"></i> Manage Jobs</a>
+        <a href="/admin-portal/applications/"><i class="fas fa-users"></i> Applications</a>
+        <a href="/admin-portal/analytics/"><i class="fas fa-chart-bar"></i> Analytics</a>
+        <a href="/profile/education/" class="active"><i class="fas fa-graduation-cap"></i> Education Preferences</a>
+    </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1>
+                        <i class="fas fa-graduation-cap me-2 
+                            {% if user.user_type == 'applicant' %}text-primary{% else %}text-success{% endif %}">
+                        </i>
+                        {% if user.user_type == 'applicant' %}
+                        My Education
+                        {% else %}
+                        Education Preferences
+                        {% endif %}
+                    </h1>
+                    <button class="btn btn-add" onclick="openAddModal()">
+                        <i class="fas fa-plus me-2"></i>
+                        {% if user.user_type == 'applicant' %}
+                        Add Education
+                        {% else %}
+                        Add Preference
+                        {% endif %}
+                    </button>
+                </div>
+
+                <!-- Business User Section -->
+                {% if user.user_type == 'admin' %}
+                <div class="business-section">
+                    <h3><i class="fas fa-building me-2"></i>Education Preferences</h3>
+                    <p class="text-muted">Define the educational qualifications you're looking for in candidates. This helps match with qualified applicants.</p>
+                </div>
+                {% endif %}
+                
+                <!-- Education List -->
+                <div class="card education-card">
+                    <div class="card-body">
+                        <div id="educationList">
+                            <div class="text-center py-4">
+                                <div class="spinner-border 
+                                    {% if user.user_type == 'applicant' %}text-primary{% else %}text-success{% endif %}" 
+                                    role="status">
+                                    <span class="visually-hidden">Loading education data...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Navbar -->
+    <div class="mobile-bottom-nav">
+        <a href="/"><i class="fas fa-home"></i>Home</a>
+        <a href="/dashboard"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
+        {% if user.user_type == 'applicant' %}
+        <a href="/applications/"><i class="fas fa-file-alt"></i>Jobs</a>
+        <a href="/profile/education/" class="active"><i class="fas fa-graduation-cap"></i>Edu</a>
+        {% else %}
+        <a href="/admin-portal/jobs/"><i class="fas fa-briefcase"></i>Jobs</a>
+        <a href="/admin-portal/applications/"><i class="fas fa-users"></i>Apps</a>
+        <a href="/profile/education/" class="active"><i class="fas fa-graduation-cap"></i>Preferences</a>
+        {% endif %}
+    </div>
+
+    <!-- Add/Edit Education Modal -->
+    <div class="modal fade" id="addEducationModal" tabindex="-1" aria-labelledby="addEducationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addEducationModalLabel">
+                        {% if user.user_type == 'applicant' %}
+                        Add Education
+                        {% else %}
+                        Add Education Preference
+                        {% endif %}
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="educationForm">
+                        {% if user.user_type == 'applicant' %}
+                        <!-- Applicant Form -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="qualification" class="form-label">Qualification *</label>
+                                <input type="text" class="form-control" id="qualification" required 
+                                       placeholder="e.g., Bachelor of Science in Computer Science">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="institution" class="form-label">Institution *</label>
+                                <input type="text" class="form-control" id="institution" required 
+                                       placeholder="e.g., University of Technology">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="degree_level" class="form-label">Degree Level</label>
+                                <select class="form-select" id="degree_level">
+                                    <option value="">Select level</option>
+                                    <option value="high_school">High School</option>
+                                    <option value="associate">Associate Degree</option>
+                                    <option value="bachelor">Bachelor Degree</option>
+                                    <option value="master">Master Degree</option>
+                                    <option value="phd">PhD</option>
+                                    <option value="certificate">Certificate</option>
+                                    <option value="diploma">Diploma</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="completion_year" class="form-label">Completion Year *</label>
+                                <input type="number" class="form-control" id="completion_year" 
+                                       min="1900" max="2030" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="field_of_study" class="form-label">Field of Study</label>
+                                <input type="text" class="form-control" id="field_of_study" 
+                                       placeholder="e.g., Computer Science, Business Administration">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="gpa" class="form-label">GPA</label>
+                                <input type="number" class="form-control" id="gpa" step="0.01" min="0" max="4.0"
+                                       placeholder="e.g., 3.5">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" rows="3" 
+                                      placeholder="Additional details about your education..."></textarea>
+                        </div>
+                        {% else %}
+                        <!-- Business Form -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="title" class="form-label">Preference Title *</label>
+                                <input type="text" class="form-control" id="title" required 
+                                       placeholder="e.g., Software Engineers with CS Degrees">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="positions_available" class="form-label">Positions Available *</label>
+                                <input type="number" class="form-control" id="positions_available" min="1" value="1" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="preferred_degree_level" class="form-label">Preferred Degree Level</label>
+                                <select class="form-select" id="preferred_degree_level">
+                                    <option value="">Any level</option>
+                                    <option value="high_school">High School</option>
+                                    <option value="associate">Associate Degree</option>
+                                    <option value="bachelor">Bachelor Degree</option>
+                                    <option value="master">Master Degree</option>
+                                    <option value="phd">PhD</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="minimum_gpa" class="form-label">Minimum GPA</label>
+                                <input type="number" class="form-control" id="minimum_gpa" step="0.01" min="0" max="4.0"
+                                       placeholder="e.g., 3.0">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="preferred_fields" class="form-label">Preferred Fields of Study (comma separated)</label>
+                            <input type="text" class="form-control" id="preferred_fields" 
+                                   placeholder="e.g., Computer Science, Engineering, Business">
+                            <div class="form-text">Leave empty to accept any field of study</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" rows="3" 
+                                      placeholder="Describe what you're looking for in candidates..."></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="is_active" checked>
+                                <label class="form-check-label" for="is_active">
+                                    Active (accepting applications)
+                                </label>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveEducationBtn" onclick="saveEducation()">
+                        {% if user.user_type == 'applicant' %}
+                        Save Education
+                        {% else %}
+                        Save Preference
+                        {% endif %}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const userType = "{{ user.user_type }}";
+        let editingEducationId = null;
+
+        // Simple navigation functions
+        function toggleProfileDropdown() {
+            document.getElementById("profileMenu").classList.toggle("show");
+        }
+
+        // Close dropdown on click outside
+        document.addEventListener("click", function(e) {
+            const menu = document.getElementById("profileMenu");
+            const avatar = document.querySelector(".profile-avatar-small");
+
+            if (avatar && menu && !avatar.contains(e.target) && !menu.contains(e.target)) {
+                menu.classList.remove("show");
+            }
+        });
+
+        // Load education data when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadEducationData();
+        });
+
+        async function loadEducationData() {
+            try {
+                const response = await fetch('/api/profile/education/');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayEducationData(data, data.user_type);
+                } else {
+                    showError('Failed to load education data: ' + (data.errors || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error loading education:', error);
+                showError('Error loading education data: ' + error.message);
+            }
+        }
+
+        function displayEducationData(data, currentUserType) {
+            const container = document.getElementById('educationList');
+            
+            if (currentUserType === 'applicant') {
+                displayApplicantEducation(container, data);
+            } else {
+                displayBusinessPreferences(container, data);
+            }
+        }
+
+        function displayApplicantEducation(container, data) {
+            const education = data.education || [];
+            const matches = data.business_matches || [];
+            
+            if (education.length === 0 && matches.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-4">
+                        <i class="fas fa-graduation-cap fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No Education Added</h5>
+                        <p class="text-muted">Add your educational qualifications to showcase your background to employers.</p>
+                        <button class="btn btn-primary" onclick="openAddModal()">
+                            <i class="fas fa-plus me-2"></i>Add Your First Education
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            
+            // Display education history
+            if (education.length > 0) {
+                html += `<h5 class="mb-3"><i class="fas fa-user me-2 text-primary"></i>My Education</h5>`;
+                html += education.map(edu => createEducationHTML(edu)).join('');
+            }
+            
+            // Display business matches
+            if (matches.length > 0) {
+                html += `<h5 class="mb-3 mt-4"><i class="fas fa-check-circle me-2 text-success"></i>Education Opportunities</h5>`;
+                html += `<p class="text-muted mb-3">Your education matches these company preferences</p>`;
+                html += matches.map(match => createMatchHTML(match)).join('');
+            }
+            
+            container.innerHTML = html;
+        }
+
+        function displayBusinessPreferences(container, data) {
+            const preferences = data.preferences || [];
+            
+            if (preferences.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-4">
+                        <i class="fas fa-lightbulb fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No Education Preferences</h5>
+                        <p class="text-muted">Add education preferences to attract qualified candidates.</p>
+                        <button class="btn btn-primary" onclick="openAddModal()">
+                            <i class="fas fa-plus me-2"></i>Add Your First Preference
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = `<h5 class="mb-3"><i class="fas fa-building me-2 text-success"></i>Your Education Preferences</h5>`;
+            html += preferences.map(pref => createPreferenceHTML(pref)).join('');
+            container.innerHTML = html;
+        }
+
+        function createEducationHTML(education) {
+            const degreeLevels = {
+                'high_school': 'High School',
+                'associate': 'Associate Degree',
+                'bachelor': 'Bachelor Degree', 
+                'master': 'Master Degree',
+                'phd': 'PhD',
+                'certificate': 'Certificate',
+                'diploma': 'Diploma'
+            };
+
+            return `
+                <div class="education-item">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <h5 class="mb-1">${escapeHtml(education.qualification)}</h5>
+                            <p class="mb-1 text-primary fw-bold">${escapeHtml(education.institution)}</p>
+                            <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                                ${education.degree_level ? `
+                                <span class="degree-badge">${degreeLevels[education.degree_level] || education.degree_level}</span>
+                                ` : ''}
+                                <span class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    ${education.completion_year}
+                                </span>
+                                ${education.gpa ? `
+                                <span class="text-muted">
+                                    <i class="fas fa-star me-1"></i>
+                                    GPA: ${education.gpa}
+                                </span>
+                                ` : ''}
+                            </div>
+                            ${education.field_of_study ? `<p class="mb-1"><strong>Field:</strong> ${escapeHtml(education.field_of_study)}</p>` : ''}
+                            ${education.description ? `<p class="mb-0 text-muted">${escapeHtml(education.description)}</p>` : ''}
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#" onclick="editEducation(${education.id})">Edit</a></li>
+                                <li><a class="dropdown-item text-danger" href="#" onclick="deleteEducation(${education.id})">Delete</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function createMatchHTML(match) {
+            const preference = match.preference;
+
+            return `
+                <div class="education-item match-item">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <h5 class="mb-1">
+                                ${preference.title}
+                                <span class="match-badge ms-2">${match.match_score}% Match</span>
+                            </h5>
+                            <p class="mb-1 text-muted">${match.company_name} • ${preference.positions_available} positions available</p>
+                            <div class="progress mb-2">
+                                <div class="progress-bar match-progress" style="width: ${match.match_score}%"></div>
+                            </div>
+                            <ul class="mb-0">
+                                ${match.match_reasons.map(reason => `<li><small>${reason}</small></li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function createPreferenceHTML(preference) {
+            const statusBadge = preference.is_active ? 
+                '<span class="badge bg-success">Active</span>' : 
+                '<span class="badge bg-secondary">Inactive</span>';
+
+            return `
+                <div class="education-item business-preference-item">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <h5 class="mb-1">
+                                ${preference.title}
+                                ${statusBadge}
+                            </h5>
+                            <p class="mb-1"><strong>Positions Available:</strong> ${preference.positions_available}</p>
+                            <p class="mb-1"><strong>Criteria:</strong> ${preference.criteria_summary || 'No specific criteria'}</p>
+                            <p class="mb-1 text-success"><strong>Matching Applicants:</strong> ${preference.match_count || 0}</p>
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item text-danger" href="#" onclick="deleteEducation(${preference.id})">Delete</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openAddModal() {
+            resetEducationForm();
+            const modal = new bootstrap.Modal(document.getElementById('addEducationModal'));
+            modal.show();
+        }
+
+        async function editEducation(educationId) {
+            try {
+                const response = await fetch('/api/profile/education/');
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch education data: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (!data.success) {
+                    throw new Error(data.errors || 'Failed to load education data');
+                }
+                
+                // Find the education record to edit
+                let education = null;
+                if (userType === 'applicant') {
+                    education = data.education.find(edu => edu.id === educationId);
+                } else {
+                    education = data.preferences.find(pref => pref.id === educationId);
+                }
+                
+                if (!education) {
+                    throw new Error('Education record not found');
+                }
+                
+                // Populate the modal with existing data
+                if (userType === 'applicant') {
+                    document.getElementById('qualification').value = education.qualification || '';
+                    document.getElementById('institution').value = education.institution || '';
+                    document.getElementById('degree_level').value = education.degree_level || '';
+                    document.getElementById('completion_year').value = education.completion_year || '';
+                    document.getElementById('field_of_study').value = education.field_of_study || '';
+                    document.getElementById('gpa').value = education.gpa || '';
+                    document.getElementById('description').value = education.description || '';
+                } else {
+                    document.getElementById('title').value = education.title || '';
+                    document.getElementById('positions_available').value = education.positions_available || 1;
+                    document.getElementById('preferred_degree_level').value = education.criteria?.degree_level || '';
+                    document.getElementById('minimum_gpa').value = education.criteria?.minimum_gpa || '';
+                    document.getElementById('preferred_fields').value = education.criteria?.preferred_fields?.join(', ') || '';
+                    document.getElementById('description').value = education.description || '';
+                    document.getElementById('is_active').checked = education.is_active !== false;
+                }
+                
+                // Set the editing ID and update modal
+                editingEducationId = educationId;
+                const modalTitle = userType === 'applicant' ? 'Edit Education' : 'Edit Education Preference';
+                document.getElementById('addEducationModalLabel').textContent = modalTitle;
+                
+                // Update the save button
+                const saveButton = document.getElementById('saveEducationBtn');
+                const buttonText = userType === 'applicant' ? 'Update Education' : 'Update Preference';
+                saveButton.textContent = buttonText;
+                saveButton.onclick = updateEducation;
+                
+                // Show the modal
+                const modal = new bootstrap.Modal(document.getElementById('addEducationModal'));
+                modal.show();
+                
+            } catch (error) {
+                console.error('Error loading education for edit:', error);
+                showError('Failed to load education data for editing: ' + error.message);
+            }
+        }
+
+        async function updateEducation() {
+            if (!editingEducationId) {
+                showError('No education record selected for editing');
+                return;
+            }
+
+            let formData = {};
+            
+            if (userType === 'applicant') {
+                formData = {
+                    qualification: document.getElementById('qualification').value.trim(),
+                    institution: document.getElementById('institution').value.trim(),
+                    degree_level: document.getElementById('degree_level').value,
+                    completion_year: parseInt(document.getElementById('completion_year').value),
+                    field_of_study: document.getElementById('field_of_study').value.trim(),
+                    gpa: document.getElementById('gpa').value ? parseFloat(document.getElementById('gpa').value) : null,
+                    description: document.getElementById('description').value.trim()
+                };
+
+                // Basic validation
+                if (!formData.qualification || !formData.institution || !formData.completion_year) {
+                    showError('Please fill in all required fields (Qualification, Institution, and Completion Year)');
+                    return;
+                }
+            } else {
+                // Business user form data
+                const preferredFields = document.getElementById('preferred_fields').value
+                    .split(',')
+                    .map(f => f.trim())
+                    .filter(f => f.length > 0);
+                
+                formData = {
+                    title: document.getElementById('title').value.trim(),
+                    positions_available: parseInt(document.getElementById('positions_available').value),
+                    description: document.getElementById('description').value.trim(),
+                    is_active: document.getElementById('is_active').checked,
+                    criteria: {
+                        degree_level: document.getElementById('preferred_degree_level').value || null,
+                        minimum_gpa: document.getElementById('minimum_gpa').value ? parseFloat(document.getElementById('minimum_gpa').value) : null,
+                        preferred_fields: preferredFields
+                    }
+                };
+
+                // Basic validation
+                if (!formData.title || !formData.positions_available) {
+                    showError('Please fill in all required fields (Title and Positions Available)');
+                    return;
+                }
+            }
+
+            try {
+                // Use the update endpoint
+                const response = await fetch(`/api/profile/education/${editingEducationId}/update/`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCSRFToken()
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Close modal and reset form
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('addEducationModal'));
+                    modal.hide();
+                    resetEducationForm();
+                    
+                    // Reload education list
+                    loadEducationData();
+                    
+                    // Show success message
+                    const successMessage = userType === 'applicant' ? 
+                        'Education updated successfully!' : 'Education preference updated successfully!';
+                    showMessage(successMessage, 'success');
+                } else {
+                    // Show validation errors
+                    if (data.errors) {
+                        const errorMessages = Object.values(data.errors).flat().join(', ');
+                        showError('Please fix the following errors: ' + errorMessages);
+                    } else {
+                        showError(data.error || 'Failed to update education data');
+                    }
+                }
+            } catch (error) {
+                console.error('Error updating education:', error);
+                showError('Error updating education data. Please try again.');
+            }
+        }
+
+        async function saveEducation() {
+            let formData = {};
+            
+            if (userType === 'applicant') {
+                formData = {
+                    qualification: document.getElementById('qualification').value.trim(),
+                    institution: document.getElementById('institution').value.trim(),
+                    degree_level: document.getElementById('degree_level').value,
+                    completion_year: parseInt(document.getElementById('completion_year').value),
+                    field_of_study: document.getElementById('field_of_study').value.trim(),
+                    gpa: document.getElementById('gpa').value ? parseFloat(document.getElementById('gpa').value) : null,
+                    description: document.getElementById('description').value.trim()
+                };
+
+                // Basic validation
+                if (!formData.qualification || !formData.institution || !formData.completion_year) {
+                    showError('Please fill in all required fields (Qualification, Institution, and Completion Year)');
+                    return;
+                }
+            } else {
+                // Business user form data
+                const preferredFields = document.getElementById('preferred_fields').value
+                    .split(',')
+                    .map(f => f.trim())
+                    .filter(f => f.length > 0);
+                
+                formData = {
+                    title: document.getElementById('title').value.trim(),
+                    positions_available: parseInt(document.getElementById('positions_available').value),
+                    description: document.getElementById('description').value.trim(),
+                    is_active: document.getElementById('is_active').checked,
+                    criteria: {
+                        degree_level: document.getElementById('preferred_degree_level').value || null,
+                        minimum_gpa: document.getElementById('minimum_gpa').value ? parseFloat(document.getElementById('minimum_gpa').value) : null,
+                        preferred_fields: preferredFields
+                    }
+                };
+
+                // Basic validation
+                if (!formData.title || !formData.positions_available) {
+                    showError('Please fill in all required fields (Title and Positions Available)');
+                    return;
+                }
+            }
+
+            try {
+                const response = await fetch('/api/profile/education/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCSRFToken()
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Close modal and reset form
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('addEducationModal'));
+                    modal.hide();
+                    resetEducationForm();
+                    
+                    // Reload education list
+                    loadEducationData();
+                    
+                    // Show success message
+                    const successMessage = userType === 'applicant' ? 
+                        'Education added successfully!' : 'Education preference added successfully!';
+                    showMessage(successMessage, 'success');
+                } else {
+                    // Show validation errors
+                    if (data.errors) {
+                        const errorMessages = Object.values(data.errors).flat().join(', ');
+                        showError('Please fix the following errors: ' + errorMessages);
+                    } else {
+                        showError(data.error || 'Failed to save education data');
+                    }
+                }
+            } catch (error) {
+                console.error('Error saving education:', error);
+                showError('Error saving education data. Please try again.');
+            }
+        }
+
+        function resetEducationForm() {
+            document.getElementById('educationForm').reset();
+            
+            const modalTitle = userType === 'applicant' ? 'Add Education' : 'Add Education Preference';
+            document.getElementById('addEducationModalLabel').textContent = modalTitle;
+            
+            // Reset save button
+            const saveButton = document.getElementById('saveEducationBtn');
+            const buttonText = userType === 'applicant' ? 'Save Education' : 'Save Preference';
+            saveButton.textContent = buttonText;
+            saveButton.onclick = saveEducation;
+            
+            editingEducationId = null;
+        }
+
+        // Update the modal close event to reset the form
+        document.getElementById('addEducationModal').addEventListener('hidden.bs.modal', function () {
+            resetEducationForm();
+        });
+
+        async function deleteEducation(educationId) {
+            const message = userType === 'applicant' ? 
+                'Are you sure you want to delete this education record?' : 
+                'Are you sure you want to delete this education preference?';
+
+            if (!confirm(message)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/profile/education/${educationId}/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': getCSRFToken()
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    loadEducationData();
+                    const successMessage = userType === 'applicant' ? 
+                        'Education deleted successfully!' : 'Education preference deleted successfully!';
+                    showMessage(successMessage, 'success');
+                } else {
+                    showError('Failed to delete: ' + (data.errors || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error deleting education:', error);
+                showError('Error deleting education data');
+            }
+        }
+
+        function showMessage(message, type) {
+            // Remove any existing alerts
+            const existingAlerts = document.querySelectorAll('.alert');
+            existingAlerts.forEach(alert => alert.remove());
+
+            // Create and show a toast or alert message
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'info'} alert-dismissible fade show position-fixed`;
+            alertDiv.style.cssText = 'top: 100px; right: 20px; z-index: 1060; min-width: 300px;';
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(alertDiv);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.parentNode.removeChild(alertDiv);
+                }
+            }, 5000);
+        }
+
+        function showError(message) {
+            showMessage(message, 'error');
+        }
+
+        // Utility function for CSRF token
+        function getCSRFToken() {
+            const name = 'csrftoken';
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Utility function to escape HTML
+        function escapeHtml(unsafe) {
+            if (unsafe === null || unsafe === undefined) return '';
+            return unsafe
+                .toString()
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+
+  <script src="/static/hiring/js/notifications-global.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!-- templates/theme_toggle.html -->
+<!-- Theme Toggle Button - Include this on any page -->
+<style>
+    .theme-toggle-btn {
+        background: var(--bg-input, #f0f2f5);
+        border: 1px solid var(--border-color, #ddd);
+        border-radius: 30px;
+        padding: 6px 14px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: var(--text-primary, #191919);
+        font-size: 14px;
+        font-weight: 500;
+    }
+    
+    .theme-toggle-btn:hover {
+        transform: scale(1.05);
+        border-color: var(--primary-color, #c62828);
+    }
+    
+    .theme-toggle-btn .icon-sun {
+        color: #f59e0b;
+    }
+    
+    .theme-toggle-btn .icon-moon {
+        color: #6366f1;
+    }
+    
+    .theme-toggle-btn .theme-label {
+        font-size: 13px;
+        font-weight: 500;
+    }
+    
+    @media (max-width: 768px) {
+        .theme-toggle-btn .theme-label {
+            display: none;
+        }
+    }
+</style>
+
+<button onclick="toggleTheme()" class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Theme">
+    <span id="themeIconContainer">
+        <i class="fas fa-moon icon-moon" id="themeIcon"></i>
+    </span>
+    <span class="theme-label" id="themeLabel">Light</span>
+</button>
+
+<script>
+// ===== THEME MANAGEMENT =====
+(function() {
+    // Load theme immediately
+    const savedTheme = localStorage.getItem('tolleya_theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    
+    // Update UI when DOM loads
+    document.addEventListener('DOMContentLoaded', function() {
+        updateThemeUI(savedTheme);
+    });
+})();
+
+function toggleTheme() {
+    const html = document.documentElement;
+    const currentTheme = html.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    
+    // Apply theme
+    html.setAttribute('data-theme', newTheme);
+    localStorage.setItem('tolleya_theme', newTheme);
+    
+    // Update UI
+    updateThemeUI(newTheme);
+    
+    // Show notification
+    const themeName = newTheme.charAt(0).toUpperCase() + newTheme.slice(1);
+    showToastMessage(`Switched to ${themeName} theme`);
+}
+
+function updateThemeUI(theme) {
+    const icon = document.getElementById('themeIcon');
+    const label = document.getElementById('themeLabel');
+    
+    if (icon && label) {
+        if (theme === 'dark') {
+            icon.className = 'fas fa-sun icon-sun';
+            label.textContent = 'Dark';
+        } else {
+            icon.className = 'fas fa-moon icon-moon';
+            label.textContent = 'Light';
+        }
+    }
+}
+
+function showToastMessage(message) {
+    // Simple toast notification
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: ${document.documentElement.getAttribute('data-theme') === 'dark' ? '#1c2333' : '#fff'};
+        color: ${document.documentElement.getAttribute('data-theme') === 'dark' ? '#e6edf3' : '#191919'};
+        padding: 12px 24px;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        z-index: 99999;
+        font-size: 14px;
+        font-weight: 500;
+        border: 1px solid ${document.documentElement.getAttribute('data-theme') === 'dark' ? '#30363d' : '#ddd'};
+        animation: slideUp 0.3s ease;
+        max-width: 90%;
+    `;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s';
+        setTimeout(() => toast.remove(), 300);
+    }, 2500);
+}
+
+// Add animation
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideUp {
+        from { transform: translateY(20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+`;
+document.head.appendChild(style);
+</script>
+<script src="/static/hiring/js/notifications-global.js" defer></script>

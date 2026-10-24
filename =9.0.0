@@ -1,0 +1,10 @@
+Requirement already satisfied: mysql-connector-python in C:\Users\akani\OneDrive\Documents\tolleya\venv\Lib\site-packages (8.1.0)
+Collecting mysql-connector-python
+  Downloading mysql_connector_python-9.7.0-py2.py3-none-any.whl.metadata (11 kB)
+Downloading mysql_connector_python-9.7.0-py2.py3-none-any.whl (480 kB)
+Installing collected packages: mysql-connector-python
+  Attempting uninstall: mysql-connector-python
+    Found existing installation: mysql-connector-python 8.1.0
+    Uninstalling mysql-connector-python-8.1.0:
+      Successfully uninstalled mysql-connector-python-8.1.0
+Successfully installed mysql-connector-python-9.7.0

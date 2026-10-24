@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>My Profile - OppoGlobe</title>
+{% load api_utils %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet" />
+
+<style>
+/* ============================================================
+   DESIGN TOKENS — matches the OppoGlobe home page exactly
+   ============================================================ */
+:root{
+  --ink:#16241F; --ink-soft:#5B6660; --ink-faint:#8B958F;
+  --paper:#F6F7F5; --surface:#FFFFFF; --line:#E4E7E2; --line-soft:#EEF0ED;
+  --jade:#1F6F5C; --jade-deep:#154F41; --jade-wash:#E7F1EC;
+  --coral:#FF6B4A; --coral-deep:#E24E2F; --coral-wash:#FFEAE3;
+  --gold:#E8A93B; --gold-wash:#FBF0DA;
+  --plum:#7A5AA3; --plum-wash:#F1EBF9;
+  --sky:#2E8BC0; --sky-wash:#E7F3FA;
+  --danger:#D64545; --success:#2C9A5B;
+  --radius-xs:8px; --radius-sm:12px; --radius-md:16px; --radius-lg:22px; --radius-pill:999px;
+  --shadow-sm:0 1px 3px rgba(22,36,31,.06), 0 1px 2px rgba(22,36,31,.04);
+  --shadow-md:0 8px 24px rgba(22,36,31,.08);
+  --shadow-lg:0 20px 48px rgba(22,36,31,.14);
+  --font-display:'Fraunces', Georgia, serif;
+  --font-body:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono:'JetBrains Mono', 'SF Mono', monospace;
+  --ease:cubic-bezier(.34,1.2,.4,1);
+  --header-h:64px; --bottom-nav-h:66px; --safe-b:env(safe-area-inset-bottom, 0px);
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth; -webkit-text-size-adjust:100%; overflow-x:hidden; width:100%;}
+body{margin:0; background:var(--paper); color:var(--ink); font-family:var(--font-body); font-size:16px; line-height:1.5; padding-top:var(--header-h); min-height:100vh; overflow-x:hidden; width:100%;}
+a{color:inherit; text-decoration:none;}
+img{max-width:100%; display:block;}
+button{font-family:inherit;}
+:focus-visible{outline:2.5px solid var(--jade); outline-offset:2px; border-radius:6px;}
+h1,h2,h3,h4,h5,h6{font-family:var(--font-display); margin:0; letter-spacing:-.01em;}
+.hidden{display:none !important;}
+
+/* ============================================================
+   HEADER (identical to home)
+   ============================================================ */
+.header-area{position:fixed; inset:0 0 auto 0; height:var(--header-h); background:var(--surface); border-bottom:1px solid var(--line); z-index:3000; display:flex; align-items:center; overflow:visible;}
+.header-inner{width:100%; max-width:1400px; margin:0 auto; min-width:0; padding:0 clamp(10px,3vw,24px); display:flex; align-items:center; justify-content:space-between; gap:clamp(4px,1.5vw,10px); position:relative; z-index:3001;}
+.brand{display:flex; align-items:center; gap:9px; flex-shrink:0; min-width:0;}
+.brand-mark{width:34px; height:34px; border-radius:10px; flex-shrink:0; background:linear-gradient(135deg, var(--jade), var(--jade-deep)); display:flex; align-items:center; justify-content:center; color:#fff; font-family:var(--font-display); font-weight:700; font-size:17px;}
+.brand-word{font-family:var(--font-display); font-weight:600; font-size:clamp(15px,4vw,20px); color:var(--ink); white-space:nowrap;}
+.nav-icons{display:flex; align-items:center; gap:clamp(1px,1vw,4px); list-style:none; margin:0; padding:0; flex-shrink:1; min-width:0; position:relative; z-index:3002;}
+.nav-icons > li{flex-shrink:0;}
+.icon-btn{position:relative; width:40px; height:40px; border-radius:var(--radius-pill); display:flex; align-items:center; justify-content:center; color:var(--ink-soft); font-size:17px; transition:background .15s, color .15s; border:none; background:transparent; cursor:pointer; flex-shrink:0;}
+.icon-btn:hover{background:var(--jade-wash); color:var(--jade-deep);}
+.ping-badge{position:absolute; top:2px; right:2px; min-width:16px; height:16px; padding:0 3px; background:var(--coral); color:#fff; border-radius:99px; border:2px solid var(--surface); font-size:9px; font-weight:700; display:none; align-items:center; justify-content:center; line-height:1;}
+.ping-badge.show{display:flex;}
+.role-chip{font-size:11px; font-weight:600; padding:4px 11px; border-radius:var(--radius-pill); background:var(--jade-wash); color:var(--jade-deep); white-space:nowrap; flex-shrink:0;}
+.role-chip.biz{background:var(--plum-wash); color:var(--plum);}
+.avatar-btn{width:36px; height:36px; border-radius:50%; border:none; cursor:pointer; position:relative; background:linear-gradient(135deg, var(--coral), var(--gold)); color:#fff; font-weight:700; font-size:14px; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+.status-dot{position:absolute; bottom:-1px; right:-1px; width:10px; height:10px; border-radius:50%; background:var(--success); border:2px solid var(--surface);}
+.dropdown-panel{position:absolute; top:calc(100% + 10px); right:0; width:220px; max-width:calc(100vw - 20px); background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-md); box-shadow:var(--shadow-lg); padding:6px; opacity:0; visibility:hidden; transform:translateY(6px) scale(.98); transition:opacity .16s var(--ease), visibility .16s var(--ease), transform .16s var(--ease); transform-origin:top right; pointer-events:none; z-index:9999;}
+.dropdown-panel.show{opacity:1; visibility:visible; pointer-events:auto; transform:translateY(0) scale(1);}
+.dropdown-panel a, .dropdown-panel button{display:flex; align-items:center; gap:10px; width:100%; text-align:left; border:none; background:none; padding:9px 10px; border-radius:var(--radius-sm); font-size:13.5px; color:var(--ink); cursor:pointer;}
+.dropdown-panel a:hover, .dropdown-panel button:hover{background:var(--paper);}
+.dropdown-panel i{width:18px; color:var(--ink-faint); text-align:center;}
+.dropdown-divider{height:1px; background:var(--line-soft); margin:5px 6px;}
+.rel{position:relative; flex-shrink:0;}
+@media (max-width:560px){ .header-inner{padding:0 8px;} .role-chip{display:none;} .icon-btn{width:34px; height:34px; font-size:14.5px;} .avatar-btn{width:30px; height:30px; font-size:12px;} .brand-word{font-size:15px;} }
+@media (max-width:420px){ .brand-word{display:none;} .nav-icons{gap:0;} .icon-btn{width:32px; height:32px; font-size:14px;} .dropdown-panel{width:min(220px,calc(100vw - 16px)); max-width:calc(100vw - 16px);} }
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+.shell{max-width:1200px; margin:0 auto; padding:16px clamp(10px,2.5vw,20px) calc(var(--bottom-nav-h) + 24px); display:grid; grid-template-columns:1fr; gap:16px;}
+@media (min-width:960px){ .shell{grid-template-columns:220px minmax(0,1fr); padding-bottom:24px;} }
+@media (min-width:1220px){ .shell{grid-template-columns:220px minmax(0,1fr) 240px;} }
+.rail-left{min-width:0;} .rail-right{min-width:0; display:none;}
+@media (min-width:1220px){ .rail-right{display:block;} }
+.main{min-width:0; width:100%;}
+
+.card{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-md); box-shadow:var(--shadow-sm);}
+.card-pad{padding:18px;}
+.card-title{font-family:var(--font-display); font-weight:600; font-size:16px; margin-bottom:14px; display:flex; align-items:center; justify-content:space-between; gap:10px; color:var(--ink); flex-wrap:wrap;}
+.card-title .t{display:flex; align-items:center; gap:9px;}
+.card-title i{color:var(--coral); font-size:14px;}
+.stack{display:flex; flex-direction:column; gap:12px;}
+
+.rail-toggle{display:flex; align-items:center; gap:8px; width:100%; padding:11px 14px; margin-bottom:10px; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-sm); font-weight:600; font-size:13.5px; color:var(--ink); cursor:pointer; box-shadow:var(--shadow-sm);}
+.rail-toggle i{color:var(--coral);}
+@media (min-width:960px){ .rail-toggle{display:none;} }
+.rail-overlay{position:fixed; inset:0; background:rgba(22,36,31,.4); z-index:1400; display:none;}
+.rail-overlay.active{display:block;}
+.rail-body{display:flex; flex-direction:column; gap:12px;}
+@media (max-width:959px){
+  .rail-body{position:fixed; top:0; left:-290px; width:min(272px,84vw); height:100vh; z-index:1500; background:var(--surface); padding:16px; overflow-y:auto; transition:left .25s var(--ease); box-shadow:6px 0 40px rgba(0,0,0,.15);}
+  .rail-body.open{left:0;}
+}
+.quick-btn{display:flex; align-items:center; gap:10px; width:100%; padding:10px 12px; border:none; border-radius:var(--radius-sm); background:var(--paper); color:var(--ink); font-weight:500; font-size:13.5px; cursor:pointer; text-align:left; transition:background .15s, transform .15s;}
+.quick-btn:hover{transform:translateX(2px);}
+.quick-btn i{width:18px; color:var(--jade); text-align:center;}
+.quick-btn.active{background:var(--jade); color:#fff;}
+.quick-btn.active i{color:#fff;}
+.stat-row{display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--line-soft); font-size:13px;}
+.stat-row:last-child{border-bottom:none;}
+.stat-val{font-family:var(--font-mono); font-weight:700;}
+.stat-val.jade{color:var(--jade);}
+.stat-val.gold{color:var(--gold);}
+
+/* ============================================================
+   PROFILE HERO
+   ============================================================ */
+.profile-hero{background:linear-gradient(135deg, var(--jade), var(--jade-deep)); color:#fff; border-radius:var(--radius-md); padding:26px clamp(16px,4vw,32px); margin-bottom:16px; display:flex; flex-wrap:wrap; gap:20px; align-items:center; justify-content:space-between; box-shadow:var(--shadow-md);}
+.profile-hero.biz{background:linear-gradient(135deg, var(--plum), #5a3f80);}
+.hero-left{display:flex; align-items:center; gap:16px; min-width:0;}
+.hero-avatar{width:60px; height:60px; border-radius:50%; background:rgba(255,255,255,.18); border:2px solid rgba(255,255,255,.35); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-size:26px; font-weight:700; flex-shrink:0;}
+.hero-text h1{font-size:clamp(19px,3vw,24px); font-weight:600;}
+.hero-text p{font-size:13px; opacity:.85; margin-top:3px;}
+.hero-actions{display:flex; align-items:center; gap:12px; flex-wrap:wrap;}
+.hero-completeness{background:rgba(255,255,255,.14); border-radius:var(--radius-sm); padding:12px 16px; min-width:170px;}
+.hero-completeness .lbl{font-size:11px; opacity:.85; margin-bottom:6px; display:flex; justify-content:space-between;}
+.hc-track{height:7px; border-radius:99px; background:rgba(255,255,255,.25); overflow:hidden;}
+.hc-fill{height:100%; background:#fff; border-radius:99px; transition:width .4s var(--ease);}
+.btn-pill{padding:9px 18px; border-radius:var(--radius-pill); border:none; font-weight:600; font-size:13px; cursor:pointer; transition:transform .15s, opacity .15s;}
+.btn-pill:active{transform:scale(.97);}
+.btn-white{background:#fff; color:var(--jade-deep);}
+.btn-white:hover{opacity:.92;}
+.btn-jade{background:var(--jade); color:#fff;}
+.btn-jade:hover{background:var(--jade-deep);}
+.btn-outline{background:transparent; border:1.5px solid var(--line); color:var(--ink-soft);}
+.btn-outline:hover{border-color:var(--jade); color:var(--jade-deep);}
+.btn-danger-outline{background:transparent; border:1.5px solid var(--danger); color:var(--danger);}
+.btn-danger-outline:hover{background:var(--danger); color:#fff;}
+
+/* ============================================================
+   INFO GRID / LIST ROWS
+   ============================================================ */
+.info-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px 20px;}
+.info-item .lbl{font-size:10.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-faint); font-weight:700; margin-bottom:3px;}
+.info-item .val{font-size:13.5px; color:var(--ink); word-break:break-word;}
+
+.list-row{border-left:3px solid var(--jade); background:var(--paper); border-radius:var(--radius-sm); padding:12px 14px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:flex-start; gap:10px; flex-wrap:wrap; transition:background .15s;}
+.list-row:hover{background:var(--jade-wash);}
+.list-row .lr-title{font-weight:600; font-size:13.5px;}
+.list-row .lr-sub{font-size:11.5px; color:var(--ink-faint); margin-top:2px;}
+.list-row .lr-actions{display:flex; gap:6px; flex-shrink:0;}
+.icon-only-btn{width:30px; height:30px; border-radius:50%; border:1px solid var(--line); background:var(--surface); color:var(--ink-faint); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:12px;}
+.icon-only-btn:hover{border-color:var(--danger); color:var(--danger);}
+.icon-only-btn.dl:hover{border-color:var(--jade); color:var(--jade-deep);}
+
+.empty-state{text-align:center; padding:34px 18px; background:var(--paper); border:1px dashed var(--line); border-radius:var(--radius-md);}
+.empty-state i{font-size:1.8rem; color:var(--jade); opacity:.35; margin-bottom:8px;}
+.empty-state h4{font-size:14.5px; font-weight:600;}
+.empty-state p{font-size:12px; color:var(--ink-faint); margin:4px 0 12px;}
+.spin{display:inline-block; width:16px; height:16px; border:2px solid var(--jade-wash); border-top-color:var(--jade); border-radius:50%; animation:sp .7s linear infinite;}
+@keyframes sp{to{transform:rotate(360deg);}}
+.loading-line{text-align:center; padding:20px 0; color:var(--ink-faint); font-size:12.5px;}
+
+/* ============================================================
+   STAT / FILTER / UPLOAD BARS (education + ads mgmt)
+   ============================================================ */
+.mgmt-stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(80px,1fr)); gap:8px; margin-bottom:14px;}
+.mgmt-stat{background:var(--paper); border-radius:var(--radius-sm); padding:10px 8px; text-align:center; border-left:3px solid var(--jade);}
+.mgmt-stat.plum{border-left-color:var(--plum);}
+.mgmt-stat .n{font-family:var(--font-mono); font-weight:700; font-size:16px; color:var(--jade);}
+.mgmt-stat.plum .n{color:var(--plum);}
+.mgmt-stat .l{font-size:9px; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.03em; margin-top:2px;}
+
+.mgmt-upload-bar{background:var(--jade-wash); border:1px solid rgba(31,111,92,.15); border-radius:var(--radius-sm); padding:12px 14px; margin-bottom:14px; display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;}
+.mgmt-upload-bar.plum{background:var(--plum-wash); border-color:rgba(122,90,163,.2);}
+.mgmt-upload-bar .lbl{font-size:12.5px; color:var(--ink-soft); font-weight:600; display:flex; align-items:center; gap:7px;}
+.mgmt-upload-bar .lbl i{color:var(--jade);}
+.mgmt-upload-bar.plum .lbl i{color:var(--plum);}
+.mgmt-upload-bar .acts{display:flex; gap:6px; flex-wrap:wrap;}
+.mgmt-upload-bar button{padding:6px 14px; border-radius:99px; border:none; font-size:11px; font-weight:700; cursor:pointer; background:var(--jade); color:#fff; transition:transform .15s;}
+.mgmt-upload-bar.plum button{background:var(--plum);}
+.mgmt-upload-bar button:hover{transform:translateY(-1px);}
+.mgmt-upload-bar button.outline{background:transparent; border:1px solid var(--jade); color:var(--jade-deep);}
+.mgmt-upload-bar.plum button.outline{border-color:var(--plum); color:var(--plum);}
+
+.chip-row{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px;}
+.edu-chip{padding:5px 13px; border-radius:99px; border:1px solid var(--line); background:transparent; color:var(--ink-soft); font-size:11.5px; cursor:pointer; font-weight:600;}
+.edu-chip:hover{border-color:var(--jade);}
+.edu-chip.active{background:var(--jade); border-color:var(--jade); color:#fff;}
+
+.badge-type{font-size:9px; padding:2px 9px; border-radius:99px; font-weight:700; color:#fff; text-transform:uppercase; letter-spacing:.02em;}
+.badge-type.bursary{background:var(--success);} .badge-type.university{background:var(--sky);} .badge-type.school{background:var(--plum);} .badge-type.paper{background:var(--coral);}
+
+.status-pill-sm{font-size:9px; padding:2px 10px; border-radius:99px; font-weight:700; text-transform:uppercase;}
+.status-pill-sm.active{background:#dcf3e5; color:var(--success);}
+.status-pill-sm.pending{background:var(--gold-wash); color:#9c7719;}
+.status-pill-sm.rejected{background:#fbe1e1; color:var(--danger);}
+.status-pill-sm.paused{background:var(--sky-wash); color:var(--sky);}
+.status-pill-sm.expired, .status-pill-sm.draft{background:var(--line-soft); color:var(--ink-faint);}
+
+.mini-btn{padding:3px 11px; border-radius:99px; border:none; font-size:9.5px; font-weight:700; cursor:pointer;}
+.mini-btn.approve{background:var(--success); color:#fff;}
+.mini-btn.reject{background:var(--danger); color:#fff;}
+.mini-btn.pause{background:var(--gold); color:#3c2c05;}
+.mini-btn.unpause{background:var(--sky); color:#fff;}
+.ad-stats-mini{display:flex; gap:12px; font-size:10.5px; color:var(--ink-faint); margin-top:4px; flex-wrap:wrap;}
+.ad-stats-mini i{color:var(--plum); margin-right:3px;}
+
+/* ============================================================
+   MODALS — the fix: fluid header/body/footer, responsive
+   form-grid, mobile near-fullscreen sizing everywhere
+   ============================================================ */
+.modal-veil{position:fixed; inset:0; background:rgba(22,36,31,.45); display:none; align-items:center; justify-content:center; z-index:4000; padding:16px; backdrop-filter:blur(3px);}
+.modal-veil.show{display:flex;}
+.modal-box{background:var(--surface); border-radius:var(--radius-md); width:100%; max-width:480px; max-height:88vh; display:flex; flex-direction:column; box-shadow:var(--shadow-lg); overflow:hidden;}
+.modal-box.wide{max-width:720px;}
+.modal-box-head{padding:16px 20px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; flex-shrink:0; gap:10px;}
+.modal-box-head h5{font-size:16px; font-weight:600; margin:0;}
+.modal-box-body{flex:1; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain; padding:20px; background:var(--paper);}
+.modal-box-foot{padding:12px 20px; border-top:1px solid var(--line); display:flex; justify-content:flex-end; gap:8px; flex-wrap:wrap; flex-shrink:0; background:var(--surface);}
+.x-close{background:none; border:none; font-size:20px; color:var(--ink-faint); cursor:pointer; line-height:1; flex-shrink:0;}
+/* The <form> wraps modal-box-body + modal-box-foot but is a plain block by
+   default, so as a flex child of .modal-box it grows past the fixed height
+   instead of sharing it — that's what was pushing the footer/submit button
+   out of view (clipped by .modal-box's overflow:hidden). Making the form
+   itself a flex column, matching its parent, fixes it everywhere at once. */
+.modal-box form{display:flex; flex-direction:column; flex:1; min-height:0;}
+
+.form-grid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px 16px;}
+.form-grid .field{min-width:0;}
+.form-grid .field.wide{grid-column:1 / -1;}
+.field label{display:block; font-size:11.5px; font-weight:700; color:var(--ink-soft); margin-bottom:6px;}
+.field input, .field select, .field textarea{width:100%; padding:9px 12px; border:1px solid var(--line); border-radius:var(--radius-xs); font-size:13.5px; background:var(--surface); font-family:inherit; color:var(--ink);}
+.field input:focus, .field select:focus, .field textarea:focus{outline:none; border-color:var(--jade);}
+.field textarea{resize:vertical; min-height:70px;}
+.field-check{display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--ink-soft);}
+.field-check input{width:16px; height:16px; accent-color:var(--jade);}
+.field-color{height:40px; padding:3px !important;}
+@media (max-width:640px){
+  .modal-veil{padding:8px; align-items:center;}
+  .modal-box{width:100%; max-height:92vh; height:92vh; border-radius:var(--radius-sm);}
+  .modal-box.wide{max-width:100%;}
+  .form-grid{grid-template-columns:1fr; gap:12px;}
+  .modal-box-body{padding:15px;}
+  .modal-box-foot .btn-pill{flex:1;}
+}
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+.toast-stack{position:fixed; top:calc(var(--header-h) + 8px); right:12px; z-index:5000; max-width:calc(100vw - 24px); display:flex; flex-direction:column; gap:6px;}
+.toast-item{min-width:220px; max-width:340px; padding:11px 13px; border-radius:var(--radius-sm); box-shadow:var(--shadow-lg); color:#fff; font-size:12.5px; display:flex; align-items:center; gap:9px; animation:slidein .2s var(--ease);}
+@keyframes slidein{from{transform:translateX(30px); opacity:0;} to{transform:translateX(0); opacity:1;}}
+.toast-item button{background:none; border:none; color:rgba(255,255,255,.8); margin-left:auto; cursor:pointer;}
+
+/* ============================================================
+   MOBILE BOTTOM NAV
+   ============================================================ */
+.bottom-nav{position:fixed; left:10px; right:10px; bottom:calc(8px + var(--safe-b)); height:var(--bottom-nav-h); z-index:1300; background:rgba(255,255,255,.97); backdrop-filter:blur(16px); border:1px solid var(--line); border-radius:22px; box-shadow:var(--shadow-lg); display:grid; grid-template-columns:repeat(4,1fr); align-items:center;}
+@media (min-width:960px){ .bottom-nav{display:none;} }
+.bn-item{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; color:var(--ink-faint); font-size:9.5px; height:100%; font-weight:600;}
+.bn-item i{font-size:18px;}
+.bn-item.active{color:var(--jade-deep);}
+
+.company-logo-preview{max-width:120px; max-height:120px; border-radius:var(--radius-sm); object-fit:cover; border:1px solid var(--line);}
+</style>
+</head>
+<body data-user-logged-in="{% if user.is_authenticated %}true{% else %}false{% endif %}" data-user-id="{% if user.is_authenticated %}{{ user.id }}{% else %}0{% endif %}" data-username="{% if user.is_authenticated %}{{ user.username }}{% else %}{% endif %}">
+{% api_js_functions %}
+
+<!-- ===== HEADER ===== -->
+<header class="header-area">
+  <div class="header-inner">
+    <a href="/" class="brand"><span class="brand-mark">O</span><span class="brand-word">OppoGlobe</span></a>
+    <ul class="nav-icons">
+      <li><a href="/" class="icon-btn"><i class="fas fa-house"></i></a></li>
+      <li><span class="role-chip" id="headerRoleChip"><i class="fas fa-user me-1"></i>You</span></li>
+      <li><a href="/messaging/" class="icon-btn"><i class="fas fa-comment-dots"></i><span class="ping-badge" id="messageBadge">0</span></a></li>
+      <li><a href="{% url 'alerts_page' %}" class="icon-btn"><i class="fas fa-bell"></i><span class="ping-badge" id="notificationBadge">0</span></a></li>
+      <li class="rel">
+        <button class="avatar-btn" onclick="toggleDropdown('profileMenu')">{{ user.username|first|upper }}<span class="status-dot"></span></button>
+        <div class="dropdown-panel" id="profileMenu">
+          <a href="/profile/"><i class="fas fa-user"></i> Profile</a>
+          <a href="/applications/"><i class="fas fa-file-lines"></i> Applications</a>
+          <a href="{% url 'alerts_page' %}"><i class="fas fa-bell"></i> Alerts</a>
+          <a href="/preferences/"><i class="fas fa-gear"></i> Preferences</a>
+          <div class="dropdown-divider"></div>
+          <a href="/logout/"><i class="fas fa-arrow-right-from-bracket"></i> Log out</a>
+        </div>
+      </li>
+    </ul>
+  </div>
+</header>
+
+<div class="rail-overlay" id="railOverlay" onclick="closeRail()"></div>
+
+<div class="shell">
+  <!-- ===== LEFT RAIL ===== -->
+  <div class="rail-left">
+    <button class="rail-toggle" onclick="toggleRail()"><i class="fas fa-bars"></i> Profile sections</button>
+    <div class="rail-body" id="railBody">
+      <div class="card card-pad">
+        <div class="card-title" style="margin-bottom:8px;"><span class="t"><i class="fas fa-compass"></i>Jump to</span></div>
+        <div class="stack" style="gap:6px;" id="railNav">
+          <button class="quick-btn" onclick="scrollToCard('infoCard')"><i class="fas fa-id-card"></i>Personal info</button>
+          <button class="quick-btn applicant-only" onclick="scrollToCard('skillsCard')"><i class="fas fa-gears"></i>Skills</button>
+          <button class="quick-btn applicant-only" onclick="scrollToCard('employmentCard')"><i class="fas fa-briefcase"></i>Employment</button>
+          <button class="quick-btn applicant-only" onclick="scrollToCard('educationCard')"><i class="fas fa-graduation-cap"></i>Education</button>
+          <button class="quick-btn applicant-only" onclick="scrollToCard('documentsCard')"><i class="fas fa-file-arrow-up"></i>Documents</button>
+          <button class="quick-btn business-only hidden" onclick="scrollToCard('bizProfileCard')"><i class="fas fa-building"></i>Business profile</button>
+          <button class="quick-btn business-only hidden" onclick="scrollToCard('eduMgmtCard')"><i class="fas fa-graduation-cap"></i>Education content</button>
+          <button class="quick-btn business-only hidden" onclick="scrollToCard('adMgmtCard')"><i class="fas fa-ad"></i>Ad campaigns</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MAIN ===== -->
+  <div class="main">
+    <!-- HERO -->
+    <div class="profile-hero" id="profileHero">
+      <div class="hero-left">
+        <div class="hero-avatar">{{ user.username|first|upper }}</div>
+        <div class="hero-text">
+          <h1 id="heroTitle">My profile</h1>
+          <p id="heroSubtitle">Manage your professional information and job preferences</p>
+        </div>
+      </div>
+      <div class="hero-actions">
+        <div class="hero-completeness" id="heroCompleteness">
+          <div class="lbl"><span>Profile completeness</span><span id="completenessText">0%</span></div>
+          <div class="hc-track"><div class="hc-fill" id="completenessBar" style="width:0%;"></div></div>
+        </div>
+        <button class="btn-pill btn-white" id="heroEditBtn" onclick="openEditForRole()"><i class="fas fa-pen me-1"></i>Edit</button>
+      </div>
+    </div>
+
+    <!-- ===================== APPLICANT-ONLY SECTIONS ===================== -->
+    <div id="applicantOnlySections" class="stack hidden">
+
+      <div class="card card-pad" id="infoCard">
+        <div class="card-title"><span class="t"><i class="fas fa-id-card"></i>Personal information</span></div>
+        <div id="personalInfoContent"><div class="loading-line"><span class="spin"></span> Loading…</div></div>
+      </div>
+
+      <div class="card card-pad" id="skillsCard">
+        <div class="card-title"><span class="t"><i class="fas fa-gears"></i>Skills</span><button class="btn-pill btn-jade" onclick="openModal('skillModal')">Add skill</button></div>
+        <div id="skillsContent"><div class="loading-line"><span class="spin"></span> Loading…</div></div>
+      </div>
+
+      <div class="card card-pad" id="employmentCard">
+        <div class="card-title"><span class="t"><i class="fas fa-briefcase"></i>Employment history</span><button class="btn-pill btn-jade" onclick="openModal('employmentModal')">Add employment</button></div>
+        <div id="employmentContent"><div class="loading-line"><span class="spin"></span> Loading…</div></div>
+      </div>
+
+      <div class="card card-pad" id="educationCard">
+        <div class="card-title"><span class="t"><i class="fas fa-graduation-cap"></i>Education</span><button class="btn-pill btn-jade" onclick="openModal('educationModal')">Add education</button></div>
+        <div id="educationContent"><div class="loading-line"><span class="spin"></span> Loading…</div></div>
+      </div>
+
+      <div class="card card-pad" id="documentsCard">
+        <div class="card-title"><span class="t"><i class="fas fa-file-arrow-up"></i>Documents</span><button class="btn-pill btn-jade" onclick="openModal('documentModal')">Upload</button></div>
+        <div id="documentsContent"><div class="loading-line"><span class="spin"></span> Loading…</div></div>
+      </div>
+    </div>
+
+    <!-- ===================== BUSINESS-ONLY SECTIONS ===================== -->
+    <div id="businessOnlySections" class="stack hidden">
+
+      <div class="card card-pad" id="infoCardBiz">
+        <div class="card-title"><span class="t"><i class="fas fa-id-card"></i>Account information</span></div>
+        <div id="accountInfoContent"><div class="loading-line"><span class="spin"></span> Loading…</div></div>
+      </div>
+
+      <div class="card card-pad" id="bizProfileCard">
+        <div class="card-title"><span class="t"><i class="fas fa-building"></i>Business profile</span><button class="btn-pill btn-jade" onclick="editBusinessProfile()">Edit</button></div>
+        <div id="businessProfileContent"><div class="loading-line"><span class="spin"></span> Loading…</div></div>
+      </div>
+
+      <div class="card card-pad" id="eduMgmtCard">
+        <div class="card-title"><span class="t"><i class="fas fa-graduation-cap"></i>Education content</span><span class="role-chip">Business</span></div>
+        <div class="mgmt-stats" id="eduStatsGrid">
+          <div class="mgmt-stat"><div class="n" id="eduTotalCount">0</div><div class="l">Total</div></div>
+          <div class="mgmt-stat"><div class="n" id="eduSchoolCount">0</div><div class="l">Schools</div></div>
+          <div class="mgmt-stat"><div class="n" id="eduBursaryCount">0</div><div class="l">Bursaries</div></div>
+          <div class="mgmt-stat"><div class="n" id="eduUniversityCount">0</div><div class="l">Universities</div></div>
+          <div class="mgmt-stat"><div class="n" id="eduPaperCount">0</div><div class="l">Papers</div></div>
+        </div>
+        <div class="mgmt-upload-bar">
+          <span class="lbl"><i class="fas fa-circle-plus"></i>Add education content</span>
+          <div class="acts">
+            <button onclick="showEduUpload('school')"><i class="fas fa-school"></i> School</button>
+            <button onclick="showEduUpload('bursary')"><i class="fas fa-hand-holding-heart"></i> Bursary</button>
+            <button onclick="showEduUpload('paper')"><i class="fas fa-file-pdf"></i> Paper</button>
+            <button class="outline" onclick="showEduUpload('university')"><i class="fas fa-university"></i> University</button>
+          </div>
+        </div>
+        <div class="chip-row" id="eduFilterChips">
+          <button class="edu-chip active" data-filter="all" onclick="filterEduManage('all', this)">All</button>
+          <button class="edu-chip" data-filter="school" onclick="filterEduManage('school', this)">Schools</button>
+          <button class="edu-chip" data-filter="bursary" onclick="filterEduManage('bursary', this)">Bursaries</button>
+          <button class="edu-chip" data-filter="university" onclick="filterEduManage('university', this)">Universities</button>
+          <button class="edu-chip" data-filter="paper" onclick="filterEduManage('paper', this)">Papers</button>
+        </div>
+        <div id="educationManageContent"><div class="loading-line"><span class="spin"></span> Loading…</div></div>
+      </div>
+
+      <div class="card card-pad" id="adMgmtCard">
+        <div class="card-title"><span class="t"><i class="fas fa-ad"></i>Ad campaigns</span><span class="role-chip biz" id="adAdminBadge" style="display:none;">Admin</span></div>
+        <div class="mgmt-stats" id="adStatsGrid">
+          <div class="mgmt-stat plum"><div class="n" id="adTotalCount">0</div><div class="l">Total</div></div>
+          <div class="mgmt-stat plum"><div class="n" id="adActiveCount">0</div><div class="l">Active</div></div>
+          <div class="mgmt-stat plum"><div class="n" id="adPendingCount">0</div><div class="l">Pending</div></div>
+          <div class="mgmt-stat plum"><div class="n" id="adImpressions">0</div><div class="l">Impressions</div></div>
+          <div class="mgmt-stat plum"><div class="n" id="adClicks">0</div><div class="l">Clicks</div></div>
+          <div class="mgmt-stat plum"><div class="n" id="adConversions">0</div><div class="l">Conversions</div></div>
+        </div>
+        <div class="mgmt-upload-bar plum">
+          <span class="lbl"><i class="fas fa-circle-plus"></i>Create ad campaign</span>
+          <div class="acts"><button onclick="showAdUpload()"><i class="fas fa-plus"></i> New ad</button><button class="outline" onclick="loadAds()"><i class="fas fa-rotate"></i> Refresh</button></div>
+        </div>
+        <div class="chip-row" id="adFilterChips">
+          <button class="edu-chip active" data-filter="all" onclick="filterAds('all', this)">All</button>
+          <button class="edu-chip" data-filter="active" onclick="filterAds('active', this)">Active</button>
+          <button class="edu-chip" data-filter="pending" onclick="filterAds('pending', this)">Pending</button>
+          <button class="edu-chip" data-filter="rejected" onclick="filterAds('rejected', this)">Rejected</button>
+          <button class="edu-chip" data-filter="paused" onclick="filterAds('paused', this)">Paused</button>
+        </div>
+        <div id="adManageContent"><div class="loading-line"><span class="spin"></span> Loading…</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== RIGHT RAIL ===== -->
+  <div class="rail-right">
+    <div class="stack">
+      <div class="card card-pad">
+        <div class="card-title" style="margin-bottom:8px;"><span class="t"><i class="fas fa-lightbulb"></i>Tip</span></div>
+        <p style="font-size:12.5px; color:var(--ink-soft); line-height:1.6; margin:0;">A complete profile with a photo, skills, and an up-to-date CV gets noticed first by employers on OppoGlobe.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MOBILE BOTTOM NAV ===== -->
+<nav class="bottom-nav">
+  <a href="/" class="bn-item"><i class="fas fa-house"></i><span>Home</span></a>
+  <a href="/dashboard" class="bn-item"><i class="fas fa-gauge"></i><span>Dashboard</span></a>
+  <a href="/applications/" class="bn-item"><i class="fas fa-file-lines"></i><span>Jobs</span></a>
+  <a href="/profile/" class="bn-item active"><i class="fas fa-user"></i><span>Profile</span></a>
+</nav>
+
+<div class="toast-stack" id="toastStack"></div>
+
+<!-- ============================================================
+     MODALS — APPLICANT
+     ============================================================ -->
+
+<div class="modal-veil" id="skillModal">
+  <div class="modal-box">
+    <div class="modal-box-head"><h5>Add skill</h5><button class="x-close" onclick="closeModal('skillModal')">&times;</button></div>
+    <form id="skillForm">
+      <div class="modal-box-body">
+        <div class="form-grid">
+          <div class="field wide"><label>Skill name</label><input type="text" name="skill_name" required></div>
+          <div class="field wide"><label>Proficiency</label>
+            <select name="proficiency" required>
+              <option value="beginner">Beginner</option><option value="intermediate">Intermediate</option>
+              <option value="good" selected>Good</option><option value="expert">Expert</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-box-foot"><button type="button" class="btn-pill btn-outline" onclick="closeModal('skillModal')">Cancel</button><button type="submit" class="btn-pill btn-jade">Add skill</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-veil" id="employmentModal">
+  <div class="modal-box wide">
+    <div class="modal-box-head"><h5>Add employment history</h5><button class="x-close" onclick="closeModal('employmentModal')">&times;</button></div>
+    <form id="employmentForm">
+      <div class="modal-box-body">
+        <div class="form-grid">
+          <div class="field"><label>Job title *</label><input type="text" name="job_title" required></div>
+          <div class="field"><label>Company *</label><input type="text" name="company" required></div>
+          <div class="field"><label>Location</label><input type="text" name="location"></div>
+          <div class="field"><label>Contract type</label>
+            <select name="contract_type"><option value="">Select type</option><option value="full_time">Full time</option><option value="part_time">Part time</option><option value="contract">Contract</option><option value="temporary">Temporary</option><option value="internship">Internship</option></select>
+          </div>
+          <div class="field"><label>Start date *</label><input type="date" name="start_date" required></div>
+          <div class="field">
+            <label>End date</label><input type="date" name="end_date" id="employmentEndDate">
+            <div class="field-check" style="margin-top:6px;"><input type="checkbox" id="currentlyWorking"><label for="currentlyWorking" style="margin:0;">I currently work here</label></div>
+          </div>
+          <div class="field wide"><label>Description</label><textarea name="description" rows="3"></textarea></div>
+        </div>
+      </div>
+      <div class="modal-box-foot"><button type="button" class="btn-pill btn-outline" onclick="closeModal('employmentModal')">Cancel</button><button type="submit" class="btn-pill btn-jade">Add employment</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-veil" id="educationModal">
+  <div class="modal-box wide">
+    <div class="modal-box-head"><h5>Add education</h5><button class="x-close" onclick="closeModal('educationModal')">&times;</button></div>
+    <form id="educationForm">
+      <div class="modal-box-body">
+        <div class="form-grid">
+          <div class="field"><label>Qualification *</label><input type="text" name="qualification" required placeholder="e.g. Bachelor of Science"></div>
+          <div class="field"><label>Institution *</label><input type="text" name="institution" required></div>
+          <div class="field"><label>Completion year *</label><input type="number" name="completion_year" min="1900" max="2030" required></div>
+          <div class="field"><label>Major subject</label><input type="text" name="major_subject" placeholder="e.g. Computer Science"></div>
+        </div>
+      </div>
+      <div class="modal-box-foot"><button type="button" class="btn-pill btn-outline" onclick="closeModal('educationModal')">Cancel</button><button type="submit" class="btn-pill btn-jade">Add education</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-veil" id="documentModal">
+  <div class="modal-box">
+    <div class="modal-box-head"><h5>Upload document</h5><button class="x-close" onclick="closeModal('documentModal')">&times;</button></div>
+    <form id="documentForm" enctype="multipart/form-data">
+      <div class="modal-box-body">
+        <div class="form-grid">
+          <div class="field wide"><label>Document type</label>
+            <select name="document_type" required><option value="">Select type</option><option value="cv">CV / Resume</option><option value="cover_letter">Cover letter</option><option value="certificate">Certificate</option><option value="transcript">Transcript</option><option value="id">ID document</option><option value="other">Other</option></select>
+          </div>
+          <div class="field wide"><label>File</label><input type="file" name="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" required>
+            <div style="font-size:11px; color:var(--ink-faint); margin-top:5px;">PDF, DOC, DOCX, JPG, JPEG, PNG (max 5MB)</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-box-foot"><button type="button" class="btn-pill btn-outline" onclick="closeModal('documentModal')">Cancel</button><button type="submit" class="btn-pill btn-jade" id="documentSubmitBtn"><i class="fas fa-upload me-1"></i>Upload</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-veil" id="personalInfoModal">
+  <div class="modal-box wide">
+    <div class="modal-box-head"><h5>Edit personal information</h5><button class="x-close" onclick="closeModal('personalInfoModal')">&times;</button></div>
+    <form id="personalInfoForm">
+      <div class="modal-box-body">
+        <div class="form-grid">
+          <div class="field"><label>Title</label><select name="title" id="titleInput"><option value="">Select</option><option value="mr">Mr</option><option value="ms">Ms</option><option value="mrs">Mrs</option><option value="dr">Dr</option></select></div>
+          <div class="field"><label>Gender</label><select name="gender" id="genderInput"><option value="">Select</option><option value="male">Male</option><option value="female">Female</option><option value="other">Other</option></select></div>
+          <div class="field"><label>First name *</label><input type="text" name="first_name" id="firstNameInput" required></div>
+          <div class="field"><label>Last name *</label><input type="text" name="last_name" id="lastNameInput" required></div>
+          <div class="field"><label>Ethnicity</label><select name="ethnicity" id="ethnicityInput"><option value="">Select</option><option value="african">African</option><option value="coloured">Coloured</option><option value="indian">Indian</option><option value="white">White</option><option value="other">Other</option></select></div>
+          <div class="field"><label>Citizenship</label><select name="is_citizen" id="citizenInput"><option value="">Select</option><option value="south_african">South African</option><option value="permanent_resident">Permanent resident</option><option value="work_permit">Work permit</option><option value="other">Other</option></select></div>
+          <div class="field"><label>Date of birth</label><input type="date" name="birth_date" id="birthDateInput"></div>
+          <div class="field"><label>Location</label><input type="text" name="current_home_location" id="locationInput"></div>
+          <div class="field wide" style="display:flex; gap:20px; flex-wrap:wrap;">
+            <div class="field-check"><input type="checkbox" id="driversLicenseInput"><label style="margin:0;">Driver's license</label></div>
+            <div class="field-check"><input type="checkbox" id="ownTransportInput"><label style="margin:0;">Own transport</label></div>
+            <div class="field-check"><input type="checkbox" id="relocateInput"><label style="margin:0;">Willing to relocate</label></div>
+          </div>
+          <div class="field"><label>Preferred job</label><input type="text" name="preferred_job_title" id="preferredJobInput"></div>
+          <div class="field"><label>Availability</label><input type="text" name="availability" id="availabilityInput" placeholder="e.g. Immediate"></div>
+          <div class="field"><label>Current salary</label><select name="current_salary" id="currentSalaryInput"><option value="">Select</option><option value="0_50k">0 – 50K</option><option value="50_100k">50 – 100K</option><option value="100_150k">100 – 150K</option><option value="150_200k">150 – 200K</option><option value="200k_plus">200K+</option></select></div>
+          <div class="field"><label>Desired salary</label><select name="desired_salary" id="desiredSalaryInput"><option value="">Select</option><option value="0_50k">0 – 50K</option><option value="50_100k">50 – 100K</option><option value="100_150k">100 – 150K</option><option value="150_200k">150 – 200K</option><option value="200k_plus">200K+</option></select></div>
+          <div class="field wide"><label>Introduction</label><textarea name="introduction" id="introductionInput" rows="4"></textarea></div>
+        </div>
+      </div>
+      <div class="modal-box-foot"><button type="button" class="btn-pill btn-outline" onclick="closeModal('personalInfoModal')">Cancel</button><button type="submit" class="btn-pill btn-jade">Save changes</button></div>
+    </form>
+  </div>
+</div>
+
+<!-- ============================================================
+     MODALS — BUSINESS
+     ============================================================ -->
+
+<div class="modal-veil" id="accountInfoModal">
+  <div class="modal-box">
+    <div class="modal-box-head"><h5>Edit account information</h5><button class="x-close" onclick="closeModal('accountInfoModal')">&times;</button></div>
+    <form id="accountInfoForm">
+      <div class="modal-box-body">
+        <div class="form-grid">
+          <div class="field"><label>First name *</label><input type="text" name="first_name" id="accFirstNameInput" required></div>
+          <div class="field"><label>Last name *</label><input type="text" name="last_name" id="accLastNameInput" required></div>
+        </div>
+      </div>
+      <div class="modal-box-foot"><button type="button" class="btn-pill btn-outline" onclick="closeModal('accountInfoModal')">Cancel</button><button type="submit" class="btn-pill btn-jade">Save changes</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-veil" id="businessProfileModal">
+  <div class="modal-box wide">
+    <div class="modal-box-head"><h5>Edit business profile</h5><button class="x-close" onclick="closeModal('businessProfileModal')">&times;</button></div>
+    <form id="businessProfileForm" enctype="multipart/form-data">
+      <div class="modal-box-body">
+        <div class="form-grid">
+          <div class="field"><label>Company name *</label><input type="text" name="company_name" id="companyNameInput" required></div>
+          <div class="field"><label>Phone</label><input type="text" name="phone_number" id="companyPhoneInput"></div>
+          <div class="field wide"><label>Description</label><textarea name="company_description" id="companyDescriptionInput" rows="3"></textarea></div>
+          <div class="field"><label>Industry</label><select name="industry" id="industryInput"><option value="">Select</option></select></div>
+          <div class="field"><label>Company size</label><select name="company_size" id="companySizeInput"><option value="">Select</option></select></div>
+          <div class="field"><label>Website</label><input type="url" name="website" id="websiteInput" placeholder="https://"></div>
+          <div class="field"><label>Logo</label><input type="file" name="company_logo" id="companyLogoInput" accept="image/*"></div>
+          <div class="field wide" id="companyLogoPreview"></div>
+          <div class="field"><label>Address</label><input type="text" name="address" id="addressInput"></div>
+          <div class="field"><label>City</label><input type="text" name="city" id="cityInput"></div>
+          <div class="field"><label>Country</label><input type="text" name="country" id="countryInput"></div>
+          <div class="field"><label>Postal code</label><input type="text" name="postal_code" id="postalCodeInput"></div>
+          <div class="field wide" style="display:flex; gap:20px; flex-wrap:wrap;">
+            <div class="field-check"><input type="checkbox" id="notificationsInput"><label style="margin:0;">Applicant notifications</label></div>
+            <div class="field-check"><input type="checkbox" id="newsletterInput"><label style="margin:0;">Newsletter</label></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-box-foot"><button type="button" class="btn-pill btn-outline" onclick="closeModal('businessProfileModal')">Cancel</button><button type="submit" class="btn-pill btn-jade" id="businessProfileSubmitBtn">Save changes</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-veil" id="eduUploadModal">
+  <div class="modal-box wide">
+    <div class="modal-box-head"><h5 id="eduUploadTitle">Add education content</h5><button class="x-close" onclick="closeModal('eduUploadModal')">&times;</button></div>
+    <form id="eduUploadForm" enctype="multipart/form-data">
+      <div class="modal-box-body"><div class="form-grid" id="eduUploadFields"></div></div>
+      <div class="modal-box-foot"><button type="button" class="btn-pill btn-outline" onclick="closeModal('eduUploadModal')">Cancel</button><button type="submit" class="btn-pill btn-jade" id="eduUploadSubmitBtn"><i class="fas fa-upload me-1"></i>Upload</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-veil" id="adCreateModal">
+  <div class="modal-box wide">
+    <div class="modal-box-head"><h5>Create ad campaign</h5><button class="x-close" onclick="closeModal('adCreateModal')">&times;</button></div>
+    <form id="adCreateForm" enctype="multipart/form-data">
+      <div class="modal-box-body">
+        <div class="form-grid">
+          <div class="field"><label>Ad title *</label><input type="text" name="title" required></div>
+          <div class="field"><label>Ad type</label><select name="ad_type"><option value="promotion">Promotion</option><option value="property">Property</option><option value="service">Service</option><option value="event">Event</option><option value="brand">Brand awareness</option><option value="other">Other</option></select></div>
+          <div class="field wide"><label>Description</label><textarea name="description" rows="2"></textarea></div>
+          <div class="field"><label>Image</label><input type="file" name="image" accept="image/*"></div>
+          <div class="field"><label>Image URL</label><input type="url" name="image_url" placeholder="https://"></div>
+          <div class="field"><label>Price</label><input type="number" name="price" step="0.01"></div>
+          <div class="field"><label>Display price</label><input type="text" name="display_price" placeholder="e.g. From R500,000"></div>
+          <div class="field"><label>Currency</label><select name="price_currency"><option value="ZAR">ZAR</option><option value="USD">USD</option><option value="EUR">EUR</option></select></div>
+          <div class="field"><label>CTA text</label><input type="text" name="cta_text" value="Learn more"></div>
+          <div class="field"><label>CTA link</label><input type="url" name="cta_link" placeholder="https://"></div>
+          <div class="field"><label>Button color</label><input type="color" class="field-color" name="cta_button_color" value="#8a2be2"></div>
+          <div class="field"><label>Text color</label><input type="color" class="field-color" name="cta_button_text_color" value="#ffffff"></div>
+          <div class="field"><label>Placement</label><select name="position"><option value="feed">Feed</option><option value="sidebar">Sidebar</option><option value="top">Top banner</option><option value="bottom">Bottom banner</option><option value="popup">Popup</option><option value="both">Both</option></select></div>
+          <div class="field"><label>Priority</label><input type="number" name="priority" value="0"></div>
+          <div class="field"><label>Start date</label><input type="datetime-local" name="start_date"></div>
+          <div class="field"><label>End date</label><input type="datetime-local" name="end_date"></div>
+          <div class="field"><label>Total budget</label><input type="number" name="budget_total" step="0.01"></div>
+          <div class="field"><label>Daily budget</label><input type="number" name="budget_daily" step="0.01"></div>
+          <div class="field"><label>Frequency cap</label><input type="number" name="frequency_cap" placeholder="0 = unlimited"></div>
+          <div class="field"><label>Target locations</label><input type="text" name="target_locations" placeholder="e.g. Johannesburg, Cape Town"></div>
+          <div class="field"><label>Target user types</label><select name="target_user_types"><option value="">All users</option><option value="applicant">Applicants</option><option value="admin">Business / admin</option></select></div>
+          <div class="field"><label>Min age</label><input type="number" name="target_min_age" placeholder="18"></div>
+          <div class="field"><label>Max age</label><input type="number" name="target_max_age" placeholder="65"></div>
+          <div class="field"><label>Target property types</label><input type="text" name="target_property_types" placeholder="e.g. Apartment, House"></div>
+          <div class="field"><label>Link to property</label><select name="property" id="adPropertySelect"><option value="">None</option></select></div>
+          <div class="field wide" style="display:flex; gap:20px; flex-wrap:wrap;">
+            <div class="field-check"><input type="checkbox" name="is_featured" id="adIsFeatured"><label style="margin:0;">Featured ad</label></div>
+            <div class="field-check"><input type="checkbox" name="is_active" id="adIsActive" checked><label style="margin:0;">Active</label></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-box-foot"><button type="button" class="btn-pill btn-outline" onclick="closeModal('adCreateModal')">Cancel</button><button type="submit" class="btn-pill btn-jade" id="adCreateSubmitBtn"><i class="fas fa-rocket me-1"></i>Create ad</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-veil" id="adRejectModal">
+  <div class="modal-box">
+    <div class="modal-box-head"><h5>Reject ad</h5><button class="x-close" onclick="closeModal('adRejectModal')">&times;</button></div>
+    <form id="adRejectForm">
+      <div class="modal-box-body">
+        <div class="form-grid"><div class="field wide"><label>Reason *</label><textarea name="notes" rows="3" required></textarea></div></div>
+        <input type="hidden" name="ad_id" id="rejectAdId">
+      </div>
+      <div class="modal-box-foot"><button type="button" class="btn-pill btn-outline" onclick="closeModal('adRejectModal')">Cancel</button><button type="submit" class="btn-pill" style="background:var(--danger); color:#fff;">Reject ad</button></div>
+    </form>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   CORE UTILITIES
+   ============================================================ */
+const currentUserId = parseInt(document.body.dataset.userId || '0');
+const currentUsername = document.body.dataset.username || '';
+function getCSRFToken(){
+  const cookies = document.cookie.split(';');
+  for (let c of cookies){ const [name, value] = c.trim().split('='); if (name === 'csrftoken') return decodeURIComponent(value); }
+  return null;
+}
+function escapeHtml(str){ if (!str) return ''; const div = document.createElement('div'); div.textContent = String(str); return div.innerHTML; }
+const TOAST_COLORS = { success:'#1F6F5C', error:'#D64545', info:'#2E8BC0', warning:'#E8A93B' };
+const TOAST_ICONS = { success:'fa-circle-check', error:'fa-circle-exclamation', info:'fa-circle-info', warning:'fa-triangle-exclamation' };
+function showToast(message, type='success'){
+  const stack = document.getElementById('toastStack'); if (!stack) return;
+  const el = document.createElement('div'); el.className = 'toast-item'; el.style.background = TOAST_COLORS[type] || TOAST_COLORS.info;
+  el.innerHTML = `<i class="fas ${TOAST_ICONS[type]||TOAST_ICONS.info}"></i><span>${escapeHtml(message)}</span><button onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>`;
+  stack.appendChild(el); setTimeout(()=>el.remove(), 4500);
+}
+function openModal(id){ document.getElementById(id)?.classList.add('show'); document.body.style.overflow='hidden'; }
+function closeModal(id){ document.getElementById(id)?.classList.remove('show'); document.body.style.overflow=''; }
+document.querySelectorAll('.modal-veil').forEach(v=>v.addEventListener('click', e=>{ if (e.target===v) closeModal(v.id); }));
+document.addEventListener('keydown', e=>{ if (e.key==='Escape') document.querySelectorAll('.modal-veil.show').forEach(v=>closeModal(v.id)); });
+
+function toggleDropdown(id){
+  const menu = document.getElementById(id); if (!menu) return;
+  const open = !menu.classList.contains('show');
+  document.querySelectorAll('.dropdown-panel').forEach(m=>m.classList.remove('show'));
+  if (open) menu.classList.add('show');
+}
+document.addEventListener('click', e=>{ if (!e.target.closest('.rel')) document.querySelectorAll('.dropdown-panel').forEach(m=>m.classList.remove('show')); });
+
+function toggleRail(){ document.getElementById('railBody').classList.toggle('open'); document.getElementById('railOverlay').classList.toggle('active'); }
+function closeRail(){ document.getElementById('railBody').classList.remove('open'); document.getElementById('railOverlay').classList.remove('active'); }
+function scrollToCard(id){
+  closeRail();
+  const el = document.getElementById(id); if (!el) return;
+  setTimeout(()=>{ const y = el.getBoundingClientRect().top + window.scrollY - 78; window.scrollTo({top:y, behavior:'smooth'}); }, 150);
+}
+
+/* ============================================================
+   PROFILE LOADER — strict applicant / business split
+   ============================================================ */
+let currentUserType = 'applicant', isSuperAdmin = false, isBusinessUser = false;
+let allProperties = [];
+
+function loadProfileData(){
+  fetch('/api/profile/').then(r=>r.json()).then(data=>{
+    if (!data.success){ showToast('Error loading profile','error'); return; }
+    currentUserType = data.user_type || 'applicant';
+    isSuperAdmin = data.user?.is_superuser || data.user?.is_staff || false;
+    isBusinessUser = (currentUserType === 'admin') || isSuperAdmin;
+
+    const applicantBlock = document.getElementById('applicantOnlySections');
+    const businessBlock = document.getElementById('businessOnlySections');
+    document.querySelectorAll('.applicant-only').forEach(el=>el.classList.toggle('hidden', isBusinessUser));
+    document.querySelectorAll('.business-only').forEach(el=>el.classList.toggle('hidden', !isBusinessUser));
+
+    if (isBusinessUser){
+      applicantBlock.classList.add('hidden');
+      businessBlock.classList.remove('hidden');
+      document.getElementById('profileHero').classList.add('biz');
+      document.getElementById('heroTitle').textContent = 'Business profile';
+      document.getElementById('heroSubtitle').textContent = 'Manage your company, ads, and education content';
+      document.getElementById('heroCompleteness').style.display = 'none';
+      document.getElementById('headerRoleChip').className = 'role-chip biz';
+      document.getElementById('headerRoleChip').innerHTML = '<i class="fas fa-building me-1"></i>Business';
+      if (isSuperAdmin) document.getElementById('adAdminBadge').style.display = 'inline-block';
+
+      displayAccountInfo(data.user);
+      displayBusinessProfile(data.business_profile);
+      loadEducationManageContent();
+      loadAds(); loadAdStats(); loadPropertiesForAdSelect();
+    } else {
+      businessBlock.classList.add('hidden');
+      applicantBlock.classList.remove('hidden');
+      document.getElementById('profileHero').classList.remove('biz');
+      document.getElementById('heroTitle').textContent = 'My profile';
+      document.getElementById('heroSubtitle').textContent = 'Manage your professional information';
+      document.getElementById('heroCompleteness').style.display = 'block';
+
+      updateCompleteness(data.profile);
+      displayPersonalInfo(data.profile);
+      displaySkills(data.skills);
+      displayEmployment(data.employment);
+      displayEducation(data.education);
+      displayDocuments(data.documents);
+    }
+  }).catch(()=>showToast('Error loading profile','error'));
+}
+function openEditForRole(){ if (isBusinessUser) editAccountInfo(); else editPersonalInfo(); }
+
+/* ---- Applicant renderers ---- */
+function updateCompleteness(profile){
+  const c = profile.profile_completeness || 0;
+  document.getElementById('completenessBar').style.width = c + '%';
+  document.getElementById('completenessText').textContent = c + '% complete';
+}
+function displayPersonalInfo(profile){
+  const user = profile.user || {};
+  document.getElementById('personalInfoContent').innerHTML = `
+    <div class="info-grid">
+      <div class="info-item"><div class="lbl">Name</div><div class="val">${escapeHtml(profile.first_name||'Not set')} ${escapeHtml(profile.last_name||'')}</div></div>
+      <div class="info-item"><div class="lbl">Email</div><div class="val">${escapeHtml(user.email||'Not set')}</div></div>
+      <div class="info-item"><div class="lbl">Phone</div><div class="val">${escapeHtml(user.mobile_phone||'Not set')}</div></div>
+      <div class="info-item"><div class="lbl">Title</div><div class="val">${escapeHtml(profile.title||'Not set')}</div></div>
+      <div class="info-item"><div class="lbl">Gender</div><div class="val">${escapeHtml(profile.gender||'Not set')}</div></div>
+      <div class="info-item"><div class="lbl">Citizenship</div><div class="val">${escapeHtml(profile.is_citizen||'Not set')}</div></div>
+      <div class="info-item"><div class="lbl">Date of birth</div><div class="val">${escapeHtml(profile.birth_date||'Not set')}</div></div>
+      <div class="info-item"><div class="lbl">Location</div><div class="val">${escapeHtml(profile.current_home_location||'Not set')}</div></div>
+      <div class="info-item"><div class="lbl">Driver's license</div><div class="val">${profile.has_drivers_license?'Yes':'No'}</div></div>
+      <div class="info-item"><div class="lbl">Own transport</div><div class="val">${profile.has_own_transport?'Yes':'No'}</div></div>
+    </div>
+    ${profile.introduction?`<div style="margin-top:14px; padding-top:14px; border-top:1px solid var(--line-soft);"><div class="info-item"><div class="lbl">Introduction</div><div class="val">${escapeHtml(profile.introduction)}</div></div></div>`:''}
+  `;
+  window._profileCache = profile;
+}
+function displaySkills(skills){
+  const c = document.getElementById('skillsContent');
+  if (!skills?.length){ c.innerHTML = `<div class="empty-state"><i class="fas fa-gears"></i><h4>No skills yet</h4><p>Add the skills that make you stand out.</p><button class="btn-pill btn-jade" onclick="openModal('skillModal')">Add skill</button></div>`; return; }
+  c.innerHTML = skills.map(s=>`<div class="list-row"><div><div class="lr-title">${escapeHtml(s.skill_name)}</div><div class="lr-sub">${escapeHtml(s.proficiency)}</div></div><div class="lr-actions"><button class="icon-only-btn" onclick="deleteSkill('${s.id}')"><i class="fas fa-trash"></i></button></div></div>`).join('');
+}
+function displayEmployment(employment){
+  const c = document.getElementById('employmentContent');
+  if (!employment?.length){ c.innerHTML = `<div class="empty-state"><i class="fas fa-briefcase"></i><h4>No employment history</h4><p>Add your work experience.</p><button class="btn-pill btn-jade" onclick="openModal('employmentModal')">Add employment</button></div>`; return; }
+  c.innerHTML = employment.map(j=>`<div class="list-row"><div><div class="lr-title">${escapeHtml(j.job_title)}</div><div class="lr-sub">${escapeHtml(j.company)} ${j.location?'· '+escapeHtml(j.location):''} — ${j.start_date?new Date(j.start_date).toLocaleDateString():''} to ${j.currently_working?'Present':(j.end_date?new Date(j.end_date).toLocaleDateString():'')}</div></div><div class="lr-actions"><button class="icon-only-btn" onclick="deleteEmployment('${j.id}')"><i class="fas fa-trash"></i></button></div></div>`).join('');
+}
+function displayEducation(education){
+  const c = document.getElementById('educationContent');
+  if (!education?.length){ c.innerHTML = `<div class="empty-state"><i class="fas fa-graduation-cap"></i><h4>No education added</h4><p>Add your qualifications.</p><button class="btn-pill btn-jade" onclick="openModal('educationModal')">Add education</button></div>`; return; }
+  c.innerHTML = education.map(e=>`<div class="list-row"><div><div class="lr-title">${escapeHtml(e.qualification)}</div><div class="lr-sub">${escapeHtml(e.institution)} ${e.completion_year?'· '+e.completion_year:''} ${e.major_subject?'· '+escapeHtml(e.major_subject):''}</div></div><div class="lr-actions"><button class="icon-only-btn" onclick="deleteEducation('${e.id}')"><i class="fas fa-trash"></i></button></div></div>`).join('');
+}
+function displayDocuments(documents){
+  const c = document.getElementById('documentsContent');
+  if (!documents?.length){ c.innerHTML = `<div class="empty-state"><i class="fas fa-file-arrow-up"></i><h4>No documents uploaded</h4><p>Upload your CV and other key documents.</p><button class="btn-pill btn-jade" onclick="openModal('documentModal')">Upload</button></div>`; return; }
+  c.innerHTML = documents.map(d=>`<div class="list-row"><div><div class="lr-title">${escapeHtml(d.file_name)}</div><div class="lr-sub">${escapeHtml(d.document_type)}</div></div><div class="lr-actions"><a class="icon-only-btn dl" href="${d.file}" target="_blank"><i class="fas fa-download"></i></a><button class="icon-only-btn" onclick="deleteDocument('${d.id}')"><i class="fas fa-trash"></i></button></div></div>`).join('');
+}
+
+/* ---- Business renderers ---- */
+function displayAccountInfo(user){
+  document.getElementById('accountInfoContent').innerHTML = `
+    <div class="info-grid">
+      <div class="info-item"><div class="lbl">Username</div><div class="val">${escapeHtml(user.username||'Not set')}</div></div>
+      <div class="info-item"><div class="lbl">Email</div><div class="val">${escapeHtml(user.email||'Not set')}</div></div>
+      <div class="info-item"><div class="lbl">First name</div><div class="val">${escapeHtml(user.first_name||'Not set')}</div></div>
+      <div class="info-item"><div class="lbl">Last name</div><div class="val">${escapeHtml(user.last_name||'Not set')}</div></div>
+      <div class="info-item"><div class="lbl">Phone</div><div class="val">${escapeHtml(user.mobile_phone||'Not set')}</div></div>
+      <div class="info-item"><div class="lbl">User type</div><div class="val">${escapeHtml(user.user_type||'Not set')}${isSuperAdmin?' · Super admin':''}</div></div>
+    </div>`;
+  window._accountCache = user;
+}
+function editAccountInfo(){
+  const u = window._accountCache || {};
+  document.getElementById('accFirstNameInput').value = u.first_name || '';
+  document.getElementById('accLastNameInput').value = u.last_name || '';
+  openModal('accountInfoModal');
+}
+function displayBusinessProfile(business){
+  const c = document.getElementById('businessProfileContent');
+  if (!business){ c.innerHTML = `<div class="empty-state"><i class="fas fa-building"></i><h4>No business profile yet</h4><p>Set up your company details.</p><button class="btn-pill btn-jade" onclick="editBusinessProfile()">Set up profile</button></div>`; window._businessCache = null; return; }
+  window._businessCache = business;
+  c.innerHTML = `
+    <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:flex-start;">
+      ${business.company_logo ? `<img src="${business.company_logo}" class="company-logo-preview">` : `<div style="width:80px;height:80px;border-radius:var(--radius-sm);background:var(--paper);display:flex;align-items:center;justify-content:center;color:var(--ink-faint);"><i class="fas fa-building fa-2x"></i></div>`}
+      <div class="info-grid" style="flex:1; min-width:220px;">
+        <div class="info-item"><div class="lbl">Company</div><div class="val">${escapeHtml(business.company_name||'Not set')}</div></div>
+        <div class="info-item"><div class="lbl">Industry</div><div class="val">${escapeHtml(business.industry_name||'Not set')}</div></div>
+        <div class="info-item"><div class="lbl">Size</div><div class="val">${escapeHtml(business.company_size_name||'Not set')}</div></div>
+        <div class="info-item"><div class="lbl">Phone</div><div class="val">${escapeHtml(business.phone_number||'Not set')}</div></div>
+        <div class="info-item"><div class="lbl">Website</div><div class="val">${business.website?`<a href="${business.website}" target="_blank" style="color:var(--jade-deep);">${escapeHtml(business.website)}</a>`:'Not set'}</div></div>
+        <div class="info-item"><div class="lbl">Verified</div><div class="val">${business.is_verified?'Yes':'Pending'}</div></div>
+      </div>
+    </div>
+    ${business.company_description?`<div style="margin-top:14px; padding-top:14px; border-top:1px solid var(--line-soft);"><div class="info-item"><div class="lbl">Description</div><div class="val">${escapeHtml(business.company_description)}</div></div></div>`:''}
+  `;
+}
+
+/* ---- Applicant delete actions ---- */
+function deleteSkill(id){ if (!confirm('Delete this skill?')) return; fetch(`/api/profile/skills/${id}/`, {method:'DELETE', headers:{'X-CSRFToken':getCSRFToken()}}).then(r=>{ if (r.ok){ loadProfileData(); showToast('Deleted','success'); } else showToast('Error','error'); }).catch(()=>showToast('Error','error')); }
+function deleteEmployment(id){ if (!confirm('Delete this employment?')) return; fetch(`/api/profile/employment/${id}/`, {method:'DELETE', headers:{'X-CSRFToken':getCSRFToken()}}).then(r=>{ if (r.ok){ loadProfileData(); showToast('Deleted','success'); } else showToast('Error','error'); }).catch(()=>showToast('Error','error')); }
+function deleteEducation(id){ if (!confirm('Delete this education?')) return; fetch(`/api/profile/education/${id}/`, {method:'DELETE', headers:{'X-CSRFToken':getCSRFToken()}}).then(r=>{ if (r.ok){ loadProfileData(); showToast('Deleted','success'); } else showToast('Error','error'); }).catch(()=>showToast('Error','error')); }
+function deleteDocument(id){ if (!confirm('Delete this document?')) return; fetch(`/api/profile/documents/${id}/`, {method:'DELETE', headers:{'X-CSRFToken':getCSRFToken()}}).then(r=>{ if (r.ok){ loadProfileData(); showToast('Deleted','success'); } else showToast('Error','error'); }).catch(()=>showToast('Error','error')); }
+
+function editPersonalInfo(){
+  const p = window._profileCache || {};
+  document.getElementById('titleInput').value = p.title || '';
+  document.getElementById('genderInput').value = p.gender || '';
+  document.getElementById('firstNameInput').value = p.first_name || '';
+  document.getElementById('lastNameInput').value = p.last_name || '';
+  document.getElementById('ethnicityInput').value = p.ethnicity || '';
+  document.getElementById('citizenInput').value = p.is_citizen || '';
+  document.getElementById('birthDateInput').value = p.birth_date || '';
+  document.getElementById('locationInput').value = p.current_home_location || '';
+  document.getElementById('driversLicenseInput').checked = p.has_drivers_license || false;
+  document.getElementById('ownTransportInput').checked = p.has_own_transport || false;
+  document.getElementById('relocateInput').checked = p.willing_to_relocate || false;
+  document.getElementById('preferredJobInput').value = p.preferred_job_title || '';
+  document.getElementById('availabilityInput').value = p.availability || '';
+  document.getElementById('currentSalaryInput').value = p.current_salary || '';
+  document.getElementById('desiredSalaryInput').value = p.desired_salary || '';
+  document.getElementById('introductionInput').value = p.introduction || '';
+  openModal('personalInfoModal');
+}
+function editBusinessProfile(){
+  const b = window._businessCache || {};
+  document.getElementById('companyNameInput').value = b.company_name || '';
+  document.getElementById('companyPhoneInput').value = b.phone_number || '';
+  document.getElementById('companyDescriptionInput').value = b.company_description || '';
+  document.getElementById('websiteInput').value = b.website || '';
+  document.getElementById('addressInput').value = b.address || '';
+  document.getElementById('cityInput').value = b.city || '';
+  document.getElementById('countryInput').value = b.country || '';
+  document.getElementById('postalCodeInput').value = b.postal_code || '';
+  document.getElementById('notificationsInput').checked = b.receive_applicant_notifications || false;
+  document.getElementById('newsletterInput').checked = b.receive_newsletter || false;
+  document.getElementById('companyLogoPreview').innerHTML = b.company_logo ? `<img src="${b.company_logo}" class="company-logo-preview">` : '';
+  loadIndustriesAndSizes(b.industry, b.company_size);
+  openModal('businessProfileModal');
+}
+function loadIndustriesAndSizes(selectedIndustry, selectedSize){
+  fetch('/api/industries/').then(r=>r.json()).then(data=>{
+    if (data.success){ const sel = document.getElementById('industryInput'); sel.innerHTML = '<option value="">Select industry</option>';
+      data.industries.forEach(i=>{ const o=document.createElement('option'); o.value=i.id; o.textContent=i.name; if (selectedIndustry && i.id===selectedIndustry) o.selected=true; sel.appendChild(o); }); }
+  });
+  fetch('/api/company-sizes/').then(r=>r.json()).then(data=>{
+    if (data.success){ const sel = document.getElementById('companySizeInput'); sel.innerHTML = '<option value="">Select size</option>';
+      data.company_sizes.forEach(s=>{ const o=document.createElement('option'); o.value=s.id; o.textContent=s.size_range; if (selectedSize && s.id===selectedSize) o.selected=true; sel.appendChild(o); }); }
+  });
+}
+document.getElementById('companyLogoInput')?.addEventListener('change', function(e){
+  const file = e.target.files[0]; const preview = document.getElementById('companyLogoPreview');
+  if (!file) return preview.innerHTML='';
+  const reader = new FileReader(); reader.onload = ev=>preview.innerHTML = `<img src="${ev.target.result}" class="company-logo-preview">`; reader.readAsDataURL(file);
+});
+
+/* ============================================================
+   FORM SUBMIT HANDLERS
+   ============================================================ */
+document.getElementById('skillForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  const data = Object.fromEntries(new FormData(this));
+  fetch('/api/profile/skills/', {method:'POST', headers:{'Content-Type':'application/json','X-CSRFToken':getCSRFToken()}, body:JSON.stringify(data)})
+    .then(r=>r.json()).then(d=>{ if (d.success){ closeModal('skillModal'); this.reset(); loadProfileData(); showToast('Skill added','success'); } else showToast('Error','error'); }).catch(()=>showToast('Error','error'));
+});
+document.getElementById('currentlyWorking').addEventListener('change', function(){
+  const endDate = document.getElementById('employmentEndDate');
+  if (this.checked){ endDate.disabled = true; endDate.value=''; } else endDate.disabled = false;
+});
+document.getElementById('employmentForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  const data = Object.fromEntries(new FormData(this));
+  data.currently_working = document.getElementById('currentlyWorking').checked;
+  if (data.currently_working) data.end_date = null;
+  fetch('/api/profile/employment/', {method:'POST', headers:{'Content-Type':'application/json','X-CSRFToken':getCSRFToken()}, body:JSON.stringify(data)})
+    .then(r=>r.json()).then(d=>{ if (d.success){ closeModal('employmentModal'); this.reset(); loadProfileData(); showToast('Employment added','success'); } else showToast('Error','error'); }).catch(()=>showToast('Error','error'));
+});
+document.getElementById('educationForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  const data = Object.fromEntries(new FormData(this));
+  fetch('/api/profile/education/', {method:'POST', headers:{'Content-Type':'application/json','X-CSRFToken':getCSRFToken()}, body:JSON.stringify(data)})
+    .then(r=>r.json()).then(d=>{ if (d.success){ closeModal('educationModal'); this.reset(); loadProfileData(); showToast('Education added','success'); } else showToast('Error','error'); }).catch(()=>showToast('Error','error'));
+});
+document.getElementById('documentForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  const formData = new FormData(this);
+  const btn = document.getElementById('documentSubmitBtn'); const original = btn.innerHTML;
+  btn.innerHTML = '<span class="spin" style="width:12px;height:12px;"></span> Uploading…'; btn.disabled = true;
+  fetch('/api/profile/documents/', {method:'POST', headers:{'X-CSRFToken':getCSRFToken()}, body:formData})
+    .then(r=>r.json()).then(d=>{ btn.innerHTML=original; btn.disabled=false; if (d.success){ closeModal('documentModal'); this.reset(); loadProfileData(); showToast('Document uploaded','success'); } else showToast('Error','error'); })
+    .catch(()=>{ btn.innerHTML=original; btn.disabled=false; showToast('Error','error'); });
+});
+document.getElementById('personalInfoForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  const data = Object.fromEntries(new FormData(this));
+  data.has_drivers_license = document.getElementById('driversLicenseInput').checked;
+  data.has_own_transport = document.getElementById('ownTransportInput').checked;
+  data.willing_to_relocate = document.getElementById('relocateInput').checked;
+  ['title','gender','ethnicity','is_citizen','current_home_location','preferred_job_title','availability','current_salary','desired_salary','introduction'].forEach(f=>{ if (data[f]==='') data[f]=null; });
+  fetch('/api/profile/edit/', {method:'PUT', headers:{'Content-Type':'application/json','X-CSRFToken':getCSRFToken()}, body:JSON.stringify(data)})
+    .then(r=>r.json().then(d=>({status:r.status, d}))).then(({status,d})=>{ if (status===200 && d.success){ closeModal('personalInfoModal'); loadProfileData(); showToast('Profile updated','success'); } else showToast('Error','error'); })
+    .catch(()=>showToast('Error','error'));
+});
+document.getElementById('accountInfoForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  const data = Object.fromEntries(new FormData(this));
+  fetch('/api/profile/edit/', {method:'PUT', headers:{'Content-Type':'application/json','X-CSRFToken':getCSRFToken()}, body:JSON.stringify(data)})
+    .then(r=>r.json()).then(d=>{ if (d.success){ closeModal('accountInfoModal'); loadProfileData(); showToast('Account updated','success'); } else showToast('Error','error'); }).catch(()=>showToast('Error','error'));
+});
+document.getElementById('businessProfileForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  const formData = new FormData(this);
+  const btn = document.getElementById('businessProfileSubmitBtn'); const original = btn.innerHTML;
+  btn.innerHTML = '<span class="spin" style="width:12px;height:12px;"></span> Saving…'; btn.disabled = true;
+  fetch('/api/profile/edit/', {method:'PUT', headers:{'X-CSRFToken':getCSRFToken()}, body:formData})
+    .then(r=>r.json()).then(d=>{ btn.innerHTML=original; btn.disabled=false; if (d.success){ closeModal('businessProfileModal'); loadProfileData(); showToast('Business profile updated','success'); } else showToast('Error','error'); })
+    .catch(()=>{ btn.innerHTML=original; btn.disabled=false; showToast('Error','error'); });
+});
+
+/* ============================================================
+   EDUCATION CONTENT MANAGEMENT (business)
+   ============================================================ */
+let eduManageFilter = 'all', allEducationItems = [], eduUploadType = 'school';
+function loadEducationManageContent(){
+  const container = document.getElementById('educationManageContent');
+  container.innerHTML = `<div class="loading-line"><span class="spin"></span> Loading…</div>`;
+  Promise.all([
+    fetch('/api/education/bursaries/').then(r=>r.json()).catch(()=>({success:false, bursaries:[]})),
+    fetch('/api/education/universities/').then(r=>r.json()).catch(()=>({success:false, universities:[]})),
+    fetch('/api/education/schools/').then(r=>r.json()).catch(()=>({success:false, schools:[]})),
+    fetch('/api/education/papers/').then(r=>r.json()).catch(()=>({success:false, papers:[]}))
+  ]).then(([bursaries, universities, schools, papers])=>{
+    const items = []; let schoolCount=0, bursaryCount=0, universityCount=0, paperCount=0;
+    if (bursaries.success) bursaries.bursaries.forEach(b=>{ items.push({type:'bursary', id:b.id, title:b.title||'Bursary', institution:b.provider||'', badge:'Bursary'}); bursaryCount++; });
+    if (universities.success) universities.universities.forEach(u=>{ items.push({type:'university', id:u.id, title:u.name||'University', institution:u.city||u.province||'', badge:'University'}); universityCount++; });
+    if (schools.success) schools.schools.forEach(s=>{ items.push({type:'school', id:s.id, title:s.name||'School', institution:`${s.city||''} ${s.province||''}`, badge:'School'}); schoolCount++; });
+    if (papers.success) papers.papers.forEach(p=>{ items.push({type:'paper', id:p.id, title:p.title||'Paper', institution:`${p.grade?.name||''} ${p.subject?.name||''}`, badge:'Paper'}); paperCount++; });
+    allEducationItems = items;
+    document.getElementById('eduTotalCount').textContent = items.length;
+    document.getElementById('eduSchoolCount').textContent = schoolCount;
+    document.getElementById('eduBursaryCount').textContent = bursaryCount;
+    document.getElementById('eduUniversityCount').textContent = universityCount;
+    document.getElementById('eduPaperCount').textContent = paperCount;
+    renderEducationManage(items);
+  }).catch(()=>container.innerHTML = `<div class="empty-state"><i class="fas fa-triangle-exclamation"></i><h4>Error loading</h4></div>`);
+}
+function renderEducationManage(items){
+  const container = document.getElementById('educationManageContent');
+  const filtered = eduManageFilter==='all' ? items : items.filter(i=>i.type===eduManageFilter);
+  if (!filtered.length){ container.innerHTML = `<div class="empty-state"><i class="fas fa-graduation-cap"></i><h4>No education content</h4><p>Add schools, bursaries, universities, or papers.</p></div>`; return; }
+  container.innerHTML = filtered.map(item=>`<div class="list-row"><div><span class="badge-type ${item.type}">${item.badge}</span><span style="font-weight:600; font-size:13px; margin-left:8px;">${escapeHtml(item.title)}</span><div class="lr-sub">${escapeHtml(item.institution||'')}</div></div><div class="lr-actions"><button class="icon-only-btn" onclick="deleteEducationItem('${item.type}','${item.id}')"><i class="fas fa-trash"></i></button></div></div>`).join('');
+}
+function filterEduManage(filter, btn){ eduManageFilter = filter; document.querySelectorAll('#eduFilterChips .edu-chip').forEach(c=>c.classList.remove('active')); btn?.classList.add('active'); renderEducationManage(allEducationItems); }
+function deleteEducationItem(type, id){
+  if (!confirm(`Delete this ${type}?`)) return;
+  const endpoints = {bursary:'/api/education/bursaries/', university:'/api/education/universities/', school:'/api/education/schools/', paper:'/api/education/papers/'};
+  fetch(`${endpoints[type]}${id}/`, {method:'DELETE', headers:{'X-CSRFToken':getCSRFToken()}}).then(r=>{ if (r.ok){ showToast('Deleted','success'); loadEducationManageContent(); } else showToast('Error','error'); }).catch(()=>showToast('Error','error'));
+}
+function showEduUpload(type){
+  eduUploadType = type;
+  document.getElementById('eduUploadTitle').textContent = {school:'Add school', bursary:'Add bursary', university:'Add university', paper:'Upload question paper'}[type] || 'Add education content';
+  const fields = document.getElementById('eduUploadFields');
+  let html = '';
+  if (type === 'school') html = `
+    <div class="field wide"><label>School name *</label><input type="text" name="name" required></div>
+    <div class="field"><label>EMIS number</label><input type="text" name="emis_number"></div>
+    <div class="field"><label>Province</label><input type="text" name="province"></div>
+    <div class="field"><label>City</label><input type="text" name="city"></div>
+    <div class="field wide"><label>Address</label><textarea name="address" rows="2"></textarea></div>
+    <div class="field wide"><label>Logo</label><input type="file" name="logo" accept="image/*"></div>`;
+  else if (type === 'bursary') html = `
+    <div class="field wide"><label>Bursary title *</label><input type="text" name="title" required></div>
+    <div class="field wide"><label>Provider *</label><input type="text" name="provider" required></div>
+    <div class="field wide"><label>Description</label><textarea name="description" rows="2"></textarea></div>
+    <div class="field"><label>Amount</label><input type="text" name="amount"></div>
+    <div class="field"><label>Closing date</label><input type="date" name="closing_date"></div>
+    <div class="field wide"><label>Application link</label><input type="url" name="application_link"></div>
+    <div class="field wide"><label>Image</label><input type="file" name="image" accept="image/*"></div>`;
+  else if (type === 'university') html = `
+    <div class="field wide"><label>University name *</label><input type="text" name="name" required></div>
+    <div class="field"><label>Province</label><input type="text" name="province"></div>
+    <div class="field"><label>City</label><input type="text" name="city"></div>
+    <div class="field wide"><label>Description</label><textarea name="description" rows="2"></textarea></div>
+    <div class="field wide"><label>Website</label><input type="url" name="website"></div>
+    <div class="field wide"><label>Logo</label><input type="file" name="logo" accept="image/*"></div>`;
+  else if (type === 'paper'){
+    html = `
+    <div class="field wide"><label>Paper title *</label><input type="text" name="title" required></div>
+    <div class="field"><label>Grade *</label><select name="grade_id" id="paperGradeSelect" required><option value="">Select grade</option></select></div>
+    <div class="field"><label>Subject *</label><select name="subject_id" id="paperSubjectSelect" required><option value="">Select subject</option></select></div>
+    <div class="field"><label>Year *</label><input type="number" name="year" required min="2000" max="2026"></div>
+    <div class="field wide"><label>PDF file *</label><input type="file" name="file" accept=".pdf" required></div>
+    <div class="field wide field-check"><input type="checkbox" name="is_public" checked><label style="margin:0;">Make public</label></div>`;
+    setTimeout(()=>{
+      fetch('/api/education/grades/').then(r=>r.json()).then(data=>{ if (data.success){ const sel = document.getElementById('paperGradeSelect'); data.grades.forEach(g=>{ const o=document.createElement('option'); o.value=g.id; o.textContent=g.name; sel.appendChild(o); }); } }).catch(()=>{});
+      document.getElementById('paperGradeSelect')?.addEventListener('change', function(){
+        const subjectSelect = document.getElementById('paperSubjectSelect'); if (!this.value || !subjectSelect) return;
+        subjectSelect.innerHTML = '<option value="">Loading…</option>';
+        fetch(`/api/education/subjects/by_grade/?grade_id=${this.value}`).then(r=>r.json()).then(data=>{
+          if (data.success){ subjectSelect.innerHTML = '<option value="">Select subject</option>'; data.subjects.forEach(s=>{ const o=document.createElement('option'); o.value=s.id; o.textContent=s.name; subjectSelect.appendChild(o); }); }
+        }).catch(()=>{});
+      });
+    }, 80);
+  }
+  fields.innerHTML = html;
+  openModal('eduUploadModal');
+}
+document.getElementById('eduUploadForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  const formData = new FormData(this);
+  const btn = document.getElementById('eduUploadSubmitBtn'); const original = btn.innerHTML;
+  btn.innerHTML = '<span class="spin" style="width:12px;height:12px;"></span> Uploading…'; btn.disabled = true;
+  const endpoints = {school:'/api/education/schools/', bursary:'/api/education/bursaries/', university:'/api/education/universities/', paper:'/api/education/papers/'};
+  fetch(endpoints[eduUploadType], {method:'POST', headers:{'X-CSRFToken':getCSRFToken()}, body:formData})
+    .then(r=>r.json()).then(d=>{ btn.innerHTML=original; btn.disabled=false;
+      if (d.success || d.id){ closeModal('eduUploadModal'); this.reset(); showToast('Upload successful','success'); loadEducationManageContent(); } else showToast('Upload failed','error'); })
+    .catch(()=>{ btn.innerHTML=original; btn.disabled=false; showToast('Network error','error'); });
+});
+
+/* ============================================================
+   AD CAMPAIGN MANAGEMENT (business + admin)
+   ============================================================ */
+let adFilter = 'all', allAds = [];
+function loadAds(){
+  const container = document.getElementById('adManageContent');
+  container.innerHTML = `<div class="loading-line"><span class="spin"></span> Loading ads…</div>`;
+  fetch('/api/ads/').then(r=>r.json()).then(data=>{
+    allAds = data.results || []; renderAds(allAds);
+  }).catch(()=>container.innerHTML = `<div class="empty-state"><i class="fas fa-triangle-exclamation"></i><h4>Error loading ads</h4></div>`);
+}
+function loadAdStats(){
+  fetch('/api/ads/stats/').then(r=>r.json()).then(data=>{
+    document.getElementById('adTotalCount').textContent = data.total_ads||0;
+    document.getElementById('adActiveCount').textContent = data.active_ads||0;
+    document.getElementById('adPendingCount').textContent = data.pending_ads||0;
+    document.getElementById('adImpressions').textContent = data.total_impressions||0;
+    document.getElementById('adClicks').textContent = data.total_clicks||0;
+    document.getElementById('adConversions').textContent = data.total_conversions||0;
+  }).catch(()=>{});
+}
+function loadPropertiesForAdSelect(){
+  fetch('/api/properties/').then(r=>r.json()).then(data=>{
+    if (data.success && data.properties){ allProperties = data.properties; const sel = document.getElementById('adPropertySelect');
+      sel.innerHTML = '<option value="">None</option>'; data.properties.forEach(p=>{ const o=document.createElement('option'); o.value=p.id; o.textContent = p.title || ('Property '+p.id); sel.appendChild(o); }); }
+  }).catch(()=>{});
+}
+function renderAds(ads){
+  const container = document.getElementById('adManageContent');
+  const filtered = adFilter==='all' ? ads : ads.filter(a=>a.status===adFilter);
+  if (!filtered.length){ container.innerHTML = `<div class="empty-state"><i class="fas fa-ad"></i><h4>No ads found</h4><button class="btn-pill btn-jade" onclick="showAdUpload()">Create ad</button></div>`; return; }
+  container.innerHTML = filtered.map(ad=>{
+    let actionBtns = '';
+    if (isSuperAdmin && ad.status==='pending') actionBtns = `<button class="mini-btn approve" onclick="approveAd('${ad.id}')">Approve</button> <button class="mini-btn reject" onclick="showRejectModal('${ad.id}')">Reject</button>`;
+    else if (isSuperAdmin && ad.status==='active') actionBtns = `<button class="mini-btn pause" onclick="pauseAd('${ad.id}')">Pause</button>`;
+    else if (isSuperAdmin && ad.status==='paused') actionBtns = `<button class="mini-btn unpause" onclick="unpauseAd('${ad.id}')">Unpause</button>`;
+    return `<div class="list-row" style="border-left-color:var(--plum);">
+      <div>
+        <span class="status-pill-sm ${ad.status}">${(ad.status||'').toUpperCase()}</span>
+        <span style="font-weight:600; font-size:13.5px; margin-left:8px;">${escapeHtml(ad.title||'Untitled ad')}</span>
+        <div class="lr-sub">${escapeHtml(ad.ad_type||'Promotion')} · ${escapeHtml(ad.position||'Feed')}</div>
+        <div class="ad-stats-mini"><span><i class="fas fa-eye"></i>${ad.impressions||0}</span><span><i class="fas fa-mouse-pointer"></i>${ad.clicks||0}</span><span><i class="fas fa-trophy"></i>${ad.conversions||0}</span>${ad.display_price?`<span><i class="fas fa-tag"></i>${escapeHtml(ad.display_price)}</span>`:''}</div>
+      </div>
+      <div class="lr-actions" style="align-items:center;">${actionBtns}<button class="icon-only-btn" onclick="deleteAd('${ad.id}')"><i class="fas fa-trash"></i></button></div>
+    </div>`;
+  }).join('');
+}
+function filterAds(filter, btn){ adFilter = filter; document.querySelectorAll('#adFilterChips .edu-chip').forEach(c=>c.classList.remove('active')); btn?.classList.add('active'); renderAds(allAds); }
+function showAdUpload(){ document.getElementById('adCreateForm').reset(); openModal('adCreateModal'); }
+document.getElementById('adCreateForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  const formData = new FormData(this);
+  const btn = document.getElementById('adCreateSubmitBtn'); const original = btn.innerHTML;
+  btn.innerHTML = '<span class="spin" style="width:12px;height:12px;"></span> Creating…'; btn.disabled = true;
+  const targetLocations = formData.get('target_locations');
+  if (targetLocations) formData.set('target_locations', JSON.stringify(targetLocations.split(',').map(s=>s.trim()).filter(Boolean))); else formData.delete('target_locations');
+  const propertyTypes = formData.get('target_property_types');
+  if (propertyTypes) formData.set('target_property_types', JSON.stringify(propertyTypes.split(',').map(s=>s.trim()).filter(Boolean))); else formData.delete('target_property_types');
+  const userTypes = formData.get('target_user_types');
+  if (userTypes) formData.set('target_user_types', JSON.stringify([userTypes])); else formData.delete('target_user_types');
+  fetch('/api/ads/', {method:'POST', headers:{'X-CSRFToken':getCSRFToken()}, body:formData})
+    .then(r=>r.json()).then(d=>{ btn.innerHTML=original; btn.disabled=false;
+      if (d.id){ closeModal('adCreateModal'); showToast('Ad created — pending approval','success'); loadAds(); loadAdStats(); } else showToast('Error: '+(d.message||'Unknown'),'error'); })
+    .catch(()=>{ btn.innerHTML=original; btn.disabled=false; showToast('Network error','error'); });
+});
+function approveAd(id){
+  if (!confirm('Approve this ad?')) return;
+  fetch(`/api/ads/${id}/approve/`, {method:'POST', headers:{'Content-Type':'application/json','X-CSRFToken':getCSRFToken()}, body:JSON.stringify({})})
+    .then(r=>r.json()).then(d=>{ if (d.success){ showToast('Ad approved','success'); loadAds(); loadAdStats(); } else showToast('Error','error'); }).catch(()=>showToast('Network error','error'));
+}
+function showRejectModal(id){ document.getElementById('rejectAdId').value = id; document.getElementById('adRejectForm').reset(); openModal('adRejectModal'); }
+document.getElementById('adRejectForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  const formData = new FormData(this); const adId = formData.get('ad_id'); const notes = formData.get('notes');
+  fetch(`/api/ads/${adId}/reject/`, {method:'POST', headers:{'Content-Type':'application/json','X-CSRFToken':getCSRFToken()}, body:JSON.stringify({notes})})
+    .then(r=>r.json()).then(d=>{ if (d.success){ closeModal('adRejectModal'); showToast('Ad rejected','success'); loadAds(); loadAdStats(); } else showToast('Error','error'); }).catch(()=>showToast('Network error','error'));
+});
+function pauseAd(id){ if (!confirm('Pause this ad?')) return; fetch(`/api/ads/${id}/pause/`, {method:'POST', headers:{'Content-Type':'application/json','X-CSRFToken':getCSRFToken()}, body:JSON.stringify({})}).then(r=>r.json()).then(d=>{ if (d.success){ showToast('Ad paused','success'); loadAds(); loadAdStats(); } }).catch(()=>{}); }
+function unpauseAd(id){ if (!confirm('Unpause this ad?')) return; fetch(`/api/ads/${id}/unpause/`, {method:'POST', headers:{'Content-Type':'application/json','X-CSRFToken':getCSRFToken()}, body:JSON.stringify({})}).then(r=>r.json()).then(d=>{ if (d.success){ showToast('Ad unpaused','success'); loadAds(); loadAdStats(); } }).catch(()=>{}); }
+function deleteAd(id){ if (!confirm('Delete this ad?')) return; fetch(`/api/ads/${id}/soft_delete/`, {method:'DELETE', headers:{'X-CSRFToken':getCSRFToken()}}).then(r=>r.json()).then(d=>{ if (d.success){ showToast('Ad deleted','success'); loadAds(); loadAdStats(); } }).catch(()=>{}); }
+
+/* ============================================================
+   HEADER BADGES (best-effort, never blocks the page)
+   ============================================================ */
+function loadMessageCount(){
+  fetch('/api/conversations/unread-count/').then(r=>r.ok?r.json():Promise.reject()).then(data=>{
+    const badge = document.getElementById('messageBadge');
+    if (data?.success && data.unread_count>0){ badge.textContent = data.unread_count>99?'99+':data.unread_count; badge.classList.add('show'); } else badge.classList.remove('show');
+  }).catch(()=>document.getElementById('messageBadge')?.classList.remove('show'));
+}
+function loadNotificationCount(){
+  fetch('/api/alerts/', {headers:{'Accept':'application/json'}, credentials:'same-origin'}).then(r=>r.ok?r.json():Promise.reject()).then(data=>{
+    const alerts = Array.isArray(data) ? data : (data?.alerts||data?.results||data?.data||[]);
+    const unread = Array.isArray(alerts) ? alerts.filter(a=>{ const v=a?.is_read ?? a?.read ?? a?.read_status; return v===false||v===0||v==='false'||v==='unread'; }).length : 0;
+    const badge = document.getElementById('notificationBadge');
+    if (unread>0){ badge.textContent = unread>99?'99+':unread; badge.classList.add('show'); } else badge.classList.remove('show');
+  }).catch(()=>document.getElementById('notificationBadge')?.classList.remove('show'));
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+document.addEventListener('DOMContentLoaded', function(){
+  loadProfileData();
+  loadMessageCount();
+  loadNotificationCount();
+  setInterval(()=>{ loadMessageCount(); loadNotificationCount(); }, 60000);
+});
+</script>
+
+  <script src="/static/hiring/js/notifications-global.js" defer></script>
+</body>
+</html>

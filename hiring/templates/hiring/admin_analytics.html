@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Analytics - Hiring Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- 1️⃣ In HEAD: Load the CSS -->
+    <style>
+        .header-area {
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+        }
+        .main-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 0;
+        }
+        .logo img {
+            max-height: 40px;
+        }
+        .nav {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            align-items: center;
+        }
+        .nav li {
+            margin: 0 15px;
+        }
+        .nav li a {
+            color: #2a2a2a;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        .nav li a:hover, .nav li a.active {
+            color: #ff589e;
+        }
+        .main-button {
+            background: linear-gradient(135deg, #ff589e 0%, #ff136f 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            border: none;
+            transition: all 0.3s;
+        }
+        .main-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 88, 158, 0.3);
+            color: white;
+        }
+        
+        .profile-dropdown {
+            position: relative;
+        }
+        .profile-toggle {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 20px;
+            transition: background-color 0.3s;
+        }
+        .profile-toggle:hover {
+            background-color: rgba(255, 88, 158, 0.1);
+        }
+        .profile-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff589e 0%, #ff136f 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        .profile-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            min-width: 200px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 10px 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        .profile-dropdown.active .profile-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .profile-menu a {
+            display: block;
+            padding: 8px 20px;
+            color: #2a2a2a;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        .profile-menu a:hover {
+            background-color: rgba(255, 88, 158, 0.1);
+            color: #ff589e;
+        }
+        .profile-divider {
+            height: 1px;
+            background-color: #eee;
+            margin: 5px 0;
+        }
+        
+        .menu-trigger {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #2a2a2a;
+            cursor: pointer;
+        }
+        
+        body {
+            padding-top: 80px;
+            background-color: #f8f9fa;
+        }
+        
+        .admin-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 40px 0;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .admin-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 25px;
+        }
+        .admin-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+        .stat-card {
+            text-align: center;
+            padding: 30px 20px;
+        }
+        .stat-card i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        .stat-card h3 {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .btn-admin {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            transition: all 0.3s;
+        }
+        .btn-admin:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(44, 62, 80, 0.3);
+            color: white;
+        }
+        
+        .growth-indicator {
+            font-size: 0.875rem;
+            margin-top: 5px;
+        }
+        .growth-positive {
+            color: #28a745;
+        }
+        .growth-negative {
+            color: #dc3545;
+        }
+
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+        }
+
+        .toast-container {
+            z-index: 9999;
+        }
+
+        /* Analytics Specific Styles */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        .analytics-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .metric-card {
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .metric-primary { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); color: white; }
+        .metric-success { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; }
+        .metric-warning { background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%); color: white; }
+        .metric-info { background: linear-gradient(135deg, #17a2b8 0%, #138496 100%); color: white; }
+        .metric-purple { background: linear-gradient(135deg, #6f42c1 0%, #563d7c 100%); color: white; }
+
+        .date-filter {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .trend-indicator {
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        .trend-up { color: #28a745; }
+        .trend-down { color: #dc3545; }
+        .trend-neutral { color: #6c757d; }
+
+        .analytics-table {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .analytics-table .table th {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            font-weight: 600;
+        }
+        .analytics-table .table td {
+            padding: 12px 20px;
+            vertical-align: middle;
+            border-color: #f0f0f0;
+        }
+
+        .loading-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+
+        @media (max-width: 991px) {
+            .menu-trigger {
+                display: block;
+            }
+            .nav {
+                position: fixed;
+                top: 80px;
+                left: 0;
+                right: 0;
+                background: white;
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 20px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+                transform: translateY(-100%);
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s;
+            }
+            .nav.active {
+                transform: translateY(0);
+                opacity: 1;
+                visibility: visible;
+            }
+            .nav li {
+                margin: 10px 0;
+                width: 100%;
+            }
+            .nav li a {
+                display: block;
+                padding: 10px 0;
+            }
+            .profile-dropdown {
+                width: 100%;
+            }
+            .profile-menu {
+                position: static;
+                box-shadow: none;
+                opacity: 1;
+                visibility: visible;
+                transform: none;
+                display: none;
+                padding-left: 20px;
+            }
+            .profile-dropdown.active .profile-menu {
+                display: block;
+            }
+            
+            .chart-container {
+                height: 250px;
+            }
+        }
+
+        /* KPI Cards */
+        .kpi-card {
+            border-left: 4px solid;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .kpi-primary { border-left-color: #007bff; }
+        .kpi-success { border-left-color: #28a745; }
+        .kpi-warning { border-left-color: #ffc107; }
+        .kpi-danger { border-left-color: #dc3545; }
+        .kpi-info { border-left-color: #17a2b8; }
+
+        .kpi-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .kpi-label {
+            color: #6c757d;
+            font-size: 0.875rem;
+        }
+
+        /* Progress bars */
+        .progress {
+            height: 8px;
+            margin-bottom: 10px;
+        }
+        .progress-label {
+            display: flex;
+            justify-content: between;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    {% load api_utils %}
+    {% api_js_functions %}
+    <!-- Navigation -->
+    <header class="header-area header-sticky">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <nav class="main-nav">
+                        <!-- Logo -->
+                        <a href="/" class="logo">
+                            <img src="/static/hiring/images/logo.png" alt="JobPortal" style="max-height: 40px;">
+                        </a>
+                        
+                        <!-- Mobile Menu Trigger -->
+                        <button class="menu-trigger" id="mobileMenuTrigger">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        
+                        <!-- Menu -->
+                        <ul class="nav" id="mainNav">
+                            <li><a href="/">Home</a></li>
+                            <li><a href="/#job-listings">Browse Jobs</a></li>
+                            {% if user.is_authenticated %}
+                                {% if user.is_superuser %}
+                                    <li><a href="/admin-portal/">Admin Portal</a></li>
+                                    <li><a href="/admin-portal/jobs/">Job Management</a></li>
+                                    <li><a href="/admin-portal/applications/">Applications</a></li>
+                                    <li><a href="/admin-portal/users/">Users</a></li>
+                                    <li><a href="/admin-portal/analytics/" class="active">Analytics</a></li>
+                                {% else %}
+                                    <li><a href="/dashboard">Dashboard</a></li>
+                                {% endif %}
+                                <li class="profile-dropdown" id="profileDropdown">
+                                    <div class="profile-toggle" onclick="toggleProfileDropdown()">
+                                        <div class="profile-avatar">
+                                            {{ user.username|first|upper }}
+                                        </div>
+                                        <span>{{ user.username }}</span>
+                                        <i class="fas fa-chevron-down" style="margin-left: 5px; font-size: 12px;"></i>
+                                    </div>
+                                    <div class="profile-menu">
+                                        {% if user.is_superuser %}
+                                            <a href="/admin-portal/"><i class="fas fa-crown me-2"></i>Admin Portal</a>
+                                            <a href="/admin-portal/jobs/"><i class="fas fa-briefcase me-2"></i>Job Management</a>
+                                            <a href="/admin-portal/applications/"><i class="fas fa-file-alt me-2"></i>Applications</a>
+                                            <a href="/admin-portal/users/"><i class="fas fa-users me-2"></i>Users</a>
+                                            <a href="/admin-portal/analytics/" class="active"><i class="fas fa-chart-bar me-2"></i>Analytics</a>
+                                            <a href="/admin-portal/export/" target="_blank"><i class="fas fa-download me-2"></i>Export Data</a>
+                                            <a href="/admin/" target="_blank"><i class="fas fa-cog me-2"></i>System Admin</a>
+                                            <div class="profile-divider"></div>
+                                        {% else %}
+                                            <a href="/profile/"><i class="fas fa-user me-2"></i>My Profile</a>
+                                            <a href="/applications/"><i class="fas fa-file-alt me-2"></i>My Applications</a>
+                                            <a href="/profile/skills/"><i class="fas fa-cogs me-2"></i>Skills</a>
+                                            <a href="/profile/employment/"><i class="fas fa-briefcase me-2"></i>Employment</a>
+                                            <a href="/profile/education/"><i class="fas fa-graduation-cap me-2"></i>Education</a>
+                                            <a href="/profile/documents/"><i class="fas fa-file-upload me-2"></i>Documents</a>
+                                            <div class="profile-divider"></div>
+                                            <a href="/alerts/"><i class="fas fa-bell me-2"></i>Alerts</a>
+                                            <a href="/preferences/"><i class="fas fa-cog me-2"></i>Preferences</a>
+                                            <div class="profile-divider"></div>
+                                        {% endif %}
+                                        <a href="/logout/"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
+                                    </div>
+                                </li>
+                            {% else %}
+                                <li><a href="#" onclick="showLogin()" class="main-button">Login</a></li>
+                                <li><a href="#" onclick="showSignup()" class="main-button">Sign Up</a></li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mt-4">
+        <!-- Admin Header -->
+        <div class="admin-header">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="display-5 mb-2"><i class="fas fa-chart-bar me-3"></i>Platform Analytics</h1>
+                    <p class="lead mb-0">Comprehensive insights and performance metrics for your hiring platform</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <div class="bg-white text-dark rounded p-3 d-inline-block">
+                        <small class="text-muted d-block">Reporting Period</small>
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-calendar me-2"></i>
+                            <strong id="reportingPeriod">Last 30 Days</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Date Range Filter -->
+        <div class="date-filter">
+            <div class="row g-3 align-items-center">
+                <div class="col-md-8">
+                    <div class="d-flex flex-wrap gap-3">
+                        <button class="btn btn-outline-primary active" data-range="7">Last 7 Days</button>
+                        <button class="btn btn-outline-primary" data-range="30">Last 30 Days</button>
+                        <button class="btn btn-outline-primary" data-range="90">Last 90 Days</button>
+                        <button class="btn btn-outline-primary" data-range="365">Last Year</button>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                        <input type="date" id="custom-start-date" class="form-control">
+                        <span class="input-group-text">to</span>
+                        <input type="date" id="custom-end-date" class="form-control">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Performance Indicators -->
+        <div class="row mb-4">
+            <div class="col-md-2 col-6 mb-3">
+                <div class="kpi-card kpi-primary">
+                    <div class="kpi-value" id="total-users-kpi">0</div>
+                    <div class="kpi-label">Total Users</div>
+                    <div class="trend-indicator" id="users-trend"></div>
+                </div>
+            </div>
+            <div class="col-md-2 col-6 mb-3">
+                <div class="kpi-card kpi-success">
+                    <div class="kpi-value" id="active-jobs-kpi">0</div>
+                    <div class="kpi-label">Active Jobs</div>
+                    <div class="trend-indicator" id="jobs-trend"></div>
+                </div>
+            </div>
+            <div class="col-md-2 col-6 mb-3">
+                <div class="kpi-card kpi-warning">
+                    <div class="kpi-value" id="total-applications-kpi">0</div>
+                    <div class="kpi-label">Applications</div>
+                    <div class="trend-indicator" id="applications-trend"></div>
+                </div>
+            </div>
+            <div class="col-md-2 col-6 mb-3">
+                <div class="kpi-card kpi-info">
+                    <div class="kpi-value" id="conversion-rate-kpi">0%</div>
+                    <div class="kpi-label">Conversion Rate</div>
+                    <div class="trend-indicator" id="conversion-trend"></div>
+                </div>
+            </div>
+            <div class="col-md-2 col-6 mb-3">
+                <div class="kpi-card kpi-purple">
+                    <div class="kpi-value" id="avg-profile-complete-kpi">0%</div>
+                    <div class="kpi-label">Avg Profile Complete</div>
+                    <div class="trend-indicator" id="profile-trend"></div>
+                </div>
+            </div>
+            <div class="col-md-2 col-6 mb-3">
+                <div class="kpi-card kpi-danger">
+                    <div class="kpi-value" id="response-time-kpi">0h</div>
+                    <div class="kpi-label">Avg Response Time</div>
+                    <div class="trend-indicator" id="response-trend"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row 1 -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="analytics-card">
+                    <h5 class="mb-4"><i class="fas fa-chart-line me-2"></i>User Growth Trend</h5>
+                    <div class="chart-container">
+                        <canvas id="userGrowthChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="analytics-card">
+                    <h5 class="mb-4"><i class="fas fa-briefcase me-2"></i>Job Applications Overview</h5>
+                    <div class="chart-container">
+                        <canvas id="applicationsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row 2 -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="analytics-card">
+                    <h5 class="mb-4"><i class="fas fa-user-check me-2"></i>Application Status Distribution</h5>
+                    <div class="chart-container">
+                        <canvas id="statusDistributionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="analytics-card">
+                    <h5 class="mb-4"><i class="fas fa-map-marker-alt me-2"></i>Top Job Locations</h5>
+                    <div class="chart-container">
+                        <canvas id="locationsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Analytics -->
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <div class="analytics-card">
+                    <h5 class="mb-4"><i class="fas fa-chart-pie me-2"></i>Profile Completion Statistics</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="chart-container">
+                                <canvas id="profileCompletionChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mt-4">
+                                <h6>Completion Levels</h6>
+                                <div class="mb-3">
+                                    <div class="progress-label">
+                                        <span>High (80-100%)</span>
+                                        <span id="high-complete">0%</span>
+                                    </div>
+                                    <div class="progress">
+                                        <div class="progress-bar bg-success" id="high-complete-bar" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="progress-label">
+                                        <span>Medium (50-79%)</span>
+                                        <span id="medium-complete">0%</span>
+                                    </div>
+                                    <div class="progress">
+                                        <div class="progress-bar bg-warning" id="medium-complete-bar" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="progress-label">
+                                        <span>Low (0-49%)</span>
+                                        <span id="low-complete">0%</span>
+                                    </div>
+                                    <div class="progress">
+                                        <div class="progress-bar bg-danger" id="low-complete-bar" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="analytics-card">
+                    <h5 class="mb-4"><i class="fas fa-bolt me-2"></i>Platform Performance</h5>
+                    <div class="metric-card metric-primary mb-3">
+                        <i class="fas fa-users fa-2x mb-2"></i>
+                        <h3 id="new-users-today">0</h3>
+                        <p>New Users Today</p>
+                    </div>
+                    <div class="metric-card metric-success mb-3">
+                        <i class="fas fa-file-alt fa-2x mb-2"></i>
+                        <h3 id="new-applications-today">0</h3>
+                        <p>New Applications Today</p>
+                    </div>
+                    <div class="metric-card metric-warning">
+                        <i class="fas fa-briefcase fa-2x mb-2"></i>
+                        <h3 id="active-jobs-today">0</h3>
+                        <p>Active Jobs</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Performers -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="analytics-card">
+                    <h5 class="mb-4"><i class="fas fa-trophy me-2"></i>Most Popular Jobs</h5>
+                    <div class="analytics-table">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Job Title</th>
+                                        <th>Applications</th>
+                                        <th>Success Rate</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="popular-jobs-table">
+                                    <!-- Popular jobs will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="analytics-card">
+                    <h5 class="mb-4"><i class="fas fa-chart-line me-2"></i>Platform Activity Timeline</h5>
+                    <div class="chart-container">
+                        <canvas id="activityTimelineChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loading-state" class="loading-state">
+            <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;" role="status">
+                <span class="visually-hidden">Loading analytics...</span>
+            </div>
+            <p class="text-muted">Loading analytics data...</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentDateRange = 30;
+        let charts = {};
+        let analyticsData = {};
+
+        // Navigation functions
+        function toggleProfileDropdown() {
+            const dropdown = document.getElementById('profileDropdown');
+            dropdown.classList.toggle('active');
+        }
+
+        document.getElementById('mobileMenuTrigger').addEventListener('click', function() {
+            document.getElementById('mainNav').classList.toggle('active');
+        });
+
+        document.addEventListener('click', function(event) {
+            const profileDropdown = document.getElementById('profileDropdown');
+            if (profileDropdown && !profileDropdown.contains(event.target)) {
+                profileDropdown.classList.remove('active');
+            }
+            
+            const mobileMenuTrigger = document.getElementById('mobileMenuTrigger');
+            const mainNav = document.getElementById('mainNav');
+            if (window.innerWidth <= 991 && mainNav.classList.contains('active') && 
+                !mainNav.contains(event.target) && !mobileMenuTrigger.contains(event.target)) {
+                mainNav.classList.remove('active');
+            }
+        });
+
+        // Load analytics when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            loadAnalyticsData();
+        });
+
+        function setupEventListeners() {
+            // Date range buttons
+            document.querySelectorAll('[data-range]').forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    document.querySelectorAll('[data-range]').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    currentDateRange = parseInt(this.dataset.range);
+                    document.getElementById('reportingPeriod').textContent = this.textContent;
+                    loadAnalyticsData();
+                });
+            });
+
+            // Custom date inputs
+            document.getElementById('custom-start-date').addEventListener('change', handleCustomDateRange);
+            document.getElementById('custom-end-date').addEventListener('change', handleCustomDateRange);
+
+            // Set default dates for custom range
+            const endDate = new Date();
+            const startDate = new Date();
+            startDate.setDate(startDate.getDate() - 30);
+            
+            document.getElementById('custom-start-date').value = startDate.toISOString().split('T')[0];
+            document.getElementById('custom-end-date').value = endDate.toISOString().split('T')[0];
+        }
+
+        function handleCustomDateRange() {
+            const startDate = document.getElementById('custom-start-date').value;
+            const endDate = document.getElementById('custom-end-date').value;
+            
+            if (startDate && endDate) {
+                // Remove active class from preset buttons
+                document.querySelectorAll('[data-range]').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                document.getElementById('reportingPeriod').textContent = 'Custom Range';
+                loadAnalyticsData(startDate, endDate);
+            }
+        }
+
+        async function loadAnalyticsData(startDate = null, endDate = null) {
+            showLoadingState();
+            
+            try {
+                const params = {};
+                if (startDate && endDate) {
+                    params.start_date = startDate;
+                    params.end_date = endDate;
+                } else {
+                    params.days = currentDateRange;
+                }
+
+                const response = await fetch('/api/admin/analytics/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCSRFToken()
+                    },
+                    body: JSON.stringify(params)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    analyticsData = data.analytics;
+                    updateKPIs();
+                    renderCharts();
+                    updatePopularJobs();
+                    hideLoadingState();
+                } else {
+                    showError('Failed to load analytics data');
+                }
+            } catch (error) {
+                console.error('Error loading analytics:', error);
+                showError('Error loading analytics data');
+            }
+        }
+
+        function updateKPIs() {
+            const stats = analyticsData.stats;
+            const trends = analyticsData.trends;
+
+            // Update KPI values
+            document.getElementById('total-users-kpi').textContent = stats.total_users.toLocaleString();
+            document.getElementById('active-jobs-kpi').textContent = stats.active_jobs.toLocaleString();
+            document.getElementById('total-applications-kpi').textContent = stats.total_applications.toLocaleString();
+            document.getElementById('conversion-rate-kpi').textContent = stats.conversion_rate + '%';
+            document.getElementById('avg-profile-complete-kpi').textContent = stats.avg_profile_complete + '%';
+            document.getElementById('response-time-kpi').textContent = stats.avg_response_time + 'h';
+
+            // Update today's metrics
+            document.getElementById('new-users-today').textContent = stats.new_users_today;
+            document.getElementById('new-applications-today').textContent = stats.new_applications_today;
+            document.getElementById('active-jobs-today').textContent = stats.active_jobs_today;
+
+            // Update trends
+            updateTrendIndicator('users-trend', trends.user_growth);
+            updateTrendIndicator('jobs-trend', trends.job_growth);
+            updateTrendIndicator('applications-trend', trends.application_growth);
+            updateTrendIndicator('conversion-trend', trends.conversion_trend);
+            updateTrendIndicator('profile-trend', trends.profile_completion_trend);
+            updateTrendIndicator('response-trend', trends.response_time_trend);
+
+            // Update profile completion progress
+            const completion = analyticsData.profile_completion;
+            document.getElementById('high-complete').textContent = completion.high + '%';
+            document.getElementById('medium-complete').textContent = completion.medium + '%';
+            document.getElementById('low-complete').textContent = completion.low + '%';
+            
+            document.getElementById('high-complete-bar').style.width = completion.high + '%';
+            document.getElementById('medium-complete-bar').style.width = completion.medium + '%';
+            document.getElementById('low-complete-bar').style.width = completion.low + '%';
+        }
+
+        function updateTrendIndicator(elementId, trend) {
+            const element = document.getElementById(elementId);
+            if (trend > 0) {
+                element.innerHTML = `<i class="fas fa-arrow-up"></i> ${Math.abs(trend)}%`;
+                element.className = 'trend-indicator trend-up';
+            } else if (trend < 0) {
+                element.innerHTML = `<i class="fas fa-arrow-down"></i> ${Math.abs(trend)}%`;
+                element.className = 'trend-indicator trend-down';
+            } else {
+                element.innerHTML = `<i class="fas fa-minus"></i> 0%`;
+                element.className = 'trend-indicator trend-neutral';
+            }
+        }
+
+        function renderCharts() {
+            // Destroy existing charts
+            Object.values(charts).forEach(chart => {
+                if (chart) chart.destroy();
+            });
+
+            // User Growth Chart
+            const userGrowthCtx = document.getElementById('userGrowthChart').getContext('2d');
+            charts.userGrowth = new Chart(userGrowthCtx, {
+                type: 'line',
+                data: {
+                    labels: analyticsData.user_growth.labels,
+                    datasets: [{
+                        label: 'New Users',
+                        data: analyticsData.user_growth.data,
+                        borderColor: '#007bff',
+                        backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                drawBorder: false
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Applications Chart
+            const applicationsCtx = document.getElementById('applicationsChart').getContext('2d');
+            charts.applications = new Chart(applicationsCtx, {
+                type: 'bar',
+                data: {
+                    labels: analyticsData.applications_overview.labels,
+                    datasets: [{
+                        label: 'Applications',
+                        data: analyticsData.applications_overview.data,
+                        backgroundColor: '#28a745',
+                        borderColor: '#28a745',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                drawBorder: false
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Status Distribution Chart
+            const statusCtx = document.getElementById('statusDistributionChart').getContext('2d');
+            charts.statusDistribution = new Chart(statusCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: analyticsData.status_distribution.labels,
+                    datasets: [{
+                        data: analyticsData.status_distribution.data,
+                        backgroundColor: [
+                            '#007bff', '#28a745', '#ffc107', '#dc3545', '#6f42c1', '#17a2b8'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // Locations Chart
+            const locationsCtx = document.getElementById('locationsChart').getContext('2d');
+            charts.locations = new Chart(locationsCtx, {
+                type: 'polarArea',
+                data: {
+                    labels: analyticsData.top_locations.labels,
+                    datasets: [{
+                        data: analyticsData.top_locations.data,
+                        backgroundColor: [
+                            '#007bff', '#28a745', '#ffc107', '#dc3545', '#6f42c1',
+                            '#17a2b8', '#e83e8c', '#fd7e14', '#20c997', '#6610f2'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        }
+                    }
+                }
+            });
+
+            // Profile Completion Chart
+            const profileCtx = document.getElementById('profileCompletionChart').getContext('2d');
+            charts.profileCompletion = new Chart(profileCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['High (80-100%)', 'Medium (50-79%)', 'Low (0-49%)'],
+                    datasets: [{
+                        data: [
+                            analyticsData.profile_completion.high,
+                            analyticsData.profile_completion.medium,
+                            analyticsData.profile_completion.low
+                        ],
+                        backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // Activity Timeline Chart
+            const activityCtx = document.getElementById('activityTimelineChart').getContext('2d');
+            charts.activityTimeline = new Chart(activityCtx, {
+                type: 'line',
+                data: {
+                    labels: analyticsData.activity_timeline.labels,
+                    datasets: [
+                        {
+                            label: 'User Registrations',
+                            data: analyticsData.activity_timeline.registrations,
+                            borderColor: '#007bff',
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Job Applications',
+                            data: analyticsData.activity_timeline.applications,
+                            borderColor: '#28a745',
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                drawBorder: false
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updatePopularJobs() {
+            const tableBody = document.getElementById('popular-jobs-table');
+            const popularJobs = analyticsData.popular_jobs;
+
+            tableBody.innerHTML = popularJobs.map(job => `
+                <tr>
+                    <td>
+                        <div class="fw-bold">${escapeHtml(job.title)}</div>
+                        <small class="text-muted">${escapeHtml(job.company)}</small>
+                    </td>
+                    <td>${job.applications}</td>
+                    <td>
+                        <span class="badge bg-${getSuccessRateColor(job.success_rate)}">
+                            ${job.success_rate}%
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function getSuccessRateColor(rate) {
+            if (rate >= 70) return 'success';
+            if (rate >= 40) return 'warning';
+            return 'danger';
+        }
+
+        function showLoadingState() {
+            document.getElementById('loading-state').classList.remove('d-none');
+        }
+
+        function hideLoadingState() {
+            document.getElementById('loading-state').classList.add('d-none');
+        }
+
+        function showToast(title, message, type = 'info') {
+            // Create toast container if it doesn't exist
+            let toastContainer = document.getElementById('toastContainer');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.id = 'toastContainer';
+                toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
+                toastContainer.style.zIndex = '9999';
+                document.body.appendChild(toastContainer);
+            }
+            
+            const toastId = 'toast-' + Date.now();
+            const bgColor = type === 'success' ? 'bg-success' : type === 'error' ? 'bg-danger' : 'bg-info';
+            
+            const toastHTML = `
+                <div id="${toastId}" class="toast align-items-center text-white ${bgColor} border-0" role="alert">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <strong>${title}</strong><br>${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            `;
+            
+            toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+            
+            const toastElement = document.getElementById(toastId);
+            const toast = new bootstrap.Toast(toastElement, { delay: 5000 });
+            toast.show();
+            
+            // Remove toast from DOM after it's hidden
+            toastElement.addEventListener('hidden.bs.toast', function () {
+                toastElement.remove();
+            });
+        }
+
+        function showError(message) {
+            showToast('Error', message, 'error');
+        }
+
+        function getCSRFToken() {
+            const name = 'csrftoken';
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function escapeHtml(unsafe) {
+            if (unsafe === null || unsafe === undefined) return '';
+            return unsafe
+                .toString()
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // Auto-refresh analytics every 5 minutes
+        setInterval(loadAnalyticsData, 300000);
+    </script>
+
+  <script src="/static/hiring/js/notifications-global.js" defer></script>
+</body>
+</html>

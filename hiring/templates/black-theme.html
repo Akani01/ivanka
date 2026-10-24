@@ -1,0 +1,48 @@
+<!-- 1️⃣ In HEAD: Load the CSS -->
+<link rel="stylesheet" href="/static/css/black-theme.css">
+
+<!-- 2️⃣ In HEAD: Load theme immediately -->
+<script>
+    (function() {
+        const savedTheme = localStorage.getItem('tolleya_theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+</script>
+
+<!-- 3️⃣ Where you want the toggle button -->
+<button onclick="toggleTheme()" class="theme-toggle-btn">
+    <i class="fas fa-moon" id="themeIcon"></i>
+    <span id="themeLabel">Light</span>
+</button>
+
+<!-- 4️⃣ At the bottom: Theme toggle script -->
+<script>
+    function toggleTheme() {
+        const html = document.documentElement;
+        const current = html.getAttribute('data-theme');
+        const newTheme = current === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('tolleya_theme', newTheme);
+        
+        const icon = document.getElementById('themeIcon');
+        const label = document.getElementById('themeLabel');
+        if (newTheme === 'dark') {
+            icon.className = 'fas fa-sun';
+            label.textContent = 'Dark';
+        } else {
+            icon.className = 'fas fa-moon';
+            label.textContent = 'Light';
+        }
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        const theme = localStorage.getItem('tolleya_theme') || 'light';
+        const icon = document.getElementById('themeIcon');
+        const label = document.getElementById('themeLabel');
+        if (theme === 'dark') {
+            icon.className = 'fas fa-sun';
+            label.textContent = 'Dark';
+        }
+    });
+</script>
+<script src="/static/hiring/js/notifications-global.js" defer></script>

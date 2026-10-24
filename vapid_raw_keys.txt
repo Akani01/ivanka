@@ -1,0 +1,4 @@
+RAW VAPID KEYS - Copy these exactly!
+============================================================
+PUBLIC_KEY=BAt7mPbnnynQNSCQalbpByolKwY_0LS3JyiQ0VSWpDDC2wFkyVJBsEMmra-beaYx-cUMTXgeQAtrzIYDYnnp7tk
+PRIVATE_KEY=WPuo4Fr5_VXkmIoAy_talxVhdOhJ8mF3N8staMMloMg

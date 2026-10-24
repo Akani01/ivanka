@@ -1,0 +1,4 @@
+PROPER VAPID KEYS
+==================================================
+PUBLIC_KEY=BN2GshSj9qVcs4872vWLvbhMH4egqRUz6iwWeFMkAIA6Ek0ANlx9qmue7mNEctUb0kd0nniKFEy_nwrmJ6lS-ro
+PRIVATE_KEY=89PmAa6AII9duoK2LnodNURIg4HCYFP8NkpEMeDtVrg

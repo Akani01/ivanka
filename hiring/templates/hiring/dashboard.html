@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - JobPortal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* ===== PROFILE PAGE NAVIGATION STYLES ===== */
+        /* Top Navbar */
+        .header-area {
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+        }
+        .main-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 0;
+        }
+        .logo img {
+            max-height: 40px;
+        }
+
+        /* Desktop Sidebar */
+        .desktop-sidebar {
+            width: 250px;
+            background: white;
+            height: calc(100vh - 80px);
+            position: fixed;
+            top: 80px;
+            left: 0;
+            padding: 20px;
+            border-right: 1px solid #eee;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+            overflow-y: auto;
+        }
+
+        .desktop-sidebar a {
+            display: block;
+            padding: 12px 10px;
+            color: #333;
+            text-decoration: none;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .desktop-sidebar a:hover,
+        .desktop-sidebar a.active {
+            background-color: rgba(255, 88, 158, 0.1);
+            color: #ff589e;
+        }
+
+        /* Hide sidebar on mobile */
+        @media (max-width: 991px) {
+            .desktop-sidebar {
+                display: none;
+            }
+        }
+
+        /* Push page content right on desktop */
+        @media (min-width: 992px) {
+            body {
+                padding-left: 270px !important;
+            }
+        }
+
+        /* Mobile Bottom Navbar */
+        .mobile-bottom-nav {
+            display: none;
+        }
+
+        @media (max-width: 991px) {
+            .mobile-bottom-nav {
+                display: flex;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 65px;
+                background: white;
+                border-top: 1px solid #ddd;
+                justify-content: space-around;
+                align-items: center;
+                z-index: 9999;
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+            .mobile-bottom-nav a {
+                text-align: center;
+                color: #333;
+                font-size: 14px;
+                text-decoration: none;
+                flex: 1;
+                padding: 10px 5px;
+            }
+            .mobile-bottom-nav i {
+                font-size: 20px;
+                display: block;
+                margin-bottom: 3px;
+            }
+            .mobile-bottom-nav a.active {
+                color: #ff589e;
+            }
+        }
+
+        /* Body padding adjustments */
+        body {
+            padding-top: 80px;
+            background-color: #f8f9fa;
+            padding-bottom: 80px;
+        }
+
+        /* Top Right Navigation */
+        .nav-icons {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-icons a {
+            font-size: 20px;
+            color: #555;
+            transition: 0.2s;
+            text-decoration: none;
+        }
+
+        .nav-icons a:hover {
+            color: #ff589e;
+            transform: translateY(-2px);
+        }
+
+        /* Profile Dropdown */
+        .profile-dropdown {
+            position: relative;
+        }
+
+        .profile-avatar-small {
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, #ff589e 0%, #ff136f 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .profile-menu {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            width: 220px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            padding: 10px 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.25s ease;
+            z-index: 1000;
+        }
+
+        .profile-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0px);
+        }
+
+        .profile-menu a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            color: #444;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .profile-menu a:hover {
+            background: #f5f7fa;
+            color: #ff589e;
+        }
+
+        .profile-divider {
+            height: 1px;
+            background: #eee;
+            margin: 8px 0;
+        }
+
+        /* Three Dot Menu Styles */
+        .three-dot-menu {
+            position: relative;
+            display: inline-block;
+        }
+
+        .three-dot-menu i {
+            font-size: 20px;
+            color: #555;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .three-dot-menu i:hover {
+            background-color: rgba(255, 88, 158, 0.1);
+            color: #ff589e;
+        }
+
+        .three-dot-menu .menu-content {
+            position: absolute;
+            top: 45px;
+            right: 0;
+            width: 200px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            padding: 10px 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.25s ease;
+            z-index: 1000;
+        }
+
+        .three-dot-menu .menu-content.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0px);
+        }
+
+        .three-dot-menu .menu-content a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            color: #444;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+
+        .three-dot-menu .menu-content a:hover {
+            background: rgba(255, 88, 158, 0.1);
+            color: #ff589e;
+        }
+
+        .three-dot-menu .menu-content a.active {
+            background: rgba(255, 88, 158, 0.1);
+            color: #ff589e;
+            font-weight: 500;
+        }
+
+        .three-dot-menu .menu-content a i {
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* ===== YOUR EXISTING DASHBOARD STYLES ===== */
+        .dashboard-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+        .stat-card {
+            text-align: center;
+            padding: 30px 20px;
+        }
+        .stat-card i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        .stat-card h3 {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .recent-item {
+            padding: 15px;
+            border-left: 4px solid transparent;
+            border-bottom: 1px solid #eee;
+            transition: all 0.3s ease;
+        }
+        .recent-item:hover {
+            border-left-color: #007bff;
+            background-color: #f8f9fa;
+        }
+        .recent-item:last-child {
+            border-bottom: none;
+        }
+        .application-status {
+            font-size: 0.8rem;
+            padding: 3px 8px;
+            border-radius: 12px;
+        }
+        .status-submitted { background-color: #e3f2fd; color: #1976d2; }
+        .status-under_review { background-color: #fff3e0; color: #f57c00; }
+        .status-shortlisted { background-color: #e8f5e8; color: #388e3c; }
+        .status-interview { background-color: #f3e5f5; color: #7b1fa2; }
+        .status-successful { background-color: #e8f5e8; color: #388e3c; }
+        .status-unsuccessful { background-color: #ffebee; color: #d32f2f; }
+        
+        /* Admin specific styles */
+        .admin-stats {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .admin-feature {
+            border-left: 4px solid #667eea;
+        }
+    </style>
+</head>
+<body>
+    {% load api_utils %}
+    {% api_js_functions %}
+    <!-- ===== PROFILE PAGE NAVIGATION ===== -->
+    <!-- Top Navigation -->
+    <header class="header-area">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <nav class="main-nav">
+                        <a href="/" class="logo">
+                            <img src="/static/images/logo.png" alt="JobPortal" style="max-height: 40px;">
+                        </a>
+
+                        <!-- Top Right Icons -->
+                        <ul class="nav-icons">
+                            <li>
+                                <a href="/" title="Home">
+                                    <i class="fas fa-home"></i>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="/#job-listings" title="Browse Jobs">
+                                    <i class="fas fa-search"></i>
+                                </a>
+                            </li>
+
+                            {% if user.is_authenticated %}
+                            <li>
+                                <a href="/dashboard" title="Dashboard">
+                                    <i class="fas fa-th-large"></i>
+                                </a>
+                            </li>
+
+                            <!-- Profile Dropdown Icon -->
+                            <li class="profile-dropdown">
+                                <div class="profile-avatar-small" onclick="toggleProfileDropdown()">
+                                    {{ user.username|first|upper }}
+                                </div>
+
+                                <div class="profile-menu" id="profileMenu">
+                                    <a href="/profile/"><i class="fas fa-user"></i> Profile</a>
+                                    <a href="/applications/"><i class="fas fa-file-alt"></i> Applications</a>
+                                    <div class="profile-divider"></div>
+
+                                    <a href="/api/alerts/"><i class="fas fa-bell"></i> Alerts</a>
+                                    <a href="/preferences/"><i class="fas fa-cog"></i> Preferences</a>
+
+                                    <div class="profile-divider"></div>
+
+                                    <a href="/logout/"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                                </div>
+                            </li>
+                            <li>
+                              <a href="/messaging/">
+                                <i class="fas fa-comment-dots"></i>
+                              </a>
+                            </li>  
+                            <li>
+                                <div class="three-dot-menu">
+                                    <i class="fas fa-ellipsis-v" onclick="toggleThreeDotMenu()"></i>
+                                    <div class="menu-content" id="threeDotMenu">
+                                        <a href="/profile/skills/"><i class="fas fa-cogs"></i> Skills</a>
+                                        <a href="/profile/employment/" class="active"><i class="fas fa-briefcase"></i> Employment</a>
+                                        <a href="/profile/education/"><i class="fas fa-graduation-cap"></i> Education</a>
+                                        <a href="/profile/documents/"><i class="fas fa-file-upload"></i> Documents</a>
+                                    </div>
+                                </div>
+                            </li>
+
+                            {% else %}
+                            <li>
+                                <a href="#" onclick="showLogin()" title="Login">
+                                    <i class="fas fa-sign-in-alt"></i>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="#" onclick="showSignup()" title="Sign Up">
+                                    <i class="fas fa-user-plus"></i>
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Desktop Sidebar -->
+    <div class="desktop-sidebar">
+        <a href="/dashboard" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+        <a href="/profile/"><i class="fas fa-user"></i> My Profile</a>
+        <a href="/applications/"><i class="fas fa-file-alt"></i> Applications</a>
+        <a href="/profile/skills/"><i class="fas fa-cogs"></i> Skills</a>
+        <a href="/profile/education/"><i class="fas fa-graduation-cap"></i> Education</a>
+        <a href="/profile/employment/"><i class="fas fa-briefcase"></i> Employment</a>
+        <a href="/profile/documents/"><i class="fas fa-file-upload"></i> Documents</a>
+    </div>
+
+    <!-- ===== YOUR EXISTING DASHBOARD CONTENT ===== -->
+    <div class="container mt-4">
+        {% if user.is_superuser %}
+        <!-- Superuser Dashboard -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card dashboard-card admin-stats">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h1 class="display-6 mb-2">Admin Dashboard 👑</h1>
+                                <p class="lead mb-0">Welcome back, {{ user.username }}! Manage your job portal.</p>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <div class="bg-white text-dark rounded p-3 d-inline-block">
+                                    <small class="text-muted d-block">System Status</small>
+                                    <strong id="systemStatus">All Systems Operational</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Stats Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card dashboard-card stat-card border-primary">
+                    <div class="card-body">
+                        <i class="fas fa-users text-primary"></i>
+                        <h3 id="totalUsers">0</h3>
+                        <p class="card-text text-muted">Total Users</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card dashboard-card stat-card border-success">
+                    <div class="card-body">
+                        <i class="fas fa-briefcase text-success"></i>
+                        <h3 id="totalJobs">0</h3>
+                        <p class="card-text text-muted">Active Jobs</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card dashboard-card stat-card border-warning">
+                    <div class="card-body">
+                        <i class="fas fa-file-alt text-warning"></i>
+                        <h3 id="totalApplications">0</h3>
+                        <p class="card-text text-muted">Total Applications</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card dashboard-card stat-card border-info">
+                    <div class="card-body">
+                        <i class="fas fa-building text-info"></i>
+                        <h3 id="totalCompanies">0</h3>
+                        <p class="card-text text-muted">Companies</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Quick Actions -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card dashboard-card">
+                    <div class="card-header bg-transparent">
+                        <h5 class="mb-0"><i class="fas fa-tachometer-alt me-2 text-primary"></i>Admin Quick Actions</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                <a href="/admin-portal/jobs/" class="btn btn-outline-primary w-100 h-100 py-3">
+                                    <i class="fas fa-briefcase fa-2x mb-2"></i>
+                                    <br>
+                                    <span>Manage Jobs</span>
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <a href="/admin-portal/users/" class="btn btn-outline-success w-100 h-100 py-3">
+                                    <i class="fas fa-users fa-2x mb-2"></i>
+                                    <br>
+                                    <span>Manage Users</span>
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <a href="/admin-portal/applications/" class="btn btn-outline-info w-100 h-100 py-3">
+                                    <i class="fas fa-file-alt fa-2x mb-2"></i>
+                                    <br>
+                                    <span>View Applications</span>
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <a href="/admin/" target="_blank" class="btn btn-outline-warning w-100 h-100 py-3">
+                                    <i class="fas fa-cog fa-2x mb-2"></i>
+                                    <br>
+                                    <span>System Admin</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent System Activity -->
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card dashboard-card h-100">
+                    <div class="card-header bg-transparent">
+                        <h5 class="mb-0"><i class="fas fa-history me-2 text-primary"></i>Recent System Activity</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div id="recentActivity">
+                            <div class="text-center py-4">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading activity...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 mb-4">
+                <div class="card dashboard-card h-100">
+                    <div class="card-header bg-transparent">
+                        <h5 class="mb-0"><i class="fas fa-chart-bar me-2 text-success"></i>Quick Stats</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="quickStats">
+                            <div class="text-center py-4">
+                                <div class="spinner-border text-success" role="status">
+                                    <span class="visually-hidden">Loading stats...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% else %}
+        <!-- Regular User Dashboard -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card dashboard-card bg-primary text-white">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h1 class="display-6 mb-2">Welcome back, {{ user.username }}! 👋</h1>
+                                <p class="lead mb-0">Here's your job search overview</p>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <div class="profile-completeness bg-white text-dark rounded p-3 d-inline-block">
+                                    <small class="text-muted d-block">Profile Complete</small>
+                                    <div class="progress mb-1" style="height: 6px;">
+                                        <div id="completenessBar" class="progress-bar bg-success" style="width: 0%"></div>
+                                    </div>
+                                    <strong id="profileCompletenessText">0%</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="row mb-4">
+            <div class="col-md-4 mb-3">
+                <div class="card dashboard-card stat-card border-primary">
+                    <div class="card-body">
+                        <i class="fas fa-file-alt text-primary"></i>
+                        <h3 id="applicationsCount">0</h3>
+                        <p class="card-text text-muted">Total Applications</p>
+                        <small class="text-muted" id="applicationsTrend"></small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card dashboard-card stat-card border-warning">
+                    <div class="card-body">
+                        <i class="fas fa-bell text-warning"></i>
+                        <h3 id="alertsCount">0</h3>
+                        <p class="card-text text-muted">Unread Alerts</p>
+                        <small class="text-muted" id="alertsTrend"></small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card dashboard-card stat-card border-success">
+                    <div class="card-body">
+                        <i class="fas fa-chart-line text-success"></i>
+                        <h3 id="profileScore">0%</h3>
+                        <p class="card-text text-muted">Profile Score</p>
+                        <small class="text-muted" id="profileTrend"></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card dashboard-card h-100">
+                    <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="fas fa-file-alt me-2 text-primary"></i>Recent Applications</h5>
+                        <a href="/applications/" class="btn btn-sm btn-outline-primary">View All</a>
+                    </div>
+                    <div class="card-body p-0">
+                        <div id="recentApplications">
+                            <div class="text-center py-4">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading applications...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 mb-4">
+                <div class="card dashboard-card h-100">
+                    <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="fas fa-bell me-2 text-warning"></i>Recent Alerts</h5>
+                        <a href="/alerts/" class="btn btn-sm btn-outline-warning">View All</a>
+                    </div>
+                    <div class="card-body p-0">
+                        <div id="recentAlerts">
+                            <div class="text-center py-4">
+                                <div class="spinner-border text-warning" role="status">
+                                    <span class="visually-hidden">Loading alerts...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card dashboard-card">
+                    <div class="card-header bg-transparent">
+                        <h5 class="mb-0"><i class="fas fa-bolt me-2 text-info"></i>Quick Actions</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                <a href="/#job-listings" class="btn btn-outline-primary w-100 h-100 py-3">
+                                    <i class="fas fa-search fa-2x mb-2"></i>
+                                    <br>
+                                    <span>Browse Jobs</span>
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <a href="/profile/" class="btn btn-outline-success w-100 h-100 py-3">
+                                    <i class="fas fa-user-edit fa-2x mb-2"></i>
+                                    <br>
+                                    <span>Update Profile</span>
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <a href="/profile/documents/" class="btn btn-outline-info w-100 h-100 py-3">
+                                    <i class="fas fa-file-upload fa-2x mb-2"></i>
+                                    <br>
+                                    <span>Upload CV</span>
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <a href="/preferences/" class="btn btn-outline-warning w-100 h-100 py-3">
+                                    <i class="fas fa-cog fa-2x mb-2"></i>
+                                    <br>
+                                    <span>Settings</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Mobile Bottom Navbar -->
+    <div class="mobile-bottom-nav">
+        <a href="/"><i class="fas fa-home"></i>Home</a>
+        <a href="/dashboard" class="active"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
+        <a href="/applications/"><i class="fas fa-file-alt"></i>Jobs</a>
+        <a href="/profile/"><i class="fas fa-user"></i>Profile</a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ===== PROFILE PAGE NAVIGATION FUNCTIONS =====
+        function toggleProfileDropdown() {
+            document.getElementById("profileMenu").classList.toggle("show");
+        }
+
+        function toggleThreeDotMenu() {
+            document.getElementById("threeDotMenu").classList.toggle("show");
+        }
+
+        // Close dropdowns on click outside
+        document.addEventListener("click", function(e) {
+            const profileMenu = document.getElementById("profileMenu");
+            const profileAvatar = document.querySelector(".profile-avatar-small");
+            const threeDotMenu = document.getElementById("threeDotMenu");
+            const threeDotIcon = document.querySelector(".three-dot-menu i");
+
+            // Close profile dropdown
+            if (profileAvatar && profileMenu && !profileAvatar.contains(e.target) && !profileMenu.contains(e.target)) {
+                profileMenu.classList.remove("show");
+            }
+
+            // Close three-dot menu
+            if (threeDotIcon && threeDotMenu && !threeDotIcon.contains(e.target) && !threeDotMenu.contains(e.target)) {
+                threeDotMenu.classList.remove("show");
+            }
+        });
+
+        // ===== YOUR EXISTING DASHBOARD FUNCTIONS =====
+        document.addEventListener('DOMContentLoaded', function() {
+            {% if user.is_superuser %}
+                loadAdminDashboardData();
+            {% else %}
+                loadUserDashboardData();
+            {% endif %}
+            
+            setInterval(function() {
+                {% if user.is_superuser %}
+                    loadAdminDashboardData();
+                {% else %}
+                    loadUserDashboardData();
+                {% endif %}
+            }, 30000);
+        });
+
+        function escapeHtml(unsafe) {
+            if (unsafe === null || unsafe === undefined) return '';
+            return unsafe
+                .toString()
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function getCSRFToken() {
+            const name = 'csrftoken';
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function showError(message) {
+            const toast = document.createElement('div');
+            toast.className = 'position-fixed top-0 end-0 p-3';
+            toast.style.zIndex = '9999';
+            toast.innerHTML = `
+                <div class="toast show" role="alert">
+                    <div class="toast-header bg-danger text-white">
+                        <strong class="me-auto">Error</strong>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+                    </div>
+                    <div class="toast-body">
+                        ${escapeHtml(message)}
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            }, 5000);
+        }
+
+        {% if user.is_superuser %}
+        async function loadAdminDashboardData() {
+            try {
+                await Promise.all([
+                    loadAdminStats(),
+                    loadRecentActivity(),
+                    loadQuickStats()
+                ]);
+            } catch (error) {
+                console.error('Error loading admin dashboard data:', error);
+                showError('Failed to load admin dashboard data. Please refresh the page.');
+            }
+        }
+
+        async function loadAdminStats() {
+            try {
+                const response = await fetch('/api/admin-stats/');
+                if (!response.ok) throw new Error('Failed to fetch admin stats');
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('totalUsers').textContent = data.stats.total_users || 0;
+                    document.getElementById('totalJobs').textContent = data.stats.total_jobs || 0;
+                    document.getElementById('totalApplications').textContent = data.stats.total_applications || 0;
+                    document.getElementById('totalCompanies').textContent = data.stats.total_companies || 0;
+                } else {
+                    throw new Error(data.error || 'Failed to load stats');
+                }
+            } catch (error) {
+                console.error('Error loading admin stats:', error);
+                document.getElementById('totalUsers').textContent = '0';
+                document.getElementById('totalJobs').textContent = '0';
+                document.getElementById('totalApplications').textContent = '0';
+                document.getElementById('totalCompanies').textContent = '0';
+            }
+        }
+
+        async function loadRecentActivity() {
+            try {
+                const response = await fetch('/api/admin-recent-activity/');
+                if (!response.ok) throw new Error('Failed to fetch recent activity');
+                const data = await response.json();
+                
+                const container = document.getElementById('recentActivity');
+                if (data.success && data.activity && data.activity.length > 0) {
+                    container.innerHTML = data.activity.map(activity => `
+                        <div class="recent-item admin-feature">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">${escapeHtml(activity.action || 'System Activity')}</h6>
+                                    <p class="mb-1 text-muted small">${escapeHtml(activity.description || 'No description')}</p>
+                                    <small class="text-muted">
+                                        <i class="fas fa-clock me-1"></i>
+                                        ${new Date(activity.timestamp).toLocaleString()}
+                                    </small>
+                                </div>
+                                <div class="text-end">
+                                    <small class="text-muted">${escapeHtml(activity.user || 'System')}</small>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = `
+                        <div class="text-center py-4">
+                            <i class="fas fa-info-circle fa-2x text-muted mb-3"></i>
+                            <p class="text-muted">No recent activity</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading recent activity:', error);
+                document.getElementById('recentActivity').innerHTML = `
+                    <div class="text-center py-4">
+                        <i class="fas fa-exclamation-triangle fa-2x text-muted mb-3"></i>
+                        <p class="text-muted">Failed to load activity</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function loadQuickStats() {
+            try {
+                const response = await fetch('/api/admin-quick-stats/');
+                if (!response.ok) throw new Error('Failed to fetch quick stats');
+                const data = await response.json();
+                
+                const container = document.getElementById('quickStats');
+                if (data.success && data.stats) {
+                    const stats = data.stats;
+                    container.innerHTML = `
+                        <div class="row text-center">
+                            <div class="col-6 mb-3">
+                                <div class="border rounded p-3">
+                                    <h4 class="text-primary">${stats.today_applications || 0}</h4>
+                                    <small class="text-muted">Today's Applications</small>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="border rounded p-3">
+                                    <h4 class="text-success">${stats.week_applications || 0}</h4>
+                                    <small class="text-muted">This Week</small>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="border rounded p-3">
+                                    <h4 class="text-warning">${stats.pending_jobs || 0}</h4>
+                                    <small class="text-muted">Pending Jobs</small>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="border rounded p-3">
+                                    <h4 class="text-info">${stats.new_users || 0}</h4>
+                                    <small class="text-muted">New Users (7d)</small>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    throw new Error(data.error || 'Failed to load quick stats');
+                }
+            } catch (error) {
+                console.error('Error loading quick stats:', error);
+                document.getElementById('quickStats').innerHTML = `
+                    <div class="text-center py-4">
+                        <i class="fas fa-exclamation-triangle fa-2x text-muted mb-3"></i>
+                        <p class="text-muted">Failed to load stats</p>
+                    </div>
+                `;
+            }
+        }
+        {% else %}
+        async function loadUserDashboardData() {
+            try {
+                await Promise.all([
+                    loadApplicationsData(),
+                    loadAlertsData(),
+                    loadProfileData()
+                ]);
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+                showError('Failed to load dashboard data. Please refresh the page.');
+            }
+        }
+
+        async function loadApplicationsData() {
+            try {
+                const response = await fetch('/api/applications/');
+                if (!response.ok) throw new Error('Failed to fetch applications');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const applications = data.applications || [];
+                    document.getElementById('applicationsCount').textContent = applications.length;
+                    
+                    const trendText = applications.length > 0 ? 
+                        `${applications.length} active applications` : 
+                        'No applications yet';
+                    document.getElementById('applicationsTrend').textContent = trendText;
+                    
+                    displayRecentApplications(applications.slice(0, 5));
+                } else {
+                    throw new Error(data.error || 'Failed to load applications');
+                }
+            } catch (error) {
+                console.error('Error loading applications:', error);
+                document.getElementById('applicationsCount').textContent = '0';
+                document.getElementById('applicationsTrend').textContent = 'Error loading data';
+                document.getElementById('recentApplications').innerHTML = `
+                    <div class="text-center py-4">
+                        <i class="fas fa-exclamation-triangle fa-2x text-muted mb-3"></i>
+                        <p class="text-muted">Failed to load applications</p>
+                    </div>
+                `;
+            }
+        }
+
+        function displayRecentApplications(applications) {
+            const container = document.getElementById('recentApplications');
+            
+            if (applications.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-4">
+                        <i class="fas fa-file-alt fa-2x text-muted mb-3"></i>
+                        <p class="text-muted">No applications yet</p>
+                        <a href="/#job-listings" class="btn btn-sm btn-primary">Browse Jobs</a>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = applications.map(app => {
+                const statusClass = `application-status status-${app.status || 'submitted'}`;
+                const statusText = (app.status || 'submitted').replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+                
+                return `
+                    <div class="recent-item">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">${escapeHtml(app.job_title || 'Unknown Job')}</h6>
+                                <p class="mb-1 text-muted small">${escapeHtml(app.company_name || 'Unknown Company')}</p>
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>
+                                    ${new Date(app.applied_date).toLocaleDateString()}
+                                </small>
+                            </div>
+                            <div class="text-end">
+                                <span class="${statusClass}">${statusText}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function loadAlertsData() {
+            try {
+                const response = await fetch('/api/alerts/');
+                if (!response.ok) throw new Error('Failed to fetch alerts');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const alerts = data.alerts || [];
+                    const unreadAlerts = alerts.filter(alert => !alert.is_read);
+                    
+                    document.getElementById('alertsCount').textContent = unreadAlerts.length;
+                    
+                    const trendText = unreadAlerts.length > 0 ? 
+                        `${unreadAlerts.length} unread notifications` : 
+                        'All caught up!';
+                    document.getElementById('alertsTrend').textContent = trendText;
+                    
+                    displayRecentAlerts(alerts.slice(0, 5));
+                } else {
+                    throw new Error(data.error || 'Failed to load alerts');
+                }
+            } catch (error) {
+                console.error('Error loading alerts:', error);
+                document.getElementById('alertsCount').textContent = '0';
+                document.getElementById('alertsTrend').textContent = 'Error loading data';
+                document.getElementById('recentAlerts').innerHTML = `
+                    <div class="text-center py-4">
+                        <i class="fas fa-exclamation-triangle fa-2x text-muted mb-3"></i>
+                        <p class="text-muted">Failed to load alerts</p>
+                    </div>
+                `;
+            }
+        }
+
+        function displayRecentAlerts(alerts) {
+            const container = document.getElementById('recentAlerts');
+            
+            if (alerts.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-4">
+                        <i class="fas fa-bell-slash fa-2x text-muted mb-3"></i>
+                        <p class="text-muted">No alerts yet</p>
+                        <small class="text-muted">You'll see important notifications here</small>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = alerts.map(alert => {
+                const readClass = alert.is_read ? '' : 'fw-bold';
+                const icon = alert.is_read ? 'fa-bell' : 'fa-bell text-warning';
+                
+                return `
+                    <div class="recent-item">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1 ${readClass}">
+                                    <i class="fas ${icon} me-2"></i>
+                                    ${escapeHtml(alert.title || 'Notification')}
+                                </h6>
+                                <p class="mb-1 text-muted small">${escapeHtml(alert.message || 'No message')}</p>
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>
+                                    ${new Date(alert.created_at).toLocaleDateString()}
+                                </small>
+                            </div>
+                            ${!alert.is_read ? '<span class="badge bg-warning ms-2">New</span>' : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function loadProfileData() {
+            try {
+                const response = await fetch('/api/profile/');
+                if (!response.ok) throw new Error('Failed to fetch profile');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const profile = data.profile || {};
+                    const completeness = profile.profile_completeness || 0;
+                    
+                    document.getElementById('profileScore').textContent = `${completeness}%`;
+                    document.getElementById('profileCompletenessText').textContent = `${completeness}%`;
+                    document.getElementById('completenessBar').style.width = `${completeness}%`;
+                    
+                    const trendText = completeness >= 80 ? 
+                        'Great profile!' : 
+                        completeness >= 50 ? 
+                        'Good, but could be better' : 
+                        'Complete your profile for better matches';
+                    document.getElementById('profileTrend').textContent = trendText;
+                } else {
+                    throw new Error(data.error || 'Failed to load profile');
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                document.getElementById('profileScore').textContent = '0%';
+                document.getElementById('profileCompletenessText').textContent = '0%';
+                document.getElementById('completenessBar').style.width = '0%';
+                document.getElementById('profileTrend').textContent = 'Error loading profile';
+            }
+        }
+        {% endif %}
+    </script>
+
+  <script src="/static/hiring/js/notifications-global.js" defer></script>
+</body>
+</html>

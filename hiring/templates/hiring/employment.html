@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employment - JobPortal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+   <style>
+        /* Top Navbar */
+        .header-area {
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+        }
+        .main-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 0;
+        }
+        .logo img {
+            max-height: 40px;
+        }
+
+        /* Desktop Sidebar */
+        .desktop-sidebar {
+            width: 250px;
+            background: white;
+            height: calc(100vh - 80px);
+            position: fixed;
+            top: 80px;
+            left: 0;
+            padding: 20px;
+            border-right: 1px solid #eee;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+            overflow-y: auto;
+        }
+
+        .desktop-sidebar a {
+            display: block;
+            padding: 12px 10px;
+            color: #333;
+            text-decoration: none;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .desktop-sidebar a:hover,
+        .desktop-sidebar a.active {
+            background-color: rgba(255, 88, 158, 0.1);
+            color: #ff589e;
+        }
+
+        /* Hide sidebar on mobile */
+        @media (max-width: 991px) {
+            .desktop-sidebar {
+                display: none;
+            }
+        }
+
+        /* Push page content right on desktop */
+        @media (min-width: 992px) {
+            body {
+                padding-left: 270px !important;
+            }
+        }
+
+        /* Mobile Bottom Navbar */
+        .mobile-bottom-nav {
+            display: none;
+        }
+
+        @media (max-width: 991px) {
+            .mobile-bottom-nav {
+                display: flex;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 65px;
+                background: white;
+                border-top: 1px solid #ddd;
+                justify-content: space-around;
+                align-items: center;
+                z-index: 9999;
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+            .mobile-bottom-nav a {
+                text-align: center;
+                color: #333;
+                font-size: 14px;
+                text-decoration: none;
+                flex: 1;
+                padding: 10px 5px;
+            }
+            .mobile-bottom-nav i {
+                font-size: 20px;
+                display: block;
+                margin-bottom: 3px;
+            }
+            .mobile-bottom-nav a.active {
+                color: #ff589e;
+            }
+        }
+
+        /* Body padding adjustments */
+        body {
+            padding-top: 80px;
+            background-color: #f8f9fa;
+            padding-bottom: 80px;
+        }
+
+        /* Top Right Navigation */
+        .nav-icons {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-icons a {
+            font-size: 20px;
+            color: #555;
+            transition: 0.2s;
+            text-decoration: none;
+        }
+
+        .nav-icons a:hover {
+            color: #ff589e;
+            transform: translateY(-2px);
+        }
+
+        /* Profile Dropdown */
+        .profile-dropdown {
+            position: relative;
+        }
+
+        .profile-avatar-small {
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, #ff589e 0%, #ff136f 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .profile-menu {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            width: 220px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            padding: 10px 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.25s ease;
+            z-index: 1000;
+        }
+
+        .profile-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0px);
+        }
+
+        .profile-menu a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            color: #444;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .profile-menu a:hover {
+            background: #f5f7fa;
+            color: #ff589e;
+        }
+
+        .profile-divider {
+            height: 1px;
+            background: #eee;
+            margin: 8px 0;
+        }
+
+        /* Employment-specific styles */
+        .employment-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .employment-card:hover {
+            transform: translateY(-2px);
+        }
+        .employment-item {
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .business-preference-item {
+            border-left: 4px solid #007bff;
+        }
+        .match-item {
+            border-left: 4px solid #28a745;
+            background: linear-gradient(135deg, #e8f5e8 0%, #d1f2d1 100%);
+        }
+        .employment-duration {
+            background: #f8f9fa;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        .btn-add {
+            background: linear-gradient(135deg, #ff589e 0%, #ff136f 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 10px 20px;
+        }
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 88, 158, 0.3);
+            color: white;
+        }
+        .match-badge {
+            background-color: #28a745;
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 8px;
+        }
+        .business-section {
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8f4ff 100%);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 1px solid #e3f2fd;
+        }
+        .progress {
+            height: 8px;
+        }
+        .match-progress {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+
+        /* Three Dot Menu Styles */
+        .three-dot-menu {
+            position: relative;
+            display: inline-block;
+        }
+
+        .three-dot-menu .bi-three-dots-vertical {
+            font-size: 1.5rem;
+            color: #555;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .three-dot-menu .bi-three-dots-vertical:hover {
+            background-color: #f0f0f0;
+            color: #ff589e;
+        }
+
+        .menu-content {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            padding: 10px 0;
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .three-dot-menu:hover .menu-content {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .menu-content a {
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            color: #333;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+
+        .menu-content a:hover {
+            background-color: rgba(255, 88, 158, 0.1);
+            color: #ff589e;
+        }
+
+        .menu-content a.active {
+            background-color: rgba(255, 88, 158, 0.1);
+            color: #ff589e;
+            font-weight: 500;
+        }
+
+        .menu-content a i {
+            margin-right: 10px;
+            width: 16px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    {% load api_utils %}
+    {% api_js_functions %}
+    <!-- Top Navigation -->
+    <header class="header-area">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <nav class="main-nav">
+                        <a href="/" class="logo">
+                            <img src="/static/images/logo.png" alt="JobPortal" style="max-height: 40px;">
+                        </a>
+
+                        <!-- Top Right Icons -->
+                        <ul class="nav-icons">
+                            <li>
+                                <a href="/" title="Home">
+                                    <i class="fas fa-home"></i>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="/#job-listings" title="Browse Jobs">
+                                    <i class="fas fa-search"></i>
+                                </a>
+                            </li>
+
+                            {% if user.is_authenticated %}
+                            <li>
+                                <a href="/dashboard" title="Dashboard">
+                                    <i class="fas fa-th-large"></i>
+                                </a>
+                            </li>
+
+                            <!-- Profile Dropdown Icon -->
+                            <li class="profile-dropdown">
+                                <div class="profile-avatar-small" onclick="toggleProfileDropdown()">
+                                    {{ user.username|first|upper }}
+                                </div>
+
+                                <div class="profile-menu" id="profileMenu">
+                                    <a href="/profile/"><i class="fas fa-user"></i> Profile</a>
+                                    {% if user.user_type == 'applicant' %}
+                                    <a href="/applications/"><i class="fas fa-file-alt"></i> Applications</a>
+                                    {% else %}
+                                    <a href="/admin-portal/jobs/"><i class="fas fa-briefcase"></i> Manage Jobs</a>
+                                    <a href="/admin-portal/applications/"><i class="fas fa-users"></i> Applications</a>
+                                    {% endif %}
+                                    <div class="profile-divider"></div>
+
+                                    <a href="/api/alerts/"><i class="fas fa-bell"></i> Alerts</a>
+                                    <a href="/preferences/"><i class="fas fa-cog"></i> Preferences</a>
+
+                                    <div class="profile-divider"></div>
+
+                                    <a href="/logout/"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                                </div>
+                            </li>
+                            <li>
+                              <a href="/messaging/">
+                                <i class="fas fa-comment-dots"></i>
+                              </a>
+                            </li>  
+                            <li>
+                                <div class="three-dot-menu">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                    <div class="menu-content">
+                                        {% if user.user_type == 'applicant' %}
+                                        <a href="/profile/skills/"><i class="fas fa-cogs"></i> Skills</a>
+                                        <a href="/profile/employment/" class="active"><i class="fas fa-briefcase"></i> Employment</a>
+                                        <a href="/profile/education/"><i class="fas fa-graduation-cap"></i> Education</a>
+                                        <a href="/profile/documents/"><i class="fas fa-file-upload"></i> Documents</a>
+                                        {% else %}
+                                        <a href="/admin-portal/jobs/"><i class="fas fa-briefcase"></i> Jobs</a>
+                                        <a href="/admin-portal/applications/"><i class="fas fa-users"></i> Applications</a>
+                                        <a href="/admin-portal/analytics/"><i class="fas fa-chart-bar"></i> Analytics</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </li>
+
+                            {% else %}
+                            <li>
+                                <a href="#" onclick="showLogin()" title="Login">
+                                    <i class="fas fa-sign-in-alt"></i>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="#" onclick="showSignup()" title="Sign Up">
+                                    <i class="fas fa-user-plus"></i>
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Desktop Sidebar -->
+    {% if user.user_type == 'applicant' %}
+    <div class="desktop-sidebar">
+        <a href="/profile/"><i class="fas fa-user"></i> My Profile</a>
+        <a href="/applications/"><i class="fas fa-file-alt"></i> Applications</a>
+        <a href="/profile/skills/"><i class="fas fa-cogs"></i> Skills</a>
+        <a href="/profile/education/"><i class="fas fa-graduation-cap"></i> Education</a>
+        <a href="/profile/employment/" class="active"><i class="fas fa-briefcase"></i> Employment</a>
+        <a href="/profile/documents/"><i class="fas fa-file-upload"></i> Documents</a>
+    </div>
+    {% else %}
+    <div class="desktop-sidebar">
+        <a href="/admin-portal/"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+        <a href="/admin-portal/jobs/"><i class="fas fa-briefcase"></i> Manage Jobs</a>
+        <a href="/admin-portal/applications/"><i class="fas fa-users"></i> Applications</a>
+        <a href="/admin-portal/analytics/"><i class="fas fa-chart-bar"></i> Analytics</a>
+        <a href="/profile/employment/" class="active"><i class="fas fa-briefcase"></i> Employment Preferences</a>
+    </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1>
+                        <i class="fas fa-briefcase me-2 
+                            {% if user.user_type == 'applicant' %}text-warning{% else %}text-primary{% endif %}">
+                        </i>
+                        {% if user.user_type == 'applicant' %}
+                        My Employment History
+                        {% else %}
+                        Employment Preferences
+                        {% endif %}
+                    </h1>
+                    <button class="btn btn-add" onclick="openAddModal()">
+                        <i class="fas fa-plus me-2"></i>
+                        {% if user.user_type == 'applicant' %}
+                        Add Employment
+                        {% else %}
+                        Add Preference
+                        {% endif %}
+                    </button>
+                </div>
+
+                <!-- Business User Section -->
+                {% if user.user_type == 'admin' %}
+                <div class="business-section">
+                    <h3><i class="fas fa-building me-2"></i>Employment Preferences</h3>
+                    <p class="text-muted">Define the types of employment you're looking for and how many positions are available. This helps match with qualified candidates.</p>
+                </div>
+                {% endif %}
+                
+                <!-- Employment List -->
+                <div class="card employment-card">
+                    <div class="card-body">
+                        <div id="employmentList">
+                            <div class="text-center py-4">
+                                <div class="spinner-border 
+                                    {% if user.user_type == 'applicant' %}text-warning{% else %}text-primary{% endif %}" 
+                                    role="status">
+                                    <span class="visually-hidden">Loading employment data...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Navbar -->
+    <div class="mobile-bottom-nav">
+        <a href="/"><i class="fas fa-home"></i>Home</a>
+        <a href="/dashboard"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
+        {% if user.user_type == 'applicant' %}
+        <a href="/applications/"><i class="fas fa-file-alt"></i>Jobs</a>
+        <a href="/profile/employment/" class="active"><i class="fas fa-briefcase"></i>Work</a>
+        {% else %}
+        <a href="/admin-portal/jobs/"><i class="fas fa-briefcase"></i>Jobs</a>
+        <a href="/admin-portal/applications/"><i class="fas fa-users"></i>Apps</a>
+        <a href="/profile/employment/" class="active"><i class="fas fa-briefcase"></i>Preferences</a>
+        {% endif %}
+    </div>
+
+    <!-- Add/Edit Employment Modal -->
+    <div class="modal fade" id="addEmploymentModal" tabindex="-1" aria-labelledby="addEmploymentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addEmploymentModalLabel">
+                        {% if user.user_type == 'applicant' %}
+                        Add Employment History
+                        {% else %}
+                        Add Employment Preference
+                        {% endif %}
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="employmentForm">
+                        {% if user.user_type == 'applicant' %}
+                        <!-- Applicant Form -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="job_title" class="form-label">Job Title *</label>
+                                <input type="text" class="form-control" id="job_title" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="company" class="form-label">Company *</label>
+                                <input type="text" class="form-control" id="company" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="location" class="form-label">Location</label>
+                                <input type="text" class="form-control" id="location">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="contract_type" class="form-label">Contract Type</label>
+                                <select class="form-select" id="contract_type">
+                                    <option value="">Select type</option>
+                                    <option value="full_time">Full Time</option>
+                                    <option value="part_time">Part Time</option>
+                                    <option value="contract">Contract</option>
+                                    <option value="freelance">Freelance</option>
+                                    <option value="internship">Internship</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="start_date" class="form-label">Start Date *</label>
+                                <input type="date" class="form-control" id="start_date" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="end_date" class="form-label">End Date</label>
+                                <input type="date" class="form-control" id="end_date">
+                                <div class="form-check mt-2">
+                                    <input class="form-check-input" type="checkbox" id="currently_working">
+                                    <label class="form-check-label" for="currently_working">
+                                        I currently work here
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Job Description</label>
+                            <textarea class="form-control" id="description" rows="4" placeholder="Describe your responsibilities and achievements..."></textarea>
+                        </div>
+                        {% else %}
+                        <!-- Business Form -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="preferred_contract_type" class="form-label">Preferred Employment Type *</label>
+                                <select class="form-select" id="preferred_contract_type" required>
+                                    <option value="full_time">Full Time</option>
+                                    <option value="part_time">Part Time</option>
+                                    <option value="contract">Contract</option>
+                                    <option value="freelance">Freelance</option>
+                                    <option value="internship">Internship</option>
+                                    <option value="remote">Remote</option>
+                                    <option value="hybrid">Hybrid</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="positions_available" class="form-label">Positions Available *</label>
+                                <input type="number" class="form-control" id="positions_available" min="1" value="1" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="job_title_keywords" class="form-label">Relevant Job Titles (comma separated)</label>
+                            <input type="text" class="form-control" id="job_title_keywords" placeholder="e.g., developer, manager, analyst, engineer">
+                            <div class="form-text">Enter keywords that match the job titles you're looking for</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="required_experience_years" class="form-label">Required Experience (years)</label>
+                            <input type="number" class="form-control" id="required_experience_years" min="0" value="0">
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="is_active" checked>
+                                <label class="form-check-label" for="is_active">
+                                    Active (accepting applications)
+                                </label>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveEmploymentBtn" onclick="saveEmployment()">
+                        {% if user.user_type == 'applicant' %}
+                        Save Employment
+                        {% else %}
+                        Save Preference
+                        {% endif %}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const userType = "{{ user.user_type }}";
+        let editingEmploymentId = null;
+
+        // Simple navigation functions
+        function toggleProfileDropdown() {
+            document.getElementById("profileMenu").classList.toggle("show");
+        }
+
+        // Close dropdown on click outside
+        document.addEventListener("click", function(e) {
+            const menu = document.getElementById("profileMenu");
+            const avatar = document.querySelector(".profile-avatar-small");
+
+            if (avatar && menu && !avatar.contains(e.target) && !menu.contains(e.target)) {
+                menu.classList.remove("show");
+            }
+        });
+
+        // Load employment data when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set maximum date for start_date and end_date to today
+            const today = new Date().toISOString().split('T')[0];
+            if (document.getElementById('start_date')) {
+                document.getElementById('start_date').max = today;
+            }
+            if (document.getElementById('end_date')) {
+                document.getElementById('end_date').max = today;
+            }
+            
+            // Handle currently working checkbox for applicants
+            if (userType === 'applicant' && document.getElementById('currently_working')) {
+                document.getElementById('currently_working').addEventListener('change', function() {
+                    const endDateField = document.getElementById('end_date');
+                    if (this.checked) {
+                        endDateField.disabled = true;
+                        endDateField.value = '';
+                    } else {
+                        endDateField.disabled = false;
+                    }
+                });
+            }
+            
+            loadEmploymentData();
+        });
+
+        async function loadEmploymentData() {
+            try {
+                const response = await fetch('/api/profile/employment/');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayEmploymentData(data, data.user_type);
+                } else {
+                    showError('Failed to load employment data: ' + (data.errors || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error loading employment:', error);
+                showError('Error loading employment data: ' + error.message);
+            }
+        }
+
+        function displayEmploymentData(data, currentUserType) {
+            const container = document.getElementById('employmentList');
+            
+            if (currentUserType === 'applicant') {
+                displayApplicantEmployment(container, data);
+            } else {
+                displayBusinessPreferences(container, data);
+            }
+        }
+
+        function displayApplicantEmployment(container, data) {
+            const employment = data.employment || [];
+            const matches = data.business_matches || [];
+            
+            if (employment.length === 0 && matches.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-4">
+                        <i class="fas fa-briefcase fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No Employment History</h5>
+                        <p class="text-muted">Add your employment history to showcase your experience to employers.</p>
+                        <button class="btn btn-primary" onclick="openAddModal()">
+                            <i class="fas fa-plus me-2"></i>Add Your First Job
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            
+            // Display employment history
+            if (employment.length > 0) {
+                html += `<h5 class="mb-3"><i class="fas fa-user me-2 text-warning"></i>My Employment History</h5>`;
+                html += employment.map(emp => createEmploymentHTML(emp)).join('');
+            }
+            
+            // Display business matches
+            if (matches.length > 0) {
+                html += `<h5 class="mb-3 mt-4"><i class="fas fa-check-circle me-2 text-success"></i>Employment Opportunities</h5>`;
+                html += `<p class="text-muted mb-3">Your experience matches these company preferences</p>`;
+                html += matches.map(match => createMatchHTML(match)).join('');
+            }
+            
+            container.innerHTML = html;
+        }
+
+        function displayBusinessPreferences(container, data) {
+            const preferences = data.preferences || [];
+            
+            if (preferences.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-4">
+                        <i class="fas fa-lightbulb fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No Employment Preferences</h5>
+                        <p class="text-muted">Add employment preferences to attract qualified candidates.</p>
+                        <button class="btn btn-primary" onclick="openAddModal()">
+                            <i class="fas fa-plus me-2"></i>Add Your First Preference
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = `<h5 class="mb-3"><i class="fas fa-building me-2 text-primary"></i>Your Employment Preferences</h5>`;
+            html += preferences.map(pref => createPreferenceHTML(pref)).join('');
+            container.innerHTML = html;
+        }
+
+        function createEmploymentHTML(employment) {
+            const startDate = new Date(employment.start_date).toLocaleDateString();
+            const endDate = employment.currently_working ? 'Present' : 
+                           employment.end_date ? new Date(employment.end_date).toLocaleDateString() : 'N/A';
+            
+            const experienceMonths = employment.experience_months || 0;
+            const experienceYears = Math.floor(experienceMonths / 12);
+            const experienceMonthsRemainder = experienceMonths % 12;
+
+            return `
+                <div class="employment-item">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <h5 class="mb-1">${escapeHtml(employment.job_title)}</h5>
+                            <p class="mb-1 text-warning fw-bold">${escapeHtml(employment.company)}</p>
+                            <p class="mb-2">${escapeHtml(employment.location || 'Location not specified')}</p>
+                            ${employment.description ? `<p class="mb-2 text-muted">${escapeHtml(employment.description)}</p>` : ''}
+                            <div class="d-flex flex-wrap gap-3 align-items-center">
+                                <span class="employment-duration">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    ${startDate} - ${endDate}
+                                </span>
+                                ${employment.contract_type ? `
+                                <span class="badge bg-secondary">
+                                    ${formatContractType(employment.contract_type)}
+                                </span>
+                                ` : ''}
+                                ${experienceMonths > 0 ? `
+                                <span class="badge bg-info">
+                                    ${experienceYears}y ${experienceMonthsRemainder}m experience
+                                </span>
+                                ` : ''}
+                            </div>
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#" onclick="editEmployment(${employment.id})">Edit</a></li>
+                                <li><a class="dropdown-item text-danger" href="#" onclick="deleteEmployment(${employment.id})">Delete</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function createMatchHTML(match) {
+            const preference = match.preference;
+            const contractTypeLabels = {
+                'full_time': 'Full Time', 'part_time': 'Part Time', 'contract': 'Contract',
+                'freelance': 'Freelance', 'internship': 'Internship', 'remote': 'Remote', 'hybrid': 'Hybrid'
+            };
+
+            return `
+                <div class="employment-item match-item">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <h5 class="mb-1">
+                                ${contractTypeLabels[preference.preferred_contract_type]} Positions
+                                <span class="match-badge ms-2">${match.match_score}% Match</span>
+                            </h5>
+                            <p class="mb-1 text-muted">${match.company_name} • ${preference.positions_available} positions available</p>
+                            <div class="progress mb-2">
+                                <div class="progress-bar match-progress" style="width: ${match.match_score}%"></div>
+                            </div>
+                            <ul class="mb-0">
+                                ${match.match_reasons.map(reason => `<li><small>${reason}</small></li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function createPreferenceHTML(preference) {
+            const contractTypeLabels = {
+                'full_time': 'Full Time', 'part_time': 'Part Time', 'contract': 'Contract',
+                'freelance': 'Freelance', 'internship': 'Internship', 'remote': 'Remote', 'hybrid': 'Hybrid'
+            };
+
+            const statusBadge = preference.is_active ? 
+                '<span class="badge bg-success">Active</span>' : 
+                '<span class="badge bg-secondary">Inactive</span>';
+
+            return `
+                <div class="employment-item business-preference-item">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <h5 class="mb-1">
+                                ${contractTypeLabels[preference.preferred_contract_type]}
+                                ${statusBadge}
+                            </h5>
+                            <p class="mb-1"><strong>Positions Available:</strong> ${preference.positions_available}</p>
+                            <p class="mb-1"><strong>Required Experience:</strong> ${preference.required_experience_years}+ years</p>
+                            ${preference.job_title_keywords && preference.job_title_keywords.length > 0 ? `
+                            <p class="mb-1"><strong>Relevant Titles:</strong> ${preference.job_title_keywords.join(', ')}</p>
+                            ` : ''}
+                            <p class="mb-1 text-success"><strong>Matching Applicants:</strong> ${preference.match_count || 0}</p>
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item text-danger" href="#" onclick="deleteEmployment(${preference.id})">Delete</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function formatContractType(contractType) {
+            return contractType.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+        }
+
+        function openAddModal() {
+            resetEmploymentForm();
+            const modal = new bootstrap.Modal(document.getElementById('addEmploymentModal'));
+            modal.show();
+        }
+
+        async function editEmployment(employmentId) {
+            try {
+                console.log('Fetching employment data for ID:', employmentId);
+                
+                const response = await fetch(`/api/profile/employment/${employmentId}/`);
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch employment data: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('Received employment data:', data);
+                
+                if (!data.success) {
+                    throw new Error(data.errors || 'Failed to load employment data');
+                }
+                
+                const employment = data.employment;
+                
+                // Populate the modal with existing data
+                document.getElementById('job_title').value = employment.job_title || '';
+                document.getElementById('company').value = employment.company || '';
+                document.getElementById('location').value = employment.location || '';
+                document.getElementById('contract_type').value = employment.contract_type || '';
+                document.getElementById('description').value = employment.description || '';
+                
+                // Format dates properly for input fields
+                if (employment.start_date) {
+                    const startDate = new Date(employment.start_date);
+                    document.getElementById('start_date').value = startDate.toISOString().split('T')[0];
+                }
+                
+                // Handle currently working and end date
+                if (employment.currently_working) {
+                    document.getElementById('currently_working').checked = true;
+                    document.getElementById('end_date').disabled = true;
+                    document.getElementById('end_date').value = '';
+                } else {
+                    document.getElementById('currently_working').checked = false;
+                    document.getElementById('end_date').disabled = false;
+                    if (employment.end_date) {
+                        const endDate = new Date(employment.end_date);
+                        document.getElementById('end_date').value = endDate.toISOString().split('T')[0];
+                    } else {
+                        document.getElementById('end_date').value = '';
+                    }
+                }
+                
+                // Set the editing ID and update modal
+                editingEmploymentId = employmentId;
+                document.getElementById('addEmploymentModalLabel').textContent = 'Edit Employment History';
+                
+                // Update the save button
+                const saveButton = document.getElementById('saveEmploymentBtn');
+                saveButton.textContent = 'Update Employment';
+                saveButton.onclick = updateEmployment;
+                
+                // Show the modal
+                const modal = new bootstrap.Modal(document.getElementById('addEmploymentModal'));
+                modal.show();
+                
+            } catch (error) {
+                console.error('Error loading employment for edit:', error);
+                showError('Failed to load employment data for editing: ' + error.message);
+            }
+        }
+
+        async function updateEmployment() {
+            if (!editingEmploymentId) {
+                showError('No employment record selected for editing');
+                return;
+            }
+
+            const formData = {
+                job_title: document.getElementById('job_title').value.trim(),
+                company: document.getElementById('company').value.trim(),
+                location: document.getElementById('location').value.trim(),
+                contract_type: document.getElementById('contract_type').value,
+                start_date: document.getElementById('start_date').value,
+                end_date: document.getElementById('currently_working').checked ? null : document.getElementById('end_date').value,
+                currently_working: document.getElementById('currently_working').checked,
+                description: document.getElementById('description').value.trim()
+            };
+
+            // Basic validation
+            if (!formData.job_title || !formData.company || !formData.start_date) {
+                showError('Please fill in all required fields (Job Title, Company, and Start Date)');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/profile/employment/${editingEmploymentId}/`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCSRFToken()
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Close modal and reset form
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('addEmploymentModal'));
+                    modal.hide();
+                    resetEmploymentForm();
+                    
+                    // Reload employment list
+                    loadEmploymentData();
+                    
+                    // Show success message
+                    showMessage('Employment history updated successfully!', 'success');
+                } else {
+                    // Show validation errors
+                    if (data.errors) {
+                        const errorMessages = Object.values(data.errors).flat().join(', ');
+                        showError('Please fix the following errors: ' + errorMessages);
+                    } else {
+                        showError('Failed to update employment history');
+                    }
+                }
+            } catch (error) {
+                console.error('Error updating employment:', error);
+                showError('Error updating employment data. Please try again.');
+            }
+        }
+
+        async function saveEmployment() {
+            let formData = {};
+            
+            if (userType === 'applicant') {
+                formData = {
+                    job_title: document.getElementById('job_title').value.trim(),
+                    company: document.getElementById('company').value.trim(),
+                    location: document.getElementById('location').value.trim(),
+                    contract_type: document.getElementById('contract_type').value,
+                    start_date: document.getElementById('start_date').value,
+                    end_date: document.getElementById('currently_working').checked ? null : document.getElementById('end_date').value,
+                    currently_working: document.getElementById('currently_working').checked,
+                    description: document.getElementById('description').value.trim()
+                };
+
+                // Basic validation
+                if (!formData.job_title || !formData.company || !formData.start_date) {
+                    showError('Please fill in all required fields (Job Title, Company, and Start Date)');
+                    return;
+                }
+            } else {
+                // Business user form data
+                const keywords = document.getElementById('job_title_keywords').value
+                    .split(',')
+                    .map(k => k.trim())
+                    .filter(k => k.length > 0);
+                
+                formData = {
+                    preferred_contract_type: document.getElementById('preferred_contract_type').value,
+                    positions_available: parseInt(document.getElementById('positions_available').value),
+                    job_title_keywords: keywords,
+                    required_experience_years: parseInt(document.getElementById('required_experience_years').value),
+                    is_active: document.getElementById('is_active').checked
+                };
+
+                // Basic validation
+                if (!formData.preferred_contract_type || !formData.positions_available) {
+                    showError('Please fill in all required fields (Employment Type and Positions Available)');
+                    return;
+                }
+            }
+
+            try {
+                const response = await fetch('/api/profile/employment/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCSRFToken()
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Close modal and reset form
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('addEmploymentModal'));
+                    modal.hide();
+                    resetEmploymentForm();
+                    
+                    // Reload employment list
+                    loadEmploymentData();
+                    
+                    // Show success message
+                    const successMessage = userType === 'applicant' ? 
+                        'Employment history added successfully!' : 'Employment preference added successfully!';
+                    showMessage(successMessage, 'success');
+                } else {
+                    // Show validation errors
+                    if (data.errors) {
+                        const errorMessages = Object.values(data.errors).flat().join(', ');
+                        showError('Please fix the following errors: ' + errorMessages);
+                    } else {
+                        showError('Failed to save employment data');
+                    }
+                }
+            } catch (error) {
+                console.error('Error saving employment:', error);
+                showError('Error saving employment data. Please try again.');
+            }
+        }
+
+        function resetEmploymentForm() {
+            document.getElementById('employmentForm').reset();
+            if (document.getElementById('end_date')) {
+                document.getElementById('end_date').disabled = false;
+            }
+            
+            const modalTitle = userType === 'applicant' ? 'Add Employment History' : 'Add Employment Preference';
+            document.getElementById('addEmploymentModalLabel').textContent = modalTitle;
+            
+            // Reset save button
+            const saveButton = document.getElementById('saveEmploymentBtn');
+            const buttonText = userType === 'applicant' ? 'Save Employment' : 'Save Preference';
+            saveButton.textContent = buttonText;
+            saveButton.onclick = saveEmployment;
+            
+            editingEmploymentId = null;
+        }
+
+        // Update the modal close event to reset the form
+        document.getElementById('addEmploymentModal').addEventListener('hidden.bs.modal', function () {
+            resetEmploymentForm();
+        });
+
+        async function deleteEmployment(employmentId) {
+            const message = userType === 'applicant' ? 
+                'Are you sure you want to delete this employment record?' : 
+                'Are you sure you want to delete this employment preference?';
+
+            if (!confirm(message)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/profile/employment/${employmentId}/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': getCSRFToken()
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    loadEmploymentData();
+                    const successMessage = userType === 'applicant' ? 
+                        'Employment history deleted successfully!' : 'Employment preference deleted successfully!';
+                    showMessage(successMessage, 'success');
+                } else {
+                    showError('Failed to delete: ' + (data.errors || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error deleting employment:', error);
+                showError('Error deleting employment data');
+            }
+        }
+
+        function showMessage(message, type) {
+            // Remove any existing alerts
+            const existingAlerts = document.querySelectorAll('.alert');
+            existingAlerts.forEach(alert => alert.remove());
+
+            // Create and show a toast or alert message
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'info'} alert-dismissible fade show position-fixed`;
+            alertDiv.style.cssText = 'top: 100px; right: 20px; z-index: 1060; min-width: 300px;';
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(alertDiv);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.parentNode.removeChild(alertDiv);
+                }
+            }, 5000);
+        }
+
+        function showError(message) {
+            showMessage(message, 'error');
+        }
+
+        // Utility function for CSRF token
+        function getCSRFToken() {
+            const name = 'csrftoken';
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Utility function to escape HTML
+        function escapeHtml(unsafe) {
+            if (unsafe === null || unsafe === undefined) return '';
+            return unsafe
+                .toString()
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+
+  <script src="/static/hiring/js/notifications-global.js" defer></script>
+</body>
+</html>

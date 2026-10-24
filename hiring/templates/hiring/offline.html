@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+    <title>OppoGlobe - Manage Properties</title>
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#1a73e8">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="{% static 'hiring/icons/icon-192.png' %}">
+    
+    <!-- CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    
+    <style>
+        /* ===== ROOT VARIABLES ===== */
+        :root {
+            --primary: #1a73e8;
+            --primary-dark: #1557b0;
+            --primary-light: #e8f0fe;
+            --secondary: #34a853;
+            --accent: #ea4335;
+            --warning: #fbbc04;
+            --dark: #202124;
+            --gray: #5f6368;
+            --light-gray: #f1f3f4;
+            --border: #dadce0;
+            --shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            --shadow-hover: 0 4px 12px rgba(0,0,0,0.15);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ===== RESET & BASE ===== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #f8f9fa;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            padding-top: 72px;
+            padding-bottom: 80px;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        a { text-decoration: none; color: inherit; }
+        button { cursor: pointer; border: none; background: none; }
+        img { max-width: 100%; display: block; }
+
+        /* ===== HEADER ===== */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 16px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--primary);
+            white-space: nowrap;
+        }
+        .header-brand img { height: 32px; }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+        .btn-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray);
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+        .btn-icon:hover { background: var(--light-gray); color: var(--primary); }
+        .user-badge {
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            background: #fce8e6;
+            color: var(--accent);
+            display: none;
+        }
+        @media (min-width: 480px) { .user-badge { display: inline-block; } }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            color: white;
+            background: linear-gradient(135deg, var(--primary), #4285f4);
+            flex-shrink: 0;
+            transition: var(--transition);
+        }
+        .avatar:hover { transform: scale(1.04); box-shadow: 0 2px 8px rgba(26,115,232,0.25); }
+        .avatar.business { background: linear-gradient(135deg, #ea4335, #fbbc04); }
+
+        /* ===== DROPDOWNS ===== */
+        .dropdown-container { position: relative; }
+        .dropdown-menu-custom {
+            position: absolute;
+            top: calc(100% + 6px);
+            right: 0;
+            min-width: 200px;
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: 0 8px 28px rgba(0,0,0,0.13);
+            padding: 6px 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-6px) scale(0.98);
+            transition: var(--transition);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        .dropdown-menu-custom.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+        .dropdown-menu-custom .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 18px;
+            color: var(--dark);
+            font-size: 14px;
+            transition: var(--transition);
+            width: 100%;
+            text-align: left;
+            background: none;
+            border: none;
+        }
+        .dropdown-menu-custom .dropdown-item:hover { background: var(--light-gray); color: var(--primary); }
+        .dropdown-menu-custom .dropdown-item i { width: 20px; color: var(--gray); }
+        .dropdown-menu-custom .dropdown-divider { height: 1px; background: var(--border); margin: 4px 14px; }
+
+        /* ===== SIDEBAR NAV ===== */
+        .sidebar-nav {
+            display: none;
+        }
+        @media (min-width: 992px) {
+            .sidebar-nav {
+                display: flex;
+                position: fixed;
+                left: 0;
+                top: 50%;
+                transform: translateY(-50%);
+                background: white;
+                border-radius: 0 var(--radius) var(--radius) 0;
+                box-shadow: var(--shadow);
+                padding: 12px 6px;
+                flex-direction: column;
+                gap: 4px;
+                z-index: 900;
+                border: 1px solid var(--border);
+                border-left: none;
+            }
+            body { padding-left: 80px; }
+            .sidebar-nav .nav-link {
+                width: 42px;
+                height: 42px;
+                border-radius: var(--radius-sm);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--gray);
+                transition: var(--transition);
+                position: relative;
+            }
+            .sidebar-nav .nav-link:hover { background: var(--primary-light); color: var(--primary); }
+            .sidebar-nav .nav-link.active { background: var(--primary); color: white; }
+            .sidebar-nav .nav-link .tooltip-text {
+                position: absolute;
+                left: calc(100% + 12px);
+                top: 50%;
+                transform: translateY(-50%);
+                background: var(--dark);
+                color: white;
+                padding: 3px 12px;
+                border-radius: 4px;
+                font-size: 12px;
+                white-space: nowrap;
+                opacity: 0;
+                visibility: hidden;
+                transition: var(--transition);
+            }
+            .sidebar-nav .nav-link:hover .tooltip-text { opacity: 1; visibility: visible; }
+        }
+
+        /* ===== MAIN LAYOUT ===== */
+        .main-layout {
+            max-width: 1360px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        /* ===== PAGE HEADER ===== */
+        .page-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 12px;
+        }
+        .page-header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            margin: 0;
+        }
+        .page-header h1 i { color: var(--primary); }
+        .page-header .subtitle {
+            color: var(--gray);
+            font-size: 13px;
+            font-weight: 400;
+            display: block;
+            width: 100%;
+        }
+        .page-header .btn-primary {
+            padding: 10px 20px;
+            border-radius: var(--radius-sm);
+            background: var(--primary);
+            color: white;
+            font-weight: 500;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+            white-space: nowrap;
+            font-size: 14px;
+        }
+        .page-header .btn-primary:hover { background: var(--primary-dark); box-shadow: 0 2px 8px rgba(26,115,232,0.3); }
+
+        /* ===== STATS CARDS ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        @media (min-width: 480px) { .stats-grid { grid-template-columns: repeat(4, 1fr); } }
+        .stats-card {
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            padding: 16px;
+            transition: var(--transition);
+            position: relative;
+        }
+        .stats-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+        .stats-card .stats-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        .stats-card .stats-icon.blue { background: #e3f2fd; color: #1976d2; }
+        .stats-card .stats-icon.green { background: #e8f5e9; color: #2e7d32; }
+        .stats-card .stats-icon.orange { background: #fff3e0; color: #e65100; }
+        .stats-card .stats-icon.red { background: #fce4ec; color: #c62828; }
+        .stats-card .stats-label {
+            font-size: 11px;
+            color: var(--gray);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .stats-card .stats-number {
+            font-size: 24px;
+            font-weight: 700;
+            margin-top: 2px;
+        }
+        .stats-card .stats-number.blue { color: #1976d2; }
+        .stats-card .stats-number.green { color: #2e7d32; }
+        .stats-card .stats-number.orange { color: #e65100; }
+        .stats-card .stats-number.red { color: #c62828; }
+        .stats-card .stats-trend {
+            font-size: 10px;
+            padding: 1px 10px;
+            border-radius: 20px;
+            background: var(--light-gray);
+            color: var(--gray);
+            display: inline-block;
+            margin-top: 4px;
+        }
+        .stats-card .stats-trend.up { background: #e8f5e9; color: #2e7d32; }
+        .stats-card .stats-trend.down { background: #fce4ec; color: #c62828; }
+
+        /* ===== FILTER BAR ===== */
+        .filter-bar {
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            padding: 14px 16px;
+            margin-bottom: 20px;
+        }
+        .filter-bar .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+        }
+        @media (min-width: 576px) {
+            .filter-bar .filter-group { flex-direction: row; flex-wrap: wrap; }
+        }
+        .filter-bar select,
+        .filter-bar input {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            background: white;
+            width: 100%;
+            transition: var(--transition);
+        }
+        @media (min-width: 576px) {
+            .filter-bar select,
+            .filter-bar input { width: auto; flex: 1 1 140px; min-width: 120px; }
+        }
+        .filter-bar select:focus,
+        .filter-bar input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(26,115,232,0.12);
+        }
+        .filter-bar .btn-filter {
+            padding: 8px 18px;
+            border-radius: var(--radius-sm);
+            background: var(--primary);
+            color: white;
+            font-weight: 500;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            justify-content: center;
+            transition: var(--transition);
+            width: 100%;
+        }
+        .filter-bar .btn-filter:hover { background: var(--primary-dark); }
+        .filter-bar .btn-clear {
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            background: var(--light-gray);
+            color: var(--gray);
+            font-weight: 500;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            justify-content: center;
+            transition: var(--transition);
+            width: 100%;
+        }
+        .filter-bar .btn-clear:hover { background: #e8eaed; color: var(--dark); }
+        .filter-bar .d-flex { gap: 8px; flex-wrap: wrap; width: 100%; }
+        @media (min-width: 576px) {
+            .filter-bar .d-flex { width: auto; flex-wrap: nowrap; }
+            .filter-bar .btn-filter,
+            .filter-bar .btn-clear { width: auto; }
+        }
+
+        /* ===== PROPERTY GRID ===== */
+        .property-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 18px;
+            margin-bottom: 24px;
+        }
+        @media (min-width: 480px) { .property-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (min-width: 768px) { .property-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (min-width: 1200px) { .property-grid { grid-template-columns: repeat(4, 1fr); } }
+
+        /* ===== PROPERTY CARD ===== */
+        .property-card {
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+        }
+        .property-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-3px); }
+        .property-card .card-image {
+            height: 160px;
+            background: var(--light-gray);
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .property-card .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+        .property-card:hover .card-image img { transform: scale(1.02); }
+        .property-card .badge-status {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: white;
+            z-index: 2;
+            letter-spacing: 0.3px;
+        }
+        .badge-status.available { background: var(--secondary); }
+        .badge-status.booked { background: var(--warning); color: var(--dark); }
+        .badge-status.pending { background: #ff9800; }
+        .badge-status.sold { background: var(--accent); }
+        .badge-status.maintenance { background: #78909c; }
+        .badge-featured, .badge-premium {
+            position: absolute;
+            top: 48px;
+            right: 10px;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 9px;
+            font-weight: 600;
+            z-index: 2;
+        }
+        .badge-featured { background: #f9a825; color: var(--dark); }
+        .badge-premium { background: linear-gradient(135deg, #7c4dff, #651fff); color: white; }
+
+        .property-card .card-body {
+            padding: 14px 16px;
+            flex: 1;
+        }
+        .property-card .property-title {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 2px;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .property-card .property-location {
+            font-size: 12px;
+            color: var(--gray);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .property-card .property-price {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .property-card .property-price small {
+            font-size: 12px;
+            font-weight: 400;
+            color: var(--gray);
+        }
+        .property-card .property-specs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 8px 0 4px;
+            border-top: 1px solid var(--border);
+            margin-top: 8px;
+        }
+        .property-card .property-specs span {
+            font-size: 12px;
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .property-card .property-specs span i { color: var(--primary); font-size: 13px; }
+
+        .property-card .card-actions {
+            padding: 10px 16px;
+            background: var(--light-gray);
+            border-top: 1px solid var(--border);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .property-card .card-actions .btn {
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 500;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            border: none;
+            flex: 1 0 auto;
+            justify-content: center;
+        }
+        .property-card .card-actions .btn-primary { background: var(--primary); color: white; }
+        .property-card .card-actions .btn-primary:hover { background: var(--primary-dark); }
+        .property-card .card-actions .btn-outline { background: transparent; color: var(--primary); border: 1px solid var(--primary); }
+        .property-card .card-actions .btn-outline:hover { background: var(--primary); color: white; }
+        .property-card .card-actions .btn-info { background: #e3f2fd; color: #1976d2; }
+        .property-card .card-actions .btn-info:hover { background: #bbdefb; }
+        @media (max-width: 400px) {
+            .property-card .card-actions .btn { flex: 1 1 100%; }
+        }
+
+        /* ===== EMPTY STATE ===== */
+        .empty-state {
+            text-align: center;
+            padding: 40px 16px;
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+        .empty-state i { font-size: 48px; color: var(--border); margin-bottom: 12px; }
+        .empty-state h4 { font-size: 18px; margin-bottom: 4px; }
+        .empty-state p { color: var(--gray); font-size: 14px; margin-bottom: 16px; }
+        .empty-state .btn {
+            padding: 10px 24px;
+            border-radius: var(--radius-sm);
+            background: var(--primary);
+            color: white;
+            font-weight: 500;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .empty-state .btn:hover { background: var(--primary-dark); }
+
+        /* ===== PAGINATION ===== */
+        .pagination-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            margin-top: 20px;
+        }
+        .pagination-wrap .page-btn {
+            padding: 6px 14px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: white;
+            color: var(--dark);
+            font-size: 13px;
+            transition: var(--transition);
+        }
+        .pagination-wrap .page-btn:hover { background: var(--light-gray); }
+        .pagination-wrap .page-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .pagination-wrap .page-btn.disabled { opacity: 0.4; pointer-events: none; }
+        .pagination-wrap .page-info { font-size: 13px; color: var(--gray); padding: 0 6px; }
+
+        /* ===== TOAST ===== */
+        .toast-container {
+            position: fixed;
+            top: 76px;
+            right: 12px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-width: calc(100% - 24px);
+        }
+        .toast-item {
+            padding: 10px 16px;
+            border-radius: var(--radius-sm);
+            color: white;
+            font-size: 13px;
+            animation: slideIn 0.25s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--shadow-hover);
+            background: var(--dark);
+        }
+        .toast-item.success { background: var(--secondary); }
+        .toast-item.error { background: var(--accent); }
+        .toast-item.info { background: var(--primary); }
+        .toast-item .close-toast { margin-left: auto; background: none; border: none; color: rgba(255,255,255,0.7); font-size: 18px; }
+        .toast-item .close-toast:hover { color: white; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+
+        /* ===== MOBILE BOTTOM NAV ===== */
+        .mobile-nav {
+            display: flex;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid var(--border);
+            padding: 4px 0 env(safe-area-inset-bottom, 6px);
+            z-index: 999;
+            justify-content: space-around;
+            align-items: center;
+        }
+        @media (min-width: 992px) { .mobile-nav { display: none; } }
+        .mobile-nav a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1px;
+            font-size: 9px;
+            color: var(--gray);
+            padding: 4px 8px;
+            transition: var(--transition);
+            border: none;
+            background: none;
+            flex: 1;
+            text-align: center;
+        }
+        .mobile-nav a i { font-size: 20px; }
+        .mobile-nav a.active { color: var(--primary); }
+        .mobile-nav a:hover { color: var(--primary); }
+
+        /* ===== INSTALL BANNER ===== */
+        #installBanner {
+            display: none;
+            position: fixed;
+            bottom: 70px;
+            left: 16px;
+            right: 16px;
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            padding: 16px 20px;
+            z-index: 998;
+            border: 1px solid var(--border);
+            align-items: center;
+            gap: 12px;
+        }
+        #installBanner.show { display: flex; }
+        #installBanner .banner-icon {
+            font-size: 32px;
+            color: var(--primary);
+            flex-shrink: 0;
+        }
+        #installBanner .banner-text {
+            flex: 1;
+            font-size: 13px;
+        }
+        #installBanner .banner-text strong { display: block; font-size: 14px; }
+        #installBanner .btn-install {
+            padding: 8px 20px;
+            border-radius: var(--radius-sm);
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            border: none;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+        #installBanner .btn-close-banner {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: var(--gray);
+            padding: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== SIDEBAR NAV ===== -->
+    <nav class="sidebar-nav">
+        {% if user.is_authenticated %}
+            {% if user.user_type == 'admin' or user.is_superuser %}
+                <a href="/admin-portal/" class="nav-link" title="Dashboard">
+                    <i class="fas fa-th-large"></i>
+                    <span class="tooltip-text">Dashboard</span>
+                </a>
+                <a href="/properties/manage/" class="nav-link active" title="Properties">
+                    <i class="fas fa-home"></i>
+                    <span class="tooltip-text">Properties</span>
+                </a>
+                <a href="/admin-portal/jobs/" class="nav-link" title="Jobs">
+                    <i class="fas fa-briefcase"></i>
+                    <span class="tooltip-text">Jobs</span>
+                </a>
+                <a href="/admin-portal/applications/" class="nav-link" title="Applications">
+                    <i class="fas fa-file-alt"></i>
+                    <span class="tooltip-text">Applications</span>
+                </a>
+                <a href="/admin-portal/analytics/" class="nav-link" title="Analytics">
+                    <i class="fas fa-chart-bar"></i>
+                    <span class="tooltip-text">Analytics</span>
+                </a>
+            {% else %}
+                <a href="/dashboard" class="nav-link" title="Dashboard">
+                    <i class="fas fa-th-large"></i>
+                    <span class="tooltip-text">Dashboard</span>
+                </a>
+                <a href="/#job-listings" class="nav-link" title="Jobs">
+                    <i class="fas fa-search"></i>
+                    <span class="tooltip-text">Jobs</span>
+                </a>
+                <a href="/applications/" class="nav-link" title="Applications">
+                    <i class="fas fa-file-alt"></i>
+                    <span class="tooltip-text">Applications</span>
+                </a>
+                <a href="/properties/search/" class="nav-link" title="Properties">
+                    <i class="fas fa-home"></i>
+                    <span class="tooltip-text">Properties</span>
+                </a>
+                <a href="/profile/" class="nav-link" title="Profile">
+                    <i class="fas fa-user"></i>
+                    <span class="tooltip-text">Profile</span>
+                </a>
+            {% endif %}
+        {% endif %}
+    </nav>
+
+    <!-- ===== HEADER ===== -->
+    <header class="header">
+        <a href="/" class="header-brand">
+            <img src="{% static 'hiring/icons/icon-192.png' %}" alt="OppoGlobe">
+            <span>OppoGlobe</span>
+        </a>
+
+        <div class="header-actions">
+            {% if user.is_authenticated %}
+                <span class="user-badge">
+                    <i class="fas fa-building me-1"></i>Business
+                </span>
+
+                <a href="/messaging/" class="btn-icon" title="Messages">
+                    <i class="fas fa-comment-dots"></i>
+                </a>
+
+                <div class="dropdown-container">
+                    <div class="avatar business" onclick="toggleDropdown('profileMenu')">
+                        {{ user.username|first|upper }}
+                    </div>
+                    <div class="dropdown-menu-custom" id="profileMenu">
+                        <a href="/admin-portal/" class="dropdown-item"><i class="fas fa-th-large"></i> Dashboard</a>
+                        <a href="/properties/manage/" class="dropdown-item"><i class="fas fa-home"></i> Properties</a>
+                        <a href="/properties/add/" class="dropdown-item"><i class="fas fa-plus-circle"></i> Add Property</a>
+                        <a href="/properties/bookings/" class="dropdown-item"><i class="fas fa-calendar-check"></i> Bookings</a>
+                        <a href="/admin-portal/jobs/" class="dropdown-item"><i class="fas fa-briefcase"></i> Jobs</a>
+                        <a href="/admin-portal/applications/" class="dropdown-item"><i class="fas fa-file-alt"></i> Applications</a>
+                        <div class="dropdown-divider"></div>
+                        <a href="/logout/" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                </div>
+
+                <div class="dropdown-container">
+                    <button class="btn-icon" onclick="toggleDropdown('moreMenu')">
+                        <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+                    <div class="dropdown-menu-custom" id="moreMenu">
+                        <a href="/properties/analytics/" class="dropdown-item"><i class="fas fa-chart-line"></i> Analytics</a>
+                        <a href="/properties/reports/" class="dropdown-item"><i class="fas fa-file-pdf"></i> Reports</a>
+                        <a href="/admin-portal/settings/" class="dropdown-item"><i class="fas fa-cog"></i> Settings</a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </header>
+
+    <!-- ===== INSTALL BANNER (PWA) ===== -->
+    <div id="installBanner">
+        <span class="banner-icon"><i class="fas fa-download"></i></span>
+        <div class="banner-text">
+            <strong>Install OppoGlobe</strong>
+            <span>Get the app for a better experience</span>
+        </div>
+        <button class="btn-install" id="installBtn">Install</button>
+        <button class="btn-close-banner" id="closeBanner">&times;</button>
+    </div>
+
+    <!-- ===== MAIN LAYOUT ===== -->
+    <div class="main-layout">
+
+        <!-- ===== PAGE HEADER ===== -->
+        <div class="page-header">
+            <div>
+                <h1>
+                    <i class="fas fa-home"></i>
+                    Manage Properties
+                    <span class="subtitle">View and manage all your property listings</span>
+                </h1>
+            </div>
+            <a href="{% url 'property_add' %}" class="btn-primary">
+                <i class="fas fa-plus"></i> Add New Property
+            </a>
+        </div>
+
+        <!-- ===== STATS ===== -->
+        <div class="stats-grid">
+            <div class="stats-card">
+                <div class="stats-icon blue"><i class="fas fa-home"></i></div>
+                <div class="stats-label">Total Properties</div>
+                <div class="stats-number blue">{{ total_count|default:0 }}</div>
+                <span class="stats-trend">All listings</span>
+            </div>
+            <div class="stats-card">
+                <div class="stats-icon green"><i class="fas fa-check-circle"></i></div>
+                <div class="stats-label">Available</div>
+                <div class="stats-number green">{{ available_count|default:0 }}</div>
+                <span class="stats-trend up">Ready to book</span>
+            </div>
+            <div class="stats-card">
+                <div class="stats-icon orange"><i class="fas fa-calendar-check"></i></div>
+                <div class="stats-label">Booked</div>
+                <div class="stats-number orange">{{ booked_count|default:0 }}</div>
+                <span class="stats-trend">Currently booked</span>
+            </div>
+            <div class="stats-card">
+                <div class="stats-icon red"><i class="fas fa-tools"></i></div>
+                <div class="stats-label">Maintenance</div>
+                <div class="stats-number red">{{ maintenance_count|default:0 }}</div>
+                <span class="stats-trend down">Needs attention</span>
+            </div>
+        </div>
+
+        <!-- ===== FILTER BAR ===== -->
+        <div class="filter-bar">
+            <form method="get" class="d-flex flex-wrap w-100 gap-2 align-items-center">
+                <div class="filter-group">
+                    <select name="status">
+                        <option value="">All Statuses</option>
+                        {% for value, label in status_choices %}
+                        <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <select name="listing_type">
+                        <option value="">All Listings</option>
+                        {% for value, label in listing_types %}
+                        <option value="{{ value }}" {% if listing_filter == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <input type="text" name="search" placeholder="Search by title, reference, or city..." value="{{ search_query }}">
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn-filter">
+                        <i class="fas fa-search"></i> Filter
+                    </button>
+                    {% if status_filter or search_query or listing_filter %}
+                    <a href="{% url 'properties_manage' %}" class="btn-clear">
+                        <i class="fas fa-times"></i> Clear
+                    </a>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+
+        <!-- ===== PROPERTIES GRID ===== -->
+        <div class="property-grid">
+            {% for property in properties %}
+            <div class="property-card">
+                <div class="card-image">
+                    {% if property.get_main_image_url %}
+                    <img src="{{ property.get_main_image_url }}" alt="{{ property.title }}" loading="lazy">
+                    {% else %}
+                    <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:var(--light-gray);color:#ccc;">
+                        <i class="fas fa-home" style="font-size:48px;"></i>
+                    </div>
+                    {% endif %}
+                    
+                    <span class="badge-status {% if property.status == 'available' %}available{% elif property.status == 'booked' %}booked{% elif property.status == 'pending' %}pending{% elif property.status == 'sold' %}sold{% else %}maintenance{% endif %}">
+                        {{ property.get_status_display }}
+                    </span>
+                    
+                    {% if property.is_featured %}
+                    <span class="badge-featured"><i class="fas fa-star me-1"></i>Featured</span>
+                    {% endif %}
+                    {% if property.is_premium and not property.is_featured %}
+                    <span class="badge-premium"><i class="fas fa-crown me-1"></i>Premium</span>
+                    {% endif %}
+                </div>
+
+                <div class="card-body">
+                    <h5 class="property-title">{{ property.title }}</h5>
+                    <div class="property-location">
+                        <i class="fas fa-map-marker-alt"></i>
+                        {{ property.city }}{% if property.city and property.country %}, {% endif %}{{ property.country }}
+                    </div>
+                    <div class="property-price">
+                        {{ property.price_currency|default:"ZAR" }} {{ property.base_price|floatformat:0|default:"0" }}
+                        <small>/{{ property.get_booking_unit_display|default:"night" }}</small>
+                    </div>
+                    <div class="property-specs">
+                        <span><i class="fas fa-bed"></i> {{ property.bedrooms|default:"0" }}</span>
+                        <span><i class="fas fa-bath"></i> {{ property.bathrooms|default:"0" }}</span>
+                        <span><i class="fas fa-car"></i> {{ property.garages|default:"0" }}</span>
+                        <span><i class="fas fa-vector-square"></i> {{ property.total_area|default:"0" }}m²</span>
+                    </div>
+                </div>
+
+                <div class="card-actions">
+                    <a href="{% url 'property_edit' property.id %}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <a href="{% url 'property_detail' property.id %}" class="btn btn-outline btn-sm">
+                        <i class="fas fa-eye"></i> View
+                    </a>
+                    <a href="{% url 'property_rooms_manage' property.id %}" class="btn btn-info btn-sm">
+                        <i class="fas fa-door-open"></i> Rooms
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12" style="grid-column:1/-1;">
+                <div class="empty-state">
+                    <i class="fas fa-home"></i>
+                    <h4>No Properties Found</h4>
+                    <p>You haven't added any properties yet. Start by listing your first property.</p>
+                    <a href="{% url 'property_add' %}" class="btn">
+                        <i class="fas fa-plus me-2"></i>Add Your First Property
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- ===== PAGINATION ===== -->
+        {% if properties.has_other_pages %}
+        <div class="pagination-wrap">
+            {% if properties.has_previous %}
+            <a href="?page={{ properties.previous_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if listing_filter %}&listing_type={{ listing_filter }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}" class="page-btn">
+                <i class="fas fa-chevron-left"></i> Previous
+            </a>
+            {% else %}
+            <span class="page-btn disabled"><i class="fas fa-chevron-left"></i> Previous</span>
+            {% endif %}
+
+            <span class="page-info">
+                Page {{ properties.number }} of {{ properties.paginator.num_pages }}
+            </span>
+
+            {% if properties.has_next %}
+            <a href="?page={{ properties.next_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if listing_filter %}&listing_type={{ listing_filter }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}" class="page-btn">
+                Next <i class="fas fa-chevron-right"></i>
+            </a>
+            {% else %}
+            <span class="page-btn disabled">Next <i class="fas fa-chevron-right"></i></span>
+            {% endif %}
+        </div>
+        {% endif %}
+
+    </div>
+
+    <!-- ===== MOBILE NAV ===== -->
+    <nav class="mobile-nav">
+        <a href="/admin-portal/" class="active">
+            <i class="fas fa-th-large"></i><span>Dashboard</span>
+        </a>
+        <a href="/properties/manage/">
+            <i class="fas fa-home"></i><span>Properties</span>
+        </a>
+        <a href="/admin-portal/jobs/">
+            <i class="fas fa-briefcase"></i><span>Jobs</span>
+        </a>
+        <a href="/admin-portal/applications/">
+            <i class="fas fa-file-alt"></i><span>Apps</span>
+        </a>
+        <a href="/profile/">
+            <i class="fas fa-user"></i><span>Profile</span>
+        </a>
+    </nav>
+
+    <!-- ===== TOAST CONTAINER ===== -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ===== SCRIPTS ===== -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // ============================================
+        // SERVICE WORKER REGISTRATION (FIXED)
+        // ============================================
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register("{% static 'hiring/js/sw.js' %}")
+                    .then(function(registration) {
+                        console.log('Service Worker registered successfully:', registration);
+                        
+                        // Check for updates
+                        registration.addEventListener('updatefound', function() {
+                            const newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', function() {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    showToast('New version available! Refresh to update.', 'info');
+                                }
+                            });
+                        });
+                    })
+                    .catch(function(error) {
+                        console.error('Service Worker registration failed:', error);
+                    });
+                
+                // Check for updates periodically
+                setInterval(() => {
+                    navigator.serviceWorker.ready.then(reg => reg.update());
+                }, 60 * 60 * 1000); // Check every hour
+            });
+        }
+
+        // ============================================
+        // PWA INSTALL BANNER (FIXED)
+        // ============================================
+        let deferredPrompt;
+        const installBanner = document.getElementById('installBanner');
+        const installBtn = document.getElementById('installBtn');
+        const closeBanner = document.getElementById('closeBanner');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installBanner.classList.add('show');
+        });
+
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const result = await deferredPrompt.userChoice;
+                if (result.outcome === 'accepted') {
+                    showToast('App installed successfully!', 'success');
+                } else {
+                    showToast('Installation declined', 'info');
+                }
+                deferredPrompt = null;
+                installBanner.classList.remove('show');
+            }
+        });
+
+        closeBanner.addEventListener('click', () => {
+            installBanner.classList.remove('show');
+            localStorage.setItem('hideInstallBanner', 'true');
+        });
+
+        // Don't show banner if user closed it before
+        if (localStorage.getItem('hideInstallBanner') === 'true') {
+            installBanner.classList.remove('show');
+        }
+
+        // ============================================
+        // TOGGLE DROPDOWN (FIXED)
+        // ============================================
+        function toggleDropdown(id) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            document.querySelectorAll('.dropdown-menu-custom.show').forEach(d => {
+                if (d.id !== id) d.classList.remove('show');
+            });
+            el.classList.toggle('show');
+        }
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.dropdown-container')) {
+                document.querySelectorAll('.dropdown-menu-custom.show').forEach(d => d.classList.remove('show'));
+            }
+        });
+
+        // ============================================
+        // TOAST SYSTEM (FIXED)
+        // ============================================
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+            
+            const toast = document.createElement('div');
+            toast.className = `toast-item ${type}`;
+            
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                info: 'fa-info-circle'
+            };
+            
+            toast.innerHTML = `
+                <i class="fas ${icons[type] || icons.info}"></i>
+                <span>${message}</span>
+                <button class="close-toast" onclick="this.parentElement.remove()">&times;</button>
+            `;
+            
+            container.appendChild(toast);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.remove();
+                }
+            }, 5000);
+        }
+
+        // ============================================
+        // DELETE PROPERTY (FIXED)
+        // ============================================
+        function deleteProperty(propertyId) {
+            if (!confirm('Are you sure you want to delete this property? This action cannot be undone.')) {
+                return;
+            }
+            
+            const csrfToken = getCSRFToken();
+            
+            fetch(`/api/properties/${propertyId}/delete/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('Property deleted successfully', 'success');
+                    setTimeout(() => window.location.reload(), 1500);
+                } else {
+                    showToast(data.error || 'Failed to delete property', 'error');
+                }
+            })
+            .catch(() => {
+                showToast('Network error. Please try again.', 'error');
+            });
+        }
+
+        // ============================================
+        // CSRF TOKEN HELPER (FIXED)
+        // ============================================
+        function getCSRFToken() {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                const [name, value] = cookie.trim().split('=');
+                if (name === 'csrftoken') {
+                    return decodeURIComponent(value);
+                }
+            }
+            return null;
+        }
+
+        // ============================================
+        // ONLINE/OFFLINE INDICATOR (NEW)
+        // ============================================
+        window.addEventListener('online', () => {
+            showToast('Back online!', 'success');
+        });
+
+        window.addEventListener('offline', () => {
+            showToast('You are offline. Some features may not work.', 'error');
+        });
+
+        // ============================================
+        // PERFORMANCE: LAZY LOADING (NEW)
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            if ('IntersectionObserver' in window) {
+                const lazyImages = document.querySelectorAll('img[loading="lazy"]');
+                const imageObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const img = entry.target;
+                            img.src = img.dataset.src || img.src;
+                            imageObserver.unobserve(img);
+                        }
+                    });
+                });
+                
+                lazyImages.forEach(img => imageObserver.observe(img));
+            }
+        });
+
+        // ============================================
+        // DEBUG: SHOW SERVICE WORKER STATUS (NEW)
+        // ============================================
+        if (navigator.serviceWorker) {
+            navigator.serviceWorker.getRegistration().then(reg => {
+                if (reg) {
+                    console.log('[SW] Service Worker active:', reg.active ? 'Yes' : 'No');
+                }
+            });
+        }
+
+        console.log('[App] OppoGlobe property management loaded successfully');
+    </script>
+
+  <script src="/static/hiring/js/notifications-global.js" defer></script>
+</body>
+</html>

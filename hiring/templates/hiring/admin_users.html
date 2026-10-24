@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Users Management - Hiring Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .header-area {
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+        }
+        .main-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 0;
+        }
+        .logo img {
+            max-height: 40px;
+        }
+
+        /* Top Right Navigation */
+        .nav-icons {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-icons a {
+            font-size: 20px;
+            color: #555;
+            transition: 0.2s;
+            text-decoration: none;
+        }
+
+        .nav-icons a:hover {
+            color: #ff589e;
+            transform: translateY(-2px);
+        }
+
+        /* Profile Dropdown */
+        .profile-dropdown {
+            position: relative;
+        }
+
+        .profile-avatar-small {
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, #ff589e 0%, #ff136f 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .profile-menu {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            width: 220px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            padding: 10px 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.25s ease;
+            z-index: 1000;
+        }
+
+        .profile-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0px);
+        }
+
+        .profile-menu a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            color: #444;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .profile-menu a:hover {
+            background: #f5f7fa;
+            color: #ff589e;
+        }
+
+        .profile-divider {
+            height: 1px;
+            background: #eee;
+            margin: 8px 0;
+        }
+
+        /* Three Dot Menu Styles */
+        .three-dot-menu {
+            position: relative;
+            display: inline-block;
+        }
+
+        .three-dot-menu i {
+            font-size: 20px;
+            color: #555;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .three-dot-menu i:hover {
+            background-color: rgba(255, 88, 158, 0.1);
+            color: #ff589e;
+        }
+
+        .three-dot-menu .menu-content {
+            position: absolute;
+            top: 45px;
+            right: 0;
+            width: 200px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            padding: 10px 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.25s ease;
+            z-index: 1000;
+        }
+
+        .three-dot-menu .menu-content.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0px);
+        }
+
+        .three-dot-menu .menu-content a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            color: #444;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+
+        .three-dot-menu .menu-content a:hover {
+            background: rgba(255, 88, 158, 0.1);
+            color: #ff589e;
+        }
+
+        .three-dot-menu .menu-content a.active {
+            background: rgba(255, 88, 158, 0.1);
+            color: #ff589e;
+            font-weight: 500;
+        }
+
+        .three-dot-menu .menu-content a i {
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        body {
+            padding-top: 80px;
+            background-color: #f8f9fa;
+        }
+        
+        .admin-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 40px 0;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .admin-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 25px;
+        }
+        .admin-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+        .stat-card {
+            text-align: center;
+            padding: 30px 20px;
+        }
+        .stat-card i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        .stat-card h3 {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .btn-admin {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            transition: all 0.3s;
+        }
+        .btn-admin:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(44, 62, 80, 0.3);
+            color: white;
+        }
+        
+        .growth-indicator {
+            font-size: 0.875rem;
+            margin-top: 5px;
+        }
+        .growth-positive {
+            color: #28a745;
+        }
+        .growth-negative {
+            color: #dc3545;
+        }
+
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+        }
+
+        .toast-container {
+            z-index: 9999;
+        }
+
+        /* User Management Styles */
+        .users-table {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .table th {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            font-weight: 600;
+        }
+        .table td {
+            padding: 15px 20px;
+            vertical-align: middle;
+            border-color: #f0f0f0;
+        }
+        .table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff589e 0%, #ff136f 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .filter-section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            padding: 10px 15px;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #ff589e;
+            box-shadow: 0 0 0 0.2rem rgba(255, 88, 158, 0.25);
+        }
+
+        .btn-action {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            margin: 0 2px;
+        }
+        .btn-view {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            border: none;
+        }
+        .btn-edit {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+        }
+        .btn-delete {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            border: none;
+        }
+        .btn-action:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+            color: white;
+        }
+
+        .loading-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .pagination-container {
+            background: white;
+            padding: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        /* User Type Badges */
+        .user-type-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+        .user-type-admin { background-color: #ffebee; color: #c62828; }
+        .user-type-applicant { background-color: #e8f5e8; color: #2e7d32; }
+
+        /* Profile Completeness */
+        .profile-completeness {
+            width: 100px;
+            height: 8px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .completeness-bar {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        .completeness-high { background-color: #28a745; }
+        .completeness-medium { background-color: #ffc107; }
+        .completeness-low { background-color: #dc3545; }
+
+        /* Modal Styles */
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            border-bottom: none;
+            border-radius: 10px 10px 0 0;
+        }
+        .modal-content {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .btn-close-white {
+            filter: invert(1);
+        }
+
+        /* Tab Styles */
+        .nav-tabs .nav-link {
+            border: none;
+            color: #6c757d;
+            font-weight: 500;
+            padding: 12px 20px;
+        }
+        .nav-tabs .nav-link.active {
+            background: none;
+            border: none;
+            border-bottom: 3px solid #007bff;
+            color: #007bff;
+        }
+        .nav-tabs .nav-link:hover {
+            border: none;
+            border-bottom: 3px solid #dee2e6;
+            color: #007bff;
+        }
+
+        .tab-content {
+            padding: 20px 0;
+        }
+
+        .document-item, .application-item, .skill-item, .education-item {
+            border-left: 4px solid #007bff;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .document-item { border-left-color: #28a745; }
+        .application-item { border-left-color: #ffc107; }
+        .skill-item { border-left-color: #dc3545; }
+        .education-item { border-left-color: #6f42c1; }
+
+        @media (max-width: 991px) {
+            .table-responsive {
+                font-size: 0.875rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    {% load api_utils %}
+    {% api_js_functions %}
+    <!-- Navigation -->
+    <header class="header-area">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <nav class="main-nav">
+                        <a href="/" class="logo">
+                            <img src="/static/images/logo.png" alt="JobPortal" style="max-height: 40px;">
+                        </a>
+
+                        <!-- Top Right Icons -->
+                        <ul class="nav-icons">
+                            <li>
+                                <a href="/" title="Home">
+                                    <i class="fas fa-home"></i>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="/#job-listings" title="Browse Jobs">
+                                    <i class="fas fa-search"></i>
+                                </a>
+                            </li>
+
+                            {% if user.is_authenticated %}
+                            <li>
+                                <a href="/dashboard" title="Dashboard">
+                                    <i class="fas fa-th-large"></i>
+                                </a>
+                            </li>
+
+                            <!-- Profile Dropdown Icon -->
+                            <li class="profile-dropdown">
+                                <div class="profile-avatar-small" onclick="toggleProfileDropdown()">
+                                    {{ user.username|first|upper }}
+                                </div>
+
+                                <div class="profile-menu" id="profileMenu">
+                                    <a href="/profile/"><i class="fas fa-user"></i> Profile</a>
+                                    <a href="/applications/"><i class="fas fa-file-alt"></i> Applications</a>
+                                    <div class="profile-divider"></div>
+
+                                    <a href="/api/alerts/"><i class="fas fa-bell"></i> Alerts</a>
+                                    <a href="/preferences/"><i class="fas fa-cog"></i> Preferences</a>
+
+                                    <div class="profile-divider"></div>
+
+                                    <a href="/logout/"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                                </div>
+                            </li>
+                            <li>
+                              <a href="/messaging/">
+                                <i class="fas fa-comment-dots"></i>
+                              </a>
+                            </li>  
+                            <li>
+                                <div class="three-dot-menu">
+                                    <i class="fas fa-ellipsis-v" onclick="toggleThreeDotMenu()"></i>
+                                    <div class="menu-content" id="threeDotMenu">
+                                        <a href="/profile/skills/"><i class="fas fa-cogs"></i> Skills</a>
+                                        <a href="/profile/employment/"><i class="fas fa-briefcase"></i> Employment</a>
+                                        <a href="/profile/education/"><i class="fas fa-graduation-cap"></i> Education</a>
+                                        <a href="/profile/documents/"><i class="fas fa-file-upload"></i> Documents</a>
+                                    </div>
+                                </div>
+                            </li>
+
+                            {% else %}
+                            <li>
+                                <a href="#" onclick="showLogin()" title="Login">
+                                    <i class="fas fa-sign-in-alt"></i>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="#" onclick="showSignup()" title="Sign Up">
+                                    <i class="fas fa-user-plus"></i>
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mt-4">
+        <!-- Admin Header -->
+        <div class="admin-header">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="display-5 mb-2"><i class="fas fa-users me-3"></i>Users Management</h1>
+                    <p class="lead mb-0">Manage all users, profiles, and applicant data in your hiring platform</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <div class="bg-white text-dark rounded p-3 d-inline-block">
+                        <small class="text-muted d-block">Users Status</small>
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-circle text-success me-2"></i>
+                            <strong id="usersStatus">Loading...</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card admin-card stat-card border-primary">
+                    <div class="card-body">
+                        <i class="fas fa-users text-primary"></i>
+                        <h3 id="total-users">0</h3>
+                        <p class="card-text text-muted">Total Users</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card admin-card stat-card border-success">
+                    <div class="card-body">
+                        <i class="fas fa-user-check text-success"></i>
+                        <h3 id="total-applicants">0</h3>
+                        <p class="card-text text-muted">Applicants</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card admin-card stat-card border-warning">
+                    <div class="card-body">
+                        <i class="fas fa-crown text-warning"></i>
+                        <h3 id="total-admins">0</h3>
+                        <p class="card-text text-muted">Admins</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card admin-card stat-card border-info">
+                    <div class="card-body">
+                        <i class="fas fa-chart-line text-info"></i>
+                        <h3 id="active-today">0</h3>
+                        <p class="card-text text-muted">Active Today</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters and Search -->
+        <div class="filter-section">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">User Type</label>
+                    <select id="type-filter" class="form-select">
+                        <option value="all">All Types</option>
+                        <option value="applicant">Applicants</option>
+                        <option value="admin">Admins</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Profile Status</label>
+                    <select id="profile-filter" class="form-select">
+                        <option value="all">All Profiles</option>
+                        <option value="complete">Complete (>80%)</option>
+                        <option value="partial">Partial (50-80%)</option>
+                        <option value="incomplete">Incomplete (<50%)</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Registration Date</label>
+                    <input type="date" id="date-filter" class="form-control">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Search</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" id="search-input" class="form-control" placeholder="Search users...">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Table -->
+        <div class="users-table">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Profile</th>
+                            <th>Type</th>
+                            <th>Profile Complete</th>
+                            <th>Registration</th>
+                            <th>Last Login</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-table-body">
+                        <!-- Users will be loaded here dynamically -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loading-state" class="loading-state">
+                <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;" role="status">
+                    <span class="visually-hidden">Loading users...</span>
+                </div>
+                <p class="text-muted">Loading users...</p>
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty-state" class="empty-state d-none">
+                <i class="fas fa-users"></i>
+                <h4 class="text-muted">No users found</h4>
+                <p class="text-muted">There are no users matching your current filters.</p>
+            </div>
+
+            <!-- Pagination -->
+            <div id="pagination" class="pagination-container d-none">
+                <!-- Pagination will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- User Details Modal -->
+    <div class="modal fade" id="userDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="userDetailsModalTitle">User Details</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Navigation Tabs -->
+                    <ul class="nav nav-tabs" id="userDetailsTabs">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-bs-toggle="tab" href="#userInfoTab">User Info</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#documentsTab">Documents</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#applicationsTab">Applications</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#skillsTab">Skills</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#educationTab">Education</a>
+                        </li>
+                    </ul>
+
+                    <!-- Tab Content -->
+                    <div class="tab-content" id="userDetailsTabContent">
+                        <!-- User Info Tab -->
+                        <div class="tab-pane fade show active" id="userInfoTab">
+                            <div id="user-info-content" class="mt-3">
+                                <!-- Basic user info will be loaded here -->
+                            </div>
+                        </div>
+
+                        <!-- Documents Tab -->
+                        <div class="tab-pane fade" id="documentsTab">
+                            <div id="documents-content" class="mt-3">
+                                <div class="text-center py-4">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading documents...</span>
+                                    </div>
+                                    <p class="text-muted mt-2">Loading documents...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Applications Tab -->
+                        <div class="tab-pane fade" id="applicationsTab">
+                            <div id="applications-content" class="mt-3">
+                                <div class="text-center py-4">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading applications...</span>
+                                    </div>
+                                    <p class="text-muted mt-2">Loading applications...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Skills Tab -->
+                        <div class="tab-pane fade" id="skillsTab">
+                            <div id="skills-content" class="mt-3">
+                                <div class="text-center py-4">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading skills...</span>
+                                    </div>
+                                    <p class="text-muted mt-2">Loading skills...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Education Tab -->
+                        <div class="tab-pane fade" id="educationTab">
+                            <div id="education-content" class="mt-3">
+                                <div class="text-center py-4">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading education...</span>
+                                    </div>
+                                    <p class="text-muted mt-2">Loading education...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div class="modal fade" id="editUserModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit User</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="edit-user-form">
+                        <div class="mb-3">
+                            <label class="form-label">Username</label>
+                            <input type="text" id="edit-username" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" id="edit-email" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">First Name</label>
+                            <input type="text" id="edit-first-name" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Last Name</label>
+                            <input type="text" id="edit-last-name" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">User Type</label>
+                            <select id="edit-user-type" class="form-select">
+                                <option value="applicant">Applicant</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Mobile Phone</label>
+                            <input type="text" id="edit-mobile-phone" class="form-control">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" id="save-user-changes" class="btn btn-success">
+                        <i class="fas fa-save me-2"></i>Save Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteUserModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Deletion</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this user? This action cannot be undone.</p>
+                    <p class="text-danger"><strong>Warning:</strong> This will permanently delete the user account and all associated data.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" id="confirm-delete-user" class="btn btn-danger">
+                        <i class="fas fa-trash me-2"></i>Delete User
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentUserId = null;
+        let currentPage = 1;
+        const usersPerPage = 10;
+
+        // Navigation functions
+        function toggleProfileDropdown() {
+            document.getElementById("profileMenu").classList.toggle("show");
+        }
+
+        function toggleThreeDotMenu() {
+            document.getElementById("threeDotMenu").classList.toggle("show");
+        }
+
+        // Close dropdowns on click outside
+        document.addEventListener("click", function(e) {
+            const profileMenu = document.getElementById("profileMenu");
+            const profileAvatar = document.querySelector(".profile-avatar-small");
+            const threeDotMenu = document.getElementById("threeDotMenu");
+            const threeDotIcon = document.querySelector(".three-dot-menu i");
+
+            // Close profile dropdown
+            if (profileAvatar && profileMenu && !profileAvatar.contains(e.target) && !profileMenu.contains(e.target)) {
+                profileMenu.classList.remove("show");
+            }
+
+            // Close three-dot menu
+            if (threeDotIcon && threeDotMenu && !threeDotIcon.contains(e.target) && !threeDotMenu.contains(e.target)) {
+                threeDotMenu.classList.remove("show");
+            }
+        });
+
+        // Load users when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUsers();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            // Filter event listeners
+            document.getElementById('type-filter').addEventListener('change', loadUsers);
+            document.getElementById('profile-filter').addEventListener('change', loadUsers);
+            document.getElementById('date-filter').addEventListener('change', loadUsers);
+            document.getElementById('search-input').addEventListener('input', debounce(loadUsers, 300));
+
+            // Modal event listeners
+            document.getElementById('save-user-changes').addEventListener('click', updateUser);
+            document.getElementById('confirm-delete-user').addEventListener('click', deleteUser);
+
+            // Tab change listeners
+            document.getElementById('userDetailsTabs').addEventListener('shown.bs.tab', function (e) {
+                const targetTab = e.target.getAttribute('href');
+                if (currentUserId) {
+                    switch(targetTab) {
+                        case '#documentsTab':
+                            loadUserDocuments(currentUserId);
+                            break;
+                        case '#applicationsTab':
+                            loadUserApplications(currentUserId);
+                            break;
+                        case '#skillsTab':
+                            loadUserSkills(currentUserId);
+                            break;
+                        case '#educationTab':
+                            loadUserEducation(currentUserId);
+                            break;
+                    }
+                }
+            });
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        async function loadUsers() {
+            showLoadingState();
+            
+            const typeFilter = document.getElementById('type-filter').value;
+            const profileFilter = document.getElementById('profile-filter').value;
+            const dateFilter = document.getElementById('date-filter').value;
+            const searchQuery = document.getElementById('search-input').value;
+
+            try {
+                const response = await fetch('/api/admin/users/list/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCSRFToken()
+                    },
+                    body: JSON.stringify({
+                        user_type: typeFilter !== 'all' ? typeFilter : null,
+                        profile_status: profileFilter !== 'all' ? profileFilter : null,
+                        date: dateFilter || null,
+                        search: searchQuery || null,
+                        page: currentPage,
+                        page_size: usersPerPage
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    displayUsers(data.users);
+                    updateStats(data.stats);
+                    updatePagination(data.total_pages);
+                    document.getElementById('usersStatus').textContent = 'Users Loaded';
+                } else {
+                    showError('Failed to load users');
+                    document.getElementById('usersStatus').textContent = 'Error Loading';
+                }
+            } catch (error) {
+                console.error('Error loading users:', error);
+                showError('Error loading users');
+                document.getElementById('usersStatus').textContent = 'Connection Error';
+            }
+        }
+
+        function displayUsers(users) {
+            const tbody = document.getElementById('users-table-body');
+            const emptyState = document.getElementById('empty-state');
+            const loadingState = document.getElementById('loading-state');
+
+            loadingState.classList.add('d-none');
+
+            if (users.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.classList.remove('d-none');
+                return;
+            }
+
+            emptyState.classList.add('d-none');
+
+            tbody.innerHTML = users.map(user => `
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="user-avatar me-3">
+                                ${user.username.charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                                <div class="fw-bold">${escapeHtml(user.username)}</div>
+                                <small class="text-muted">${escapeHtml(user.email)}</small>
+                                ${user.full_name ? `<div class="small">${escapeHtml(user.full_name)}</div>` : ''}
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        ${user.has_profile ? 
+                            `<span class="badge bg-success">Profile Created</span>` : 
+                            `<span class="badge bg-secondary">No Profile</span>`
+                        }
+                    </td>
+                    <td>
+                        <span class="user-type-badge user-type-${user.user_type}">
+                            ${user.user_type}
+                        </span>
+                    </td>
+                    <td>
+                        ${user.profile_completeness !== null ? `
+                            <div class="d-flex align-items-center">
+                                <div class="profile-completeness me-2">
+                                    <div class="completeness-bar ${getCompletenessClass(user.profile_completeness)}" 
+                                         style="width: ${user.profile_completeness}%"></div>
+                                </div>
+                                <small>${user.profile_completeness}%</small>
+                            </div>
+                        ` : '<small class="text-muted">N/A</small>'}
+                    </td>
+                    <td>
+                        <div class="text-muted">${new Date(user.date_joined).toLocaleDateString()}</div>
+                        <small class="text-muted">${new Date(user.date_joined).toLocaleTimeString()}</small>
+                    </td>
+                    <td>
+                        ${user.last_login ? `
+                            <div class="text-muted">${new Date(user.last_login).toLocaleDateString()}</div>
+                            <small class="text-muted">${new Date(user.last_login).toLocaleTimeString()}</small>
+                        ` : '<span class="text-muted">Never</span>'}
+                    </td>
+                    <td>
+                        <button onclick="viewUserDetails('${user.id}')" class="btn btn-action btn-view">
+                            <i class="fas fa-eye me-1"></i>View
+                        </button>
+                        <button onclick="openEditUserModal('${user.id}')" class="btn btn-action btn-edit">
+                            <i class="fas fa-edit me-1"></i>Edit
+                        </button>
+                        ${user.id !== '{{ user.id }}' ? `
+                            <button onclick="openDeleteUserModal('${user.id}', '${user.username}')" class="btn btn-action btn-delete">
+                                <i class="fas fa-trash me-1"></i>Delete
+                            </button>
+                        ` : ''}
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function getCompletenessClass(percentage) {
+            if (percentage >= 80) return 'completeness-high';
+            if (percentage >= 50) return 'completeness-medium';
+            return 'completeness-low';
+        }
+
+        function updateStats(stats) {
+            document.getElementById('total-users').textContent = stats.total || 0;
+            document.getElementById('total-applicants').textContent = stats.applicants || 0;
+            document.getElementById('total-admins').textContent = stats.admins || 0;
+            document.getElementById('active-today').textContent = stats.active_today || 0;
+        }
+
+        async function viewUserDetails(userId) {
+            currentUserId = userId;
+            try {
+                const response = await fetch(`/api/admin/users/${userId}/`);
+                const data = await response.json();
+
+                if (data.success) {
+                    displayUserInfo(data.user);
+                    const modal = new bootstrap.Modal(document.getElementById('userDetailsModal'));
+                    modal.show();
+                    
+                    // Load the first tab data immediately
+                    loadUserDocuments(userId);
+                } else {
+                    showError('Failed to load user details');
+                }
+            } catch (error) {
+                console.error('Error loading user details:', error);
+                showError('Error loading user details');
+            }
+        }
+
+        function displayUserInfo(user) {
+            const content = document.getElementById('user-info-content');
+            document.getElementById('userDetailsModalTitle').textContent = `User Details - ${user.username}`;
+            
+            content.innerHTML = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-header bg-primary text-white">
+                                <h6 class="mb-0"><i class="fas fa-user me-2"></i>Basic Information</h6>
+                            </div>
+                            <div class="card-body">
+                                <p><strong>Username:</strong> ${escapeHtml(user.username)}</p>
+                                <p><strong>Email:</strong> ${escapeHtml(user.email)}</p>
+                                <p><strong>Full Name:</strong> ${user.full_name || 'Not provided'}</p>
+                                <p><strong>User Type:</strong> 
+                                    <span class="user-type-badge user-type-${user.user_type}">
+                                        ${user.user_type}
+                                    </span>
+                                </p>
+                                <p><strong>Mobile Phone:</strong> ${user.mobile_phone || 'Not provided'}</p>
+                                <p><strong>Registration:</strong> ${new Date(user.date_joined).toLocaleString()}</p>
+                                <p><strong>Last Login:</strong> ${user.last_login ? new Date(user.last_login).toLocaleString() : 'Never'}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-header bg-success text-white">
+                                <h6 class="mb-0"><i class="fas fa-id-card me-2"></i>Profile Information</h6>
+                            </div>
+                            <div class="card-body">
+                                ${user.has_profile ? `
+                                    <p><strong>Profile Status:</strong> <span class="badge bg-success">Created</span></p>
+                                    <p><strong>Profile Completeness:</strong> 
+                                        <div class="d-flex align-items-center mt-1">
+                                            <div class="profile-completeness me-2" style="width: 120px;">
+                                                <div class="completeness-bar ${getCompletenessClass(user.profile_completeness)}" 
+                                                     style="width: ${user.profile_completeness}%"></div>
+                                            </div>
+                                            <span>${user.profile_completeness}%</span>
+                                        </div>
+                                    </p>
+                                    ${user.profile_title ? `<p><strong>Title:</strong> ${user.profile_title}</p>` : ''}
+                                    ${user.preferred_job_title ? `<p><strong>Preferred Job:</strong> ${user.preferred_job_title}</p>` : ''}
+                                    ${user.location ? `<p><strong>Location:</strong> ${user.location}</p>` : ''}
+                                    <p><strong>Profile Created:</strong> ${new Date(user.profile_created).toLocaleDateString()}</p>
+                                    <p><strong>Last Updated:</strong> ${new Date(user.profile_updated).toLocaleDateString()}</p>
+                                ` : `
+                                    <p class="text-muted">No profile created yet</p>
+                                `}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                ${user.has_profile ? `
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-info text-white">
+                                <h6 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Activity Summary</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row text-center">
+                                    <div class="col-md-3">
+                                        <h4 class="text-primary">${user.applications_count || 0}</h4>
+                                        <small class="text-muted">Applications</small>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h4 class="text-success">${user.skills_count || 0}</h4>
+                                        <small class="text-muted">Skills</small>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h4 class="text-warning">${user.documents_count || 0}</h4>
+                                        <small class="text-muted">Documents</small>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h4 class="text-info">${user.alerts_count || 0}</h4>
+                                        <small class="text-muted">Alerts</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                ` : ''}
+            `;
+        }
+
+        async function loadUserDocuments(userId) {
+            try {
+                const response = await fetch(`/api/admin/users/${userId}/documents/`);
+                const data = await response.json();
+                const content = document.getElementById('documents-content');
+
+                if (data.success && data.documents && data.documents.length > 0) {
+                    content.innerHTML = data.documents.map(doc => `
+                        <div class="document-item">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="mb-1">${escapeHtml(doc.document_type)}</h6>
+                                    <p class="mb-1 text-muted">${escapeHtml(doc.file_name)}</p>
+                                    <small class="text-muted">Uploaded: ${new Date(doc.uploaded_at).toLocaleDateString()}</small>
+                                </div>
+                                <div>
+                                    <button class="btn btn-sm btn-primary" onclick="downloadDocument('${doc.id}')">
+                                        <i class="fas fa-download me-1"></i>Download
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    content.innerHTML = `
+                        <div class="text-center py-4">
+                            <i class="fas fa-file fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No Documents</h5>
+                            <p class="text-muted">This user hasn't uploaded any documents yet.</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading documents:', error);
+                document.getElementById('documents-content').innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Error loading documents
+                    </div>
+                `;
+            }
+        }
+
+        async function loadUserApplications(userId) {
+            try {
+                const response = await fetch(`/api/admin/users/${userId}/applications/`);
+                const data = await response.json();
+                const content = document.getElementById('applications-content');
+
+                if (data.success && data.applications && data.applications.length > 0) {
+                    content.innerHTML = data.applications.map(app => `
+                        <div class="application-item">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="mb-1">${escapeHtml(app.job_title)}</h6>
+                                    <p class="mb-1 text-muted">${escapeHtml(app.company_name)}</p>
+                                    <p class="mb-1"><strong>Status:</strong> 
+                                        <span class="badge bg-${getStatusBadgeColor(app.status)}">${app.status}</span>
+                                    </p>
+                                    <small class="text-muted">Applied: ${new Date(app.applied_date).toLocaleDateString()}</small>
+                                </div>
+                                <div>
+                                    <button class="btn btn-sm btn-info" onclick="viewApplication('${app.id}')">
+                                        <i class="fas fa-eye me-1"></i>View
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    content.innerHTML = `
+                        <div class="text-center py-4">
+                            <i class="fas fa-briefcase fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No Applications</h5>
+                            <p class="text-muted">This user hasn't submitted any job applications yet.</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading applications:', error);
+                document.getElementById('applications-content').innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Error loading applications
+                    </div>
+                `;
+            }
+        }
+
+        async function loadUserSkills(userId) {
+            try {
+                const response = await fetch(`/api/admin/users/${userId}/skills/`);
+                const data = await response.json();
+                const content = document.getElementById('skills-content');
+
+                if (data.success && data.skills && data.skills.length > 0) {
+                    content.innerHTML = data.skills.map(skill => `
+                        <div class="skill-item">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="mb-1">${escapeHtml(skill.skill_name)}</h6>
+                                    <p class="mb-1 text-muted">Proficiency: ${skill.proficiency}</p>
+                                    ${skill.description ? `<p class="mb-1">${escapeHtml(skill.description)}</p>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    content.innerHTML = `
+                        <div class="text-center py-4">
+                            <i class="fas fa-cogs fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No Skills</h5>
+                            <p class="text-muted">This user hasn't added any skills yet.</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading skills:', error);
+                document.getElementById('skills-content').innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Error loading skills
+                    </div>
+                `;
+            }
+        }
+
+        async function loadUserEducation(userId) {
+            try {
+                const response = await fetch(`/api/admin/users/${userId}/education/`);
+                const data = await response.json();
+                const content = document.getElementById('education-content');
+
+                if (data.success && data.education && data.education.length > 0) {
+                    content.innerHTML = data.education.map(edu => `
+                        <div class="education-item">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="mb-1">${escapeHtml(edu.qualification)}</h6>
+                                    <p class="mb-1 text-muted">${escapeHtml(edu.institution)}</p>
+                                    <p class="mb-1"><strong>Completion Year:</strong> ${edu.completion_year}</p>
+                                    ${edu.major_subject ? `<p class="mb-1"><strong>Major:</strong> ${escapeHtml(edu.major_subject)}</p>` : ''}
+                                    ${edu.grade ? `<p class="mb-1"><strong>Grade:</strong> ${edu.grade}</p>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    content.innerHTML = `
+                        <div class="text-center py-4">
+                            <i class="fas fa-graduation-cap fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No Education</h5>
+                            <p class="text-muted">This user hasn't added any education records yet.</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading education:', error);
+                document.getElementById('education-content').innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Error loading education
+                    </div>
+                `;
+            }
+        }
+
+        function getStatusBadgeColor(status) {
+            const statusColors = {
+                'submitted': 'primary',
+                'under_review': 'warning',
+                'shortlisted': 'info',
+                'interview': 'success',
+                'successful': 'success',
+                'unsuccessful': 'danger'
+            };
+            return statusColors[status] || 'secondary';
+        }
+
+        // Placeholder functions for actions
+        function downloadDocument(docId) {
+            showToast('Info', 'Download functionality would be implemented here', 'info');
+        }
+
+        function viewApplication(appId) {
+            showToast('Info', 'View application functionality would be implemented here', 'info');
+        }
+
+        async function openEditUserModal(userId) {
+            try {
+                const response = await fetch(`/api/admin/users/${userId}/`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const user = data.user;
+                    currentUserId = userId;
+                    
+                    document.getElementById('edit-username').value = user.username;
+                    document.getElementById('edit-email').value = user.email;
+                    document.getElementById('edit-first-name').value = user.first_name || '';
+                    document.getElementById('edit-last-name').value = user.last_name || '';
+                    document.getElementById('edit-user-type').value = user.user_type;
+                    document.getElementById('edit-mobile-phone').value = user.mobile_phone || '';
+                    
+                    const modal = new bootstrap.Modal(document.getElementById('editUserModal'));
+                    modal.show();
+                } else {
+                    showError('Failed to load user data for editing');
+                }
+            } catch (error) {
+                console.error('Error loading user for editing:', error);
+                showError('Error loading user data');
+            }
+        }
+
+        async function updateUser() {
+            if (!currentUserId) return;
+
+            const formData = {
+                username: document.getElementById('edit-username').value,
+                email: document.getElementById('edit-email').value,
+                first_name: document.getElementById('edit-first-name').value,
+                last_name: document.getElementById('edit-last-name').value,
+                user_type: document.getElementById('edit-user-type').value,
+                mobile_phone: document.getElementById('edit-mobile-phone').value
+            };
+
+            try {
+                const response = await fetch(`/api/admin/users/${currentUserId}/update/`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCSRFToken()
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
+                    modal.hide();
+                    loadUsers(); // Refresh the list
+                    showToast('Success', 'User updated successfully', 'success');
+                } else {
+                    showError(data.error || 'Failed to update user');
+                }
+            } catch (error) {
+                console.error('Error updating user:', error);
+                showError('Error updating user');
+            }
+        }
+
+        function openDeleteUserModal(userId, username) {
+            currentUserId = userId;
+            const modal = new bootstrap.Modal(document.getElementById('deleteUserModal'));
+            modal.show();
+        }
+
+        async function deleteUser() {
+            if (!currentUserId) return;
+
+            try {
+                const response = await fetch(`/api/admin/users/${currentUserId}/delete/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': getCSRFToken()
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('deleteUserModal'));
+                    modal.hide();
+                    loadUsers(); // Refresh the list
+                    showToast('Success', 'User deleted successfully', 'success');
+                } else {
+                    showError(data.error || 'Failed to delete user');
+                }
+            } catch (error) {
+                console.error('Error deleting user:', error);
+                showError('Error deleting user');
+            }
+        }
+
+        function updatePagination(totalPages) {
+            const paginationDiv = document.getElementById('pagination');
+            
+            if (totalPages <= 1) {
+                paginationDiv.classList.add('d-none');
+                return;
+            }
+
+            paginationDiv.classList.remove('d-none');
+            
+            let paginationHTML = `
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <button onclick="changePage(${currentPage - 1})" 
+                                ${currentPage === 1 ? 'disabled' : ''}
+                                class="btn btn-outline-primary btn-sm ${currentPage === 1 ? 'disabled' : ''}">
+                            <i class="fas fa-chevron-left me-1"></i>Previous
+                        </button>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <span class="me-3 text-muted">Page ${currentPage} of ${totalPages}</span>
+                        <div class="btn-group">
+                            ${Array.from({length: totalPages}, (_, i) => i + 1).map(page => `
+                                <button onclick="changePage(${page})" 
+                                        class="btn btn-sm ${currentPage === page ? 'btn-primary' : 'btn-outline-primary'}">
+                                    ${page}
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <div>
+                        <button onclick="changePage(${currentPage + 1})" 
+                                ${currentPage === totalPages ? 'disabled' : ''}
+                                class="btn btn-outline-primary btn-sm ${currentPage === totalPages ? 'disabled' : ''}">
+                            Next<i class="fas fa-chevron-right ms-1"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            paginationDiv.innerHTML = paginationHTML;
+        }
+
+        function changePage(page) {
+            currentPage = page;
+            loadUsers();
+        }
+
+        function showLoadingState() {
+            document.getElementById('loading-state').classList.remove('d-none');
+            document.getElementById('empty-state').classList.add('d-none');
+            document.getElementById('users-table-body').innerHTML = '';
+            document.getElementById('pagination').classList.add('d-none');
+        }
+
+        function showToast(title, message, type = 'info') {
+            // Create toast container if it doesn't exist
+            let toastContainer = document.getElementById('toastContainer');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.id = 'toastContainer';
+                toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
+                toastContainer.style.zIndex = '9999';
+                document.body.appendChild(toastContainer);
+            }
+            
+            const toastId = 'toast-' + Date.now();
+            const bgColor = type === 'success' ? 'bg-success' : type === 'error' ? 'bg-danger' : 'bg-info';
+            
+            const toastHTML = `
+                <div id="${toastId}" class="toast align-items-center text-white ${bgColor} border-0" role="alert">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <strong>${title}</strong><br>${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            `;
+            
+            toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+            
+            const toastElement = document.getElementById(toastId);
+            const toast = new bootstrap.Toast(toastElement, { delay: 5000 });
+            toast.show();
+            
+            // Remove toast from DOM after it's hidden
+            toastElement.addEventListener('hidden.bs.toast', function () {
+                toastElement.remove();
+            });
+        }
+
+        function showError(message) {
+            showToast('Error', message, 'error');
+        }
+
+        function getCSRFToken() {
+            const name = 'csrftoken';
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function escapeHtml(unsafe) {
+            if (unsafe === null || unsafe === undefined) return '';
+            return unsafe
+                .toString()
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // Auto-refresh users every 30 seconds
+        setInterval(loadUsers, 30000);
+    </script>
+
+  <script src="/static/hiring/js/notifications-global.js" defer></script>
+</body>
+</html>

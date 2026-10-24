@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Details - JobPortal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+       
+    <style>
+        .header-area {
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+        }
+        .main-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 0;
+        }
+        .logo img {
+            max-height: 40px;
+        }
+        .job-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 100px 0 60px 0;
+            margin-top: 70px;
+        }
+        .job-card {
+            border: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+        .company-logo {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            background: white;
+            padding: 5px;
+            border: 1px solid #dee2e6;
+        }
+        .default-logo {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #667eea;
+            border: 1px solid #dee2e6;
+        }
+        .back-button {
+            color: white;
+            text-decoration: none;
+            margin-bottom: 20px;
+            display: inline-block;
+            font-size: 16px;
+        }
+        .back-button:hover {
+            color: #f8f9fa;
+            text-decoration: underline;
+        }
+        .nav-icons {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+        .nav-icons a {
+            font-size: 20px;
+            color: #555;
+            transition: 0.2s;
+            text-decoration: none;
+        }
+        .nav-icons a:hover {
+            color: #ff589e;
+            transform: translateY(-2px);
+        }
+        .profile-dropdown {
+            position: relative;
+        }
+        .profile-avatar-small {
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, #ff589e 0%, #ff136f 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .profile-menu {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            width: 220px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            padding: 10px 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.25s ease;
+            z-index: 1000;
+        }
+        .profile-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0px);
+        }
+        .profile-menu a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            color: #444;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+        .profile-menu a:hover {
+            background: #f5f7fa;
+            color: #ff589e;
+        }
+        .profile-divider {
+            height: 1px;
+            background: #eee;
+            margin: 8px 0;
+        }
+        .three-dot-menu {
+            position: relative;
+            cursor: pointer;
+        }
+        .three-dot-menu i {
+            font-size: 22px;
+            color: #555;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        .three-dot-menu i:hover {
+            background-color: #f0f0f0;
+            color: #ff589e;
+        }
+        .three-dot-menu .menu-content {
+            position: absolute;
+            right: 0;
+            top: 45px;
+            background: #fff;
+            width: 200px;
+            padding: 8px 0;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        .three-dot-menu:hover .menu-content {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .three-dot-menu .menu-content a {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            text-decoration: none;
+            color: #444;
+            transition: all 0.2s ease;
+            border: none;
+            background: none;
+            width: 100%;
+        }
+        .three-dot-menu .menu-content a:hover {
+            background: rgba(255, 88, 158, 0.1);
+            color: #ff589e;
+        }
+        .three-dot-menu .menu-content a i {
+            margin-right: 10px;
+            font-size: 16px;
+            width: 16px;
+            text-align: center;
+            padding: 0;
+            background: none;
+        }
+        .mobile-bottom-nav {
+            display: none;
+        }
+        @media (max-width: 991px) {
+            .mobile-bottom-nav {
+                display: flex;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 65px;
+                background: white;
+                border-top: 1px solid #ddd;
+                justify-content: space-around;
+                align-items: center;
+                z-index: 9999;
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+            .mobile-bottom-nav a {
+                text-align: center;
+                color: #333;
+                font-size: 14px;
+                text-decoration: none;
+                flex: 1;
+                padding: 10px 5px;
+            }
+            .mobile-bottom-nav i {
+                font-size: 20px;
+                display: block;
+                margin-bottom: 3px;
+            }
+            .mobile-bottom-nav a.active {
+                color: #ff589e;
+            }
+            .job-header {
+                padding: 80px 0 40px 0;
+                margin-top: 60px;
+            }
+        }
+        body {
+            background-color: #f8f9fa;
+            padding-bottom: 80px;
+        }
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .custom-alert {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            z-index: 9999;
+            min-width: 300px;
+            max-width: 500px;
+        }
+        .job-status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        .status-published {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+        }
+        .status-draft {
+            background: rgba(108, 117, 125, 0.1);
+            color: #6c757d;
+        }
+        .status-closed {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    {% load api_utils %}
+    {% api_js_functions %}
+    <!-- Top Navigation -->
+    <header class="header-area">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <nav class="main-nav">
+                        <a href="/" class="logo">
+                            <img src="/static/images/logo.png" alt="JobPortal" style="max-height: 40px;">
+                        </a>
+
+                        <!-- Top Right Icons -->
+                        <ul class="nav-icons">
+                            <li>
+                                <a href="/" title="Home">
+                                    <i class="fas fa-home"></i>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="/#job-listings" title="Browse Jobs">
+                                    <i class="fas fa-search"></i>
+                                </a>
+                            </li>
+
+                            {% if user.is_authenticated %}
+                            <li>
+                                <a href="/dashboard" title="Dashboard">
+                                    <i class="fas fa-th-large"></i>
+                                </a>
+                            </li>
+
+                            <!-- Profile Dropdown Icon -->
+                            <li class="profile-dropdown">
+                                <div class="profile-avatar-small" onclick="toggleProfileDropdown()">
+                                    {{ user.username|first|upper }}
+                                </div>
+
+                                <div class="profile-menu" id="profileMenu">
+                                    <a href="/profile/"><i class="fas fa-user"></i> Profile</a>
+                                    <a href="/applications/"><i class="fas fa-file-alt"></i> Applications</a>
+                                    <div class="profile-divider"></div>
+
+                                    <a href="/api/alerts/"><i class="fas fa-bell"></i> Alerts</a>
+                                    <a href="/preferences/"><i class="fas fa-cog"></i> Preferences</a>
+
+                                    <div class="profile-divider"></div>
+
+                                    <a href="/logout/"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                                </div>
+                            </li>
+                            <li>
+                              <a href="/messaging/">
+                                <i class="fas fa-comment-dots"></i>
+                              </a>
+                            </li>  
+                            <li>
+                                <div class="three-dot-menu">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                    <div class="menu-content">
+                                        <a href="/profile/skills/"><i class="fas fa-cogs"></i> Skills</a>
+                                        <a href="/profile/employment/"><i class="fas fa-briefcase"></i> Employment</a>
+                                        <a href="/profile/education/"><i class="fas fa-graduation-cap"></i> Education</a>
+                                        <a href="/profile/documents/"><i class="fas fa-file-upload"></i> Documents</a>
+                                    </div>
+                                </div>
+                            </li>
+
+                            {% else %}
+                            <li>
+                                <a href="#" onclick="showLogin()" title="Login">
+                                    <i class="fas fa-sign-in-alt"></i>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="#" onclick="showSignup()" title="Sign Up">
+                                    <i class="fas fa-user-plus"></i>
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Job Details Section -->
+    <div class="job-header">
+        <div class="container">
+            <a href="/" class="back-button">
+                <i class="fas fa-arrow-left"></i> Back to Jobs
+            </a>
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 id="job-title" class="display-5 mb-3">
+                        <div class="loading-spinner"></div> Loading Job Title...
+                        <span id="job-status-badge" class="job-status-badge" style="display: none;"></span>
+                    </h1>
+                    <h4 id="company-name" class="mb-2">
+                        <div class="loading-spinner"></div> Loading Company...
+                    </h4>
+                    <p id="job-location" class="mb-1">
+                        <i class="fas fa-map-marker-alt"></i> 
+                        <span><div class="loading-spinner"></div> Loading location...</span>
+                    </p>
+                    <p id="job-type" class="mb-1">
+                        <i class="fas fa-briefcase"></i> 
+                        <span><div class="loading-spinner"></div> Loading job type...</span>
+                    </p>
+                    <p id="apply-by" class="mb-0">
+                        <i class="fas fa-calendar"></i> Apply by: 
+                        <span><div class="loading-spinner"></div> Loading deadline...</span>
+                    </p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <div id="logo-container">
+                        <img id="company-logo" src="" alt="Company Logo" class="company-logo mb-3" style="display: none;">
+                        <div id="default-logo" class="default-logo mb-3" style="display: none;">
+                            <i class="fas fa-building"></i>
+                        </div>
+                    </div>
+                    <div id="apply-section">
+                        <button id="apply-btn" class="btn btn-light btn-lg" onclick="applyForJob()" disabled>
+                            <i class="fas fa-paper-plane"></i> Apply Now
+                        </button>
+                        <div id="status-message" style="display: none;"></div>
+                        <p id="applied-message" class="text-light mt-2" style="display: none;">
+                            <i class="fas fa-check-circle"></i> You have applied for this position
+                        </p>
+                        <p id="login-required" class="text-light mt-2" style="display: none;">
+                            <i class="fas fa-info-circle"></i> Please login to apply for this job
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Job Content -->
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- Position Summary -->
+                <div class="card job-card mb-4">
+                    <div class="card-body">
+                        <h3 class="card-title">Position Summary</h3>
+                        <div id="position-summary" class="card-text">
+                            <div class="text-center py-3">
+                                <div class="loading-spinner"></div>
+                                <p class="text-muted mt-2">Loading position summary...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Job Description -->
+                <div class="card job-card mb-4">
+                    <div class="card-body">
+                        <h3 class="card-title">Job Description</h3>
+                        <div id="job-description" class="card-text">
+                            <div class="text-center py-3">
+                                <div class="loading-spinner"></div>
+                                <p class="text-muted mt-2">Loading job description...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Requirements -->
+                <div class="card job-card mb-4">
+                    <div class="card-body">
+                        <h3 class="card-title">Requirements</h3>
+                        <div id="requirements">
+                            <h5>Experience Requirements</h5>
+                            <div id="experience-requirements" class="mb-3">
+                                <div class="loading-spinner"></div> Loading experience requirements...
+                            </div>
+                            
+                            <h5>Education Requirements</h5>
+                            <div id="education-requirements" class="mb-3">
+                                <div class="loading-spinner"></div> Loading education requirements...
+                            </div>
+                            
+                            <h5>Skills Requirements</h5>
+                            <div id="skills-requirements" class="mb-3">
+                                <div class="loading-spinner"></div> Loading skills requirements...
+                            </div>
+                            
+                            <h5>Knowledge Requirements</h5>
+                            <div id="knowledge-requirements" class="mb-3">
+                                <div class="loading-spinner"></div> Loading knowledge requirements...
+                            </div>
+
+                            <h5>Competencies Requirements</h5>
+                            <div id="competencies-requirements">
+                                <div class="loading-spinner"></div> Loading competencies requirements...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <!-- Job Details Sidebar -->
+                <div class="card job-card mb-4">
+                    <div class="card-body">
+                        <h4 class="card-title">Job Details</h4>
+                        <div class="mb-3">
+                            <strong><i class="fas fa-industry"></i> Industry:</strong>
+                            <span id="job-industry"><div class="loading-spinner"></div> Loading...</span>
+                        </div>
+                        <div class="mb-3">
+                            <strong><i class="fas fa-tags"></i> Category:</strong>
+                            <span id="job-category"><div class="loading-spinner"></div> Loading...</span>
+                        </div>
+                        <div class="mb-3">
+                            <strong><i class="fas fa-file-contract"></i> Contract Type:</strong>
+                            <span id="job-contract"><div class="loading-spinner"></div> Loading...</span>
+                        </div>
+                        <div class="mb-3">
+                            <strong><i class="fas fa-user-tie"></i> EE Position:</strong>
+                            <span id="job-ee-position"><div class="loading-spinner"></div> Loading...</span>
+                        </div>
+                        <div>
+                            <strong><i class="fas fa-clock"></i> Posted:</strong>
+                            <span id="job-posted"><div class="loading-spinner"></div> Loading...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Company Info -->
+                <div class="card job-card">
+                    <div class="card-body">
+                        <h4 class="card-title">About the Company</h4>
+                        <div id="company-description">
+                            <div class="text-center py-3">
+                                <div class="loading-spinner"></div>
+                                <p class="text-muted mt-2">Loading company information...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Navbar -->
+    <div class="mobile-bottom-nav">
+        <a href="/"><i class="fas fa-home"></i>Home</a>
+        <a href="/dashboard"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
+        <a href="/applications/" class="active"><i class="fas fa-file-alt"></i>Jobs</a>
+        <a href="/profile/"><i class="fas fa-user"></i>Profile</a>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Login to Apply</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label class="form-label">Username</label>
+                            <input type="text" class="form-control" name="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-control" name="password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Login</button>
+                    </form>
+                    <div class="text-center mt-3">
+                        <p>Don't have an account? <a href="#" onclick="showSignup()">Sign up here</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ========== JOB ID EXTRACTION ==========
+        function getJobIdFromUrl() {
+            const path = window.location.pathname;
+            console.log('Full URL path:', path);
+            
+            const pathSegments = path.replace(/\/$/, '').split('/');
+            console.log('Path segments:', pathSegments);
+            
+            const jobId = pathSegments[pathSegments.length - 1];
+            console.log('Extracted job ID:', jobId);
+            
+            if (!jobId || jobId === 'jobs') {
+                console.error('No valid job ID found in URL');
+                return null;
+            }
+            
+            return jobId;
+        }
+
+        const jobId = getJobIdFromUrl();
+        console.log('Final job ID to use:', jobId);
+
+        // ========== USER AUTHENTICATION CHECK ==========
+        const userIsAuthenticated = {{ user.is_authenticated|yesno:"true,false" }};
+        console.log('User authenticated:', userIsAuthenticated);
+
+        // ========== MAIN FUNCTIONS ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM fully loaded');
+            
+            if (!jobId) {
+                showError('No job ID found in URL. Please check the link and try again.');
+                return;
+            }
+            loadJobDetails();
+        });
+
+        function loadJobDetails() {
+            console.log('Loading job details for ID:', jobId);
+            
+            if (!jobId) {
+                showError('No job ID specified');
+                return;
+            }
+
+            fetch(`/api/jobs/${jobId}/`)
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Job data received:', data);
+                    if (data.success) {
+                        displayJobDetails(data.job);
+                        updateApplyButton(data.has_applied, data.job.status);
+                    } else {
+                        console.error('API returned error:', data.error);
+                        showError(data.error || 'Job not found or no longer available.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading job details:', error);
+                    showError('Failed to load job details. Please check the job ID and try again. Error: ' + error.message);
+                });
+        }
+
+        function displayJobDetails(job) {
+            console.log('Displaying job details:', job);
+            
+            try {
+                // Basic job info
+                const titleEl = document.getElementById('job-title');
+                if (titleEl) {
+                    titleEl.innerHTML = escapeHtml(job.title || 'No title available');
+                }
+                
+                const companyNameEl = document.getElementById('company-name');
+                if (companyNameEl) {
+                    companyNameEl.innerHTML = escapeHtml(job.company_name || 'Company not specified');
+                }
+                
+                const jobLocationEl = document.getElementById('job-location');
+                if (jobLocationEl) {
+                    jobLocationEl.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${escapeHtml(job.location || 'Location not specified')}`;
+                }
+                
+                const jobTypeEl = document.getElementById('job-type');
+                if (jobTypeEl) {
+                    jobTypeEl.innerHTML = `<i class="fas fa-briefcase"></i> ${escapeHtml(job.contract_type || 'Not specified')}`;
+                }
+                
+                const applyByEl = document.getElementById('apply-by');
+                if (applyByEl) {
+                    if (job.apply_by) {
+                        const applyDate = new Date(job.apply_by);
+                        applyByEl.innerHTML = `<i class="fas fa-calendar"></i> Apply by: ${applyDate.toLocaleDateString()}`;
+                    } else {
+                        applyByEl.innerHTML = '<i class="fas fa-calendar"></i> Apply by: Not specified';
+                    }
+                }
+                
+                // Company logo - handle null/empty logo
+                const logoImg = document.getElementById('company-logo');
+                const defaultLogo = document.getElementById('default-logo');
+                
+                if (logoImg && defaultLogo) {
+                    if (job.company_logo && job.company_logo.trim() !== '') {
+                        // If it's a relative path, ensure it starts with /
+                        let logoUrl = job.company_logo;
+                        if (logoUrl && !logoUrl.startsWith('http') && !logoUrl.startsWith('/')) {
+                            logoUrl = '/' + logoUrl;
+                        }
+                        logoImg.src = logoUrl;
+                        logoImg.onerror = function() {
+                            // If image fails to load, show default logo
+                            logoImg.style.display = 'none';
+                            defaultLogo.style.display = 'flex';
+                        };
+                        logoImg.style.display = 'block';
+                        defaultLogo.style.display = 'none';
+                    } else {
+                        // No logo provided, show default
+                        logoImg.style.display = 'none';
+                        defaultLogo.style.display = 'flex';
+                    }
+                }
+
+                // Show job status badge
+                if (job.status) {
+                    const badge = document.getElementById('job-status-badge');
+                    if (badge) {
+                        let statusText = '';
+                        let statusClass = '';
+                        
+                        switch(job.status) {
+                            case 'published':
+                                statusText = 'Open';
+                                statusClass = 'status-published';
+                                break;
+                            case 'draft':
+                                statusText = 'Draft';
+                                statusClass = 'status-draft';
+                                break;
+                            case 'closed':
+                                statusText = 'Closed';
+                                statusClass = 'status-closed';
+                                break;
+                            default:
+                                statusText = job.status.charAt(0).toUpperCase() + job.status.slice(1);
+                                statusClass = 'status-draft';
+                        }
+                        
+                        badge.textContent = statusText;
+                        badge.className = 'job-status-badge ' + statusClass;
+                        badge.style.display = 'inline-block';
+                    }
+                }
+
+                // Job content with fallbacks
+                const positionSummaryEl = document.getElementById('position-summary');
+                if (positionSummaryEl) {
+                    positionSummaryEl.innerHTML = job.position_summary ? 
+                        `<p>${escapeHtml(job.position_summary)}</p>` : '<p class="text-muted">No position summary available.</p>';
+                }
+                
+                const jobDescriptionEl = document.getElementById('job-description');
+                if (jobDescriptionEl) {
+                    jobDescriptionEl.innerHTML = job.job_description ? 
+                        `<p>${escapeHtml(job.job_description)}</p>` : '<p class="text-muted">No detailed description available.</p>';
+                }
+
+                // Requirements with fallbacks
+                const experienceReqEl = document.getElementById('experience-requirements');
+                if (experienceReqEl) {
+                    experienceReqEl.innerHTML = job.experience_requirements ? 
+                        `<p>${escapeHtml(job.experience_requirements)}</p>` : '<p class="text-muted">Not specified</p>';
+                }
+                
+                const educationReqEl = document.getElementById('education-requirements');
+                if (educationReqEl) {
+                    educationReqEl.innerHTML = job.education_requirements ? 
+                        `<p>${escapeHtml(job.education_requirements)}</p>` : '<p class="text-muted">Not specified</p>';
+                }
+                
+                const skillsReqEl = document.getElementById('skills-requirements');
+                if (skillsReqEl) {
+                    skillsReqEl.innerHTML = job.skills_requirements ? 
+                        `<p>${escapeHtml(job.skills_requirements)}</p>` : '<p class="text-muted">Not specified</p>';
+                }
+                
+                const knowledgeReqEl = document.getElementById('knowledge-requirements');
+                if (knowledgeReqEl) {
+                    knowledgeReqEl.innerHTML = job.knowledge_requirements ? 
+                        `<p>${escapeHtml(job.knowledge_requirements)}</p>` : '<p class="text-muted">Not specified</p>';
+                }
+
+                const competenciesReqEl = document.getElementById('competencies-requirements');
+                if (competenciesReqEl) {
+                    competenciesReqEl.innerHTML = job.competencies_requirements ? 
+                        `<p>${escapeHtml(job.competencies_requirements)}</p>` : '<p class="text-muted">Not specified</p>';
+                }
+
+                // Sidebar details with fallbacks
+                const industryEl = document.getElementById('job-industry');
+                if (industryEl) {
+                    industryEl.textContent = job.industry || 'Not specified';
+                }
+                
+                const categoryEl = document.getElementById('job-category');
+                if (categoryEl) {
+                    categoryEl.textContent = job.job_category || 'Not specified';
+                }
+                
+                const contractEl = document.getElementById('job-contract');
+                if (contractEl) {
+                    contractEl.textContent = job.contract_type || 'Not specified';
+                }
+                
+                const eePositionEl = document.getElementById('job-ee-position');
+                if (eePositionEl) {
+                    eePositionEl.textContent = job.ee_position ? 'Yes' : 'No';
+                }
+                
+                // Format posted date
+                const postedEl = document.getElementById('job-posted');
+                if (postedEl) {
+                    if (job.created_at) {
+                        const postedDate = new Date(job.created_at);
+                        postedEl.textContent = postedDate.toLocaleDateString();
+                    } else {
+                        postedEl.textContent = 'Not specified';
+                    }
+                }
+                
+                // Company description
+                const companyDescEl = document.getElementById('company-description');
+                if (companyDescEl) {
+                    companyDescEl.innerHTML = job.company_description ? 
+                        `<p>${escapeHtml(job.company_description)}</p>` : '<p class="text-muted">No company description available.</p>';
+                }
+                
+                console.log('Job details displayed successfully');
+                
+            } catch (error) {
+                console.error('Error displaying job details:', error);
+                showError('Error displaying job details: ' + error.message);
+            }
+        }
+
+        function updateApplyButton(hasApplied, jobStatus) {
+            const applyBtn = document.getElementById('apply-btn');
+            const appliedMessage = document.getElementById('applied-message');
+            const loginRequired = document.getElementById('login-required');
+            const statusMessage = document.getElementById('status-message');
+            
+            if (!applyBtn || !appliedMessage || !loginRequired || !statusMessage) {
+                console.error('One or more apply button elements not found');
+                return;
+            }
+            
+            // Clear previous messages
+            applyBtn.style.display = 'block';
+            appliedMessage.style.display = 'none';
+            loginRequired.style.display = 'none';
+            statusMessage.style.display = 'none';
+            statusMessage.innerHTML = '';
+            
+            // Check if job is published and accepting applications
+            if (jobStatus && jobStatus !== 'published') {
+                applyBtn.style.display = 'none';
+                let message = '';
+                let messageClass = '';
+                
+                switch(jobStatus) {
+                    case 'draft':
+                        message = '<i class="fas fa-edit"></i> This job is in draft mode and not accepting applications.';
+                        messageClass = 'alert-warning';
+                        break;
+                    case 'closed':
+                        message = '<i class="fas fa-ban"></i> This job is closed and no longer accepting applications.';
+                        messageClass = 'alert-danger';
+                        break;
+                    default:
+                        message = '<i class="fas fa-info-circle"></i> This job is not currently accepting applications.';
+                        messageClass = 'alert-info';
+                }
+                
+                statusMessage.innerHTML = `<div class="alert ${messageClass}">${message}</div>`;
+                statusMessage.style.display = 'block';
+                return;
+            }
+            
+            if (!userIsAuthenticated) {
+                applyBtn.style.display = 'none';
+                loginRequired.style.display = 'block';
+            } else if (hasApplied) {
+                applyBtn.style.display = 'none';
+                appliedMessage.style.display = 'block';
+            } else {
+                applyBtn.disabled = false;
+                applyBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Apply Now';
+            }
+        }
+
+        function applyForJob() {
+            if (!userIsAuthenticated) {
+                showLogin();
+                return;
+            }
+
+            if (!confirm('Are you sure you want to apply for this position?')) return;
+
+            const applyBtn = document.getElementById('apply-btn');
+            if (!applyBtn) return;
+            
+            applyBtn.disabled = true;
+            applyBtn.innerHTML = '<div class="loading-spinner"></div> Applying...';
+
+            fetch(`/api/jobs/${jobId}/apply/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken()
+                },
+                body: JSON.stringify({
+                    cover_letter: "I am very interested in this position and believe my skills and experience make me a strong candidate."
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Application response:', data);
+                if (data.success) {
+                    showSuccess('Application submitted successfully!');
+                    applyBtn.style.display = 'none';
+                    const appliedMessage = document.getElementById('applied-message');
+                    if (appliedMessage) {
+                        appliedMessage.style.display = 'block';
+                    }
+                } else {
+                    showError('Application failed: ' + (data.error || 'Please try again'));
+                    applyBtn.disabled = false;
+                    applyBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Apply Now';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showError('Application failed. Please try again.');
+                applyBtn.disabled = false;
+                applyBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Apply Now';
+            });
+        }
+
+        // ========== UTILITY FUNCTIONS ==========
+        function showError(message) {
+            // Remove existing alerts
+            document.querySelectorAll('.custom-alert').forEach(alert => alert.remove());
+            
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'alert alert-danger alert-dismissible fade show custom-alert';
+            errorDiv.innerHTML = `
+                <strong>Error:</strong> ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(errorDiv);
+            
+            setTimeout(() => {
+                if (errorDiv.parentNode) {
+                    errorDiv.remove();
+                }
+            }, 8000);
+        }
+
+        function showSuccess(message) {
+            // Remove existing alerts
+            document.querySelectorAll('.custom-alert').forEach(alert => alert.remove());
+            
+            const successDiv = document.createElement('div');
+            successDiv.className = 'alert alert-success alert-dismissible fade show custom-alert';
+            successDiv.innerHTML = `
+                <strong>Success:</strong> ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(successDiv);
+            
+            setTimeout(() => {
+                if (successDiv.parentNode) {
+                    successDiv.remove();
+                }
+            }, 5000);
+        }
+
+        function showLogin() {
+            const modalElement = document.getElementById('loginModal');
+            if (modalElement) {
+                const modal = new bootstrap.Modal(modalElement);
+                modal.show();
+            }
+        }
+
+        function showSignup() {
+            window.location.href = '/?showSignup=true';
+        }
+
+        function getCSRFToken() {
+            const name = 'csrftoken';
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function escapeHtml(unsafe) {
+            if (unsafe === null || unsafe === undefined) return '';
+            return unsafe
+                .toString()
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function toggleProfileDropdown() {
+            const profileMenu = document.getElementById("profileMenu");
+            if (profileMenu) {
+                profileMenu.classList.toggle("show");
+            }
+        }
+
+        // ========== EVENT LISTENERS ==========
+        document.addEventListener("click", function(e) {
+            const menu = document.getElementById("profileMenu");
+            const avatar = document.querySelector(".profile-avatar-small");
+            const threeDotMenu = document.querySelector(".three-dot-menu");
+
+            if (avatar && menu && !avatar.contains(e.target) && !menu.contains(e.target)) {
+                menu.classList.remove("show");
+            }
+        });
+
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) {
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                const data = Object.fromEntries(formData);
+
+                fetch('/api/auth/login/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCSRFToken()
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+                        if (modal) {
+                            modal.hide();
+                        }
+                        location.reload();
+                    } else {
+                        showError('Login failed: ' + (data.error || 'Please check your credentials'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showError('Login failed. Please try again.');
+                });
+            });
+        }
+
+        console.log('Job details page loaded successfully');
+        console.log('Job ID:', jobId);
+        console.log('User authenticated:', userIsAuthenticated);
+    </script>
+
+  <script src="/static/hiring/js/notifications-global.js" defer></script>
+</body>
+</html>

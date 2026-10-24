@@ -1,0 +1,1540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Admin Portal - Hiring Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================================
+           DESIGN TOKENS — matches the OppoGlobe design system
+           ============================================================ */
+        :root{
+            --ink:#16241F;
+            --ink-soft:#5B6660;
+            --ink-faint:#8B958F;
+            --paper:#F6F7F5;
+            --surface:#FFFFFF;
+            --line:#E4E7E2;
+            --line-soft:#EEF0ED;
+
+            --jade:#1F6F5C;
+            --jade-deep:#154F41;
+            --jade-wash:#E7F1EC;
+            --coral:#FF6B4A;
+            --coral-deep:#E24E2F;
+            --coral-wash:#FFEAE3;
+            --gold:#E8A93B;
+            --gold-wash:#FBF0DA;
+            --plum:#7A5AA3;
+            --plum-wash:#F1EBF9;
+            --sky:#2E8BC0;
+            --sky-wash:#E7F3FA;
+            --danger:#D64545;
+            --success:#2C9A5B;
+
+            --radius-sm:12px;
+            --radius-md:16px;
+            --radius-pill:999px;
+            --shadow-sm:0 1px 3px rgba(22,36,31,.06), 0 1px 2px rgba(22,36,31,.04);
+            --shadow-md:0 8px 24px rgba(22,36,31,.08);
+            --shadow-lg:0 20px 48px rgba(22,36,31,.16);
+
+            --font-display:'Fraunces', Georgia, serif;
+            --font-body:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --ease:cubic-bezier(.34,1.2,.4,1);
+        }
+
+        * { box-sizing:border-box; }
+        html{ overflow-x:hidden; }
+        body {
+            font-family: var(--font-body);
+            background-color: var(--paper);
+            color: var(--ink);
+            padding-top: 80px;
+            padding-bottom: 90px;
+            overflow-x:hidden;
+        }
+        h1,h2,h3,h4,h5,h6 { font-family: var(--font-display); letter-spacing:-.01em; }
+
+        /* ===== HEADER ===== */
+        .header-area {
+            background-color: var(--surface);
+            border-bottom: 1px solid var(--line);
+            box-shadow: none;
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 999;
+            height:80px;
+            display:flex;
+            align-items:center;
+        }
+        .main-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width:100%;
+        }
+        .logo img { max-height: 38px; }
+
+        /* Desktop Sidebar */
+        .desktop-sidebar {
+            width: 250px;
+            background: var(--surface);
+            height: calc(100vh - 80px);
+            position: fixed;
+            top: 80px;
+            left: 0;
+            padding: 18px 14px;
+            border-right: 1px solid var(--line);
+            box-shadow: none;
+            overflow-y: auto;
+        }
+        .desktop-sidebar a {
+            display: block;
+            padding: 11px 12px;
+            color: var(--ink-soft);
+            text-decoration: none;
+            margin-bottom: 4px;
+            border-radius: var(--radius-sm);
+            font-weight: 500;
+            font-size:14px;
+            transition: all 0.2s;
+        }
+        .desktop-sidebar a i { width:20px; text-align:center; margin-right:4px; color:var(--ink-faint); }
+        .desktop-sidebar a:hover,
+        .desktop-sidebar a.active {
+            background-color: var(--jade-wash);
+            color: var(--jade-deep);
+        }
+        .desktop-sidebar a:hover i, .desktop-sidebar a.active i { color: var(--jade-deep); }
+
+        @media (max-width: 991px) { .desktop-sidebar { display: none; } }
+        @media (min-width: 992px) { body { padding-left: 270px !important; } }
+
+        /* Mobile Bottom Navbar */
+        .mobile-bottom-nav { display: none; }
+        @media (max-width: 991px) {
+            .mobile-bottom-nav {
+                display: flex;
+                position: fixed;
+                bottom: 0; left: 0; right: 0;
+                height: 65px;
+                background: var(--surface);
+                border-top: 1px solid var(--line);
+                justify-content: space-around;
+                align-items: center;
+                z-index: 900; /* was 9999 — that sat ABOVE modals and blocked their bottom half on phones */
+                padding-bottom: env(safe-area-inset-bottom);
+                box-shadow: 0 -2px 12px rgba(22,36,31,.05);
+            }
+            .mobile-bottom-nav a {
+                text-align: center;
+                color: var(--ink-soft);
+                font-size: 12px;
+                text-decoration: none;
+                flex: 1;
+                padding: 8px 5px;
+            }
+            .mobile-bottom-nav i { font-size: 19px; display: block; margin-bottom: 3px; }
+            .mobile-bottom-nav a.active { color: var(--jade-deep); }
+        }
+        /* Bootstrap adds .modal-open to <body> automatically while any modal is showing.
+           Hiding the bottom nav then guarantees nothing can float on top of a popup
+           and block its content or buttons on small screens. */
+        body.modal-open .mobile-bottom-nav { display: none !important; }
+
+        /* ===== NAV ICONS ===== */
+        .nav-icons { display: flex; list-style: none; gap: 6px; align-items: center; margin: 0; padding: 0; }
+        .nav-icons a {
+            font-size: 18px;
+            color: var(--ink-soft);
+            transition: 0.2s;
+            text-decoration: none;
+            padding: 9px;
+            border-radius: 50%;
+            position: relative;
+            display:flex;
+        }
+        .nav-icons a:hover { color: var(--jade-deep); background-color: var(--jade-wash); }
+
+        .profile-dropdown { position: relative; }
+        .profile-avatar-small {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, var(--coral) 0%, var(--gold) 100%);
+            color: white; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            font-weight: 700; cursor: pointer; font-size:14px;
+        }
+        .profile-menu {
+            position: absolute; top: 50px; right: 0; width: 220px;
+            background: var(--surface); border:1px solid var(--line);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            padding: 6px; opacity: 0; visibility: hidden;
+            transform: translateY(8px); transition: all 0.2s var(--ease);
+            z-index: 1000;
+        }
+        .profile-menu.show { opacity: 1; visibility: visible; transform: translateY(0); }
+        .profile-menu a {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 12px; color: var(--ink); text-decoration: none;
+            transition: 0.15s; font-size: 13.5px; border-radius:10px; margin-bottom:0;
+        }
+        .profile-menu a:hover { background: var(--paper); color: var(--jade-deep); }
+        .profile-divider { height: 1px; background: var(--line-soft); margin: 6px 4px; }
+
+        .three-dot-menu { position: relative; display: inline-block; }
+        .three-dot-menu i {
+            font-size: 18px; color: var(--ink-soft); cursor: pointer;
+            padding: 9px; border-radius: 50%; transition: all 0.2s;
+        }
+        .three-dot-menu i:hover { background-color: var(--jade-wash); color: var(--jade-deep); }
+        .three-dot-menu .menu-content {
+            position: absolute; top: 45px; right: 0; width: 200px;
+            background: var(--surface); border:1px solid var(--line);
+            border-radius: var(--radius-md); box-shadow: var(--shadow-lg);
+            padding: 6px; opacity: 0; visibility: hidden;
+            transform: translateY(8px); transition: all 0.2s var(--ease);
+            z-index: 1000;
+        }
+        .three-dot-menu .menu-content.show { opacity: 1; visibility: visible; transform: translateY(0); }
+        .three-dot-menu .menu-content a {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 12px; color: var(--ink); text-decoration: none;
+            transition: all 0.15s; font-size: 13.5px; border-radius:10px;
+        }
+        .three-dot-menu .menu-content a:hover { background: var(--paper); color: var(--jade-deep); }
+        .three-dot-menu .menu-content a.active { background: var(--jade-wash); color: var(--jade-deep); font-weight: 600; }
+        .three-dot-menu .menu-content a i { font-size: 15px; width: 20px; text-align: center; }
+
+        .nav-badge {
+            position: absolute; top: -4px; right: -4px;
+            background: var(--coral); color: white; border-radius: 50%;
+            width: 17px; height: 17px; font-size: 9px;
+            display: flex; align-items: center; justify-content: center;
+            border:2px solid var(--surface);
+        }
+
+        /* ===== ADMIN PORTAL COMPONENTS ===== */
+        .admin-header {
+            background: linear-gradient(135deg, var(--jade) 0%, var(--jade-deep) 100%);
+            color: white;
+            padding: 34px 28px;
+            border-radius: var(--radius-md);
+            margin-bottom: 24px;
+        }
+        .admin-header .lead { opacity:.9; }
+        .admin-card {
+            border: 1px solid var(--line);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease);
+            margin-bottom: 22px;
+            background: var(--surface);
+        }
+        .admin-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+        .stat-card { text-align: center; padding: 26px 18px; }
+        .stat-card i { font-size: 2.2rem; margin-bottom: 12px; }
+        .stat-card h3 { font-size: 1.9rem; font-weight: 700; margin: 8px 0; font-family:var(--font-display); }
+        .module-card { padding: 24px; text-align: center; height: 100%; }
+        .module-icon {
+            width: 64px; height: 64px; border-radius: var(--radius-sm);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 16px; font-size: 1.6rem; color:#fff;
+        }
+        .icon-primary { background: linear-gradient(135deg, var(--sky) 0%, #1c6a94 100%); }
+        .icon-success { background: linear-gradient(135deg, var(--success) 0%, #1e7a48 100%); }
+        .icon-warning { background: linear-gradient(135deg, var(--gold) 0%, #c98a1f 100%); }
+        .icon-info    { background: linear-gradient(135deg, #4fb3d9 0%, var(--sky) 100%); }
+        .icon-danger  { background: linear-gradient(135deg, var(--danger) 0%, #a83232 100%); }
+        .icon-purple  { background: linear-gradient(135deg, var(--plum) 0%, #5c4180 100%); }
+        .icon-pink    { background: linear-gradient(135deg, var(--coral) 0%, var(--coral-deep) 100%); }
+        .icon-teal    { background: linear-gradient(135deg, var(--jade) 0%, var(--jade-deep) 100%); }
+        .icon-orange  { background: linear-gradient(135deg, #e2801a 0%, #b8630f 100%); }
+        .icon-indigo  { background: linear-gradient(135deg, #6a5ab5 0%, var(--plum) 100%); }
+        .icon-cyan    { background: linear-gradient(135deg, #35b7c9 0%, #1c8a9a 100%); }
+
+        .btn-admin {
+            background: linear-gradient(135deg, var(--jade) 0%, var(--jade-deep) 100%);
+            color: white; border: none; border-radius: var(--radius-pill);
+            padding: 9px 20px; transition: all 0.2s; font-weight:600; font-size:13.5px;
+        }
+        .btn-admin:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(31,111,92,.3); color: white; }
+
+        .recent-activity { max-height: 420px; overflow-y: auto; }
+        .activity-item {
+            padding: 14px 16px;
+            border-left: 3px solid transparent;
+            border-bottom: 1px solid var(--line-soft);
+            transition: all 0.2s ease;
+        }
+        .activity-item:hover { border-left-color: var(--jade); background-color: var(--paper); }
+        .activity-item:last-child { border-bottom: none; }
+        .activity-item h6 { font-size:14px; font-weight:700; }
+
+        .growth-indicator { font-size: 0.8rem; margin-top: 4px; }
+        .growth-positive { color: var(--success); }
+        .growth-negative { color: var(--danger); }
+        .bg-purple { background-color: var(--plum) !important; }
+
+        .toast-container { z-index: 1080; }
+
+        .job-status-published { border-left: 4px solid var(--success); }
+        .job-status-draft { border-left: 4px solid var(--ink-faint); }
+        .job-status-closed { border-left: 4px solid var(--danger); }
+        .job-status-under_review { border-left: 4px solid var(--gold); }
+        .job-actions { opacity: 1; }
+        @media (min-width:768px){ .job-actions{ opacity:0; transition:opacity .2s; } .job-item:hover .job-actions{ opacity:1; } }
+
+        /* ===== FORM SECTIONS ===== */
+        .form-section {
+            background: var(--surface);
+            border-radius: var(--radius-md);
+            padding: 22px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--line);
+        }
+        .form-section h5 {
+            color: var(--ink);
+            margin-bottom: 18px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--line-soft);
+            font-size:16px;
+        }
+        .form-section h5 i { color: var(--coral); }
+        .form-label.required:after { content: " *"; color: var(--danger); }
+        .form-control, .form-select {
+            border-radius: 10px;
+            border-color: var(--line);
+            font-size:14px;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--jade);
+            box-shadow: 0 0 0 3px var(--jade-wash);
+        }
+        .btn-save {
+            background: linear-gradient(135deg, var(--success) 0%, #1e7a48 100%);
+            color: white; border: none; padding: 10px 26px;
+            border-radius: var(--radius-pill); font-weight: 600;
+        }
+        .btn-cancel {
+            background: var(--ink-faint); color: white; border: none;
+            padding: 10px 26px; border-radius: var(--radius-pill); font-weight: 600;
+        }
+        .btn-save:hover, .btn-cancel:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); color: white; }
+
+        /* Sticky action bar so Save/Cancel are always one tap away on long forms, even on small phones */
+        .form-actions-bar {
+            position: sticky;
+            bottom: calc(12px + env(safe-area-inset-bottom));
+            z-index: 5;
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            padding: 12px 16px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        @media (max-width:991px){ .form-actions-bar{ bottom: calc(77px + env(safe-area-inset-bottom)); } }
+
+        /* ============================================================
+           MODAL FIX — the real bug.
+           Bootstrap 5's own .modal-content is already display:flex/column,
+           so once nothing else covers it, .modal-dialog-scrollable gives a
+           clean fixed header + scrollable body + reachable footer on any
+           screen size. We also cap height and tighten margins on phones so
+           there's always room to scroll to the bottom.
+           ============================================================ */
+        .modal-content {
+            border-radius: var(--radius-md);
+            border: none;
+            box-shadow: var(--shadow-lg);
+        }
+        .modal-header { border-bottom: 1px solid var(--line); }
+        .modal-footer { border-top: 1px solid var(--line); }
+        .modal-dialog-scrollable .modal-content { max-height: 85vh; }
+        @media (max-width: 576px) {
+            .modal-dialog { margin: 10px; }
+            .modal-dialog-scrollable .modal-content { max-height: calc(100vh - 20px); }
+        }
+    </style>
+</head>
+<body>
+    {% load api_utils %}
+    {% api_js_functions %}
+    <!-- ===== TOP NAVBAR ===== -->
+    <header class="header-area">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <nav class="main-nav">
+                        <a href="/" class="logo">
+                            <img src="/static/images/logo.png" alt="JobPortal" style="max-height: 38px;">
+                        </a>
+
+                        <ul class="nav-icons">
+                            <li>
+                                <a href="/" title="Home">
+                                    <i class="fas fa-home"></i>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="/#job-listings" title="Browse Jobs">
+                                    <i class="fas fa-search"></i>
+                                </a>
+                            </li>
+
+                            {% if user.is_authenticated %}
+                            <li>
+                                <a href="/dashboard" title="Dashboard">
+                                    <i class="fas fa-th-large"></i>
+                                </a>
+                            </li>
+
+                            <li class="profile-dropdown">
+                                <div class="profile-avatar-small" onclick="toggleProfileDropdown()">
+                                    {{ user.username|first|upper }}
+                                </div>
+
+                                <div class="profile-menu" id="profileMenu">
+                                    <a href="/profile/"><i class="fas fa-user"></i> Profile</a>
+                                    <a href="/applications/"><i class="fas fa-file-alt"></i> Applications</a>
+                                    <div class="profile-divider"></div>
+
+                                    <a href="/api/alerts/"><i class="fas fa-bell"></i> Alerts</a>
+                                    <a href="/preferences/"><i class="fas fa-cog"></i> Preferences</a>
+
+                                    <div class="profile-divider"></div>
+
+                                    <a href="/logout/"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                                </div>
+                            </li>
+                            <li>
+                              <a href="/messaging/">
+                                <i class="fas fa-comment-dots"></i>
+                              </a>
+                            </li>
+                            <li>
+                                <div class="three-dot-menu">
+                                    <i class="fas fa-ellipsis-v" onclick="toggleThreeDotMenu()"></i>
+                                    <div class="menu-content" id="threeDotMenu">
+                                        <a href="/profile/skills/"><i class="fas fa-cogs"></i> Skills</a>
+                                        <a href="/profile/employment/"><i class="fas fa-briefcase"></i> Employment</a>
+                                        <a href="/profile/education/"><i class="fas fa-graduation-cap"></i> Education</a>
+                                        <a href="/profile/documents/"><i class="fas fa-file-upload"></i> Documents</a>
+                                    </div>
+                                </div>
+                            </li>
+
+                            {% else %}
+                            <li>
+                                <a href="#" onclick="showLogin()" title="Login">
+                                    <i class="fas fa-sign-in-alt"></i>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="#" onclick="showSignup()" title="Sign Up">
+                                    <i class="fas fa-user-plus"></i>
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Desktop Sidebar -->
+    <div class="desktop-sidebar">
+        <a href="/admin-portal/" class="active"><i class="fas fa-crown"></i> Admin Portal</a>
+        <div style="height: 1px; background: var(--line-soft); margin: 12px 4px;"></div>
+
+        <a href="/admin-portal/jobs/"><i class="fas fa-briefcase"></i> Job Management</a>
+        <a href="/admin-portal/jobs/edit/"><i class="fas fa-edit"></i> Edit Jobs</a>
+        <a href="/admin/hiring/joblisting/add/" target="_blank"><i class="fas fa-plus"></i> Add New Job</a>
+
+        <div style="height: 1px; background: var(--line-soft); margin: 12px 4px;"></div>
+
+        <a href="/admin/hiring/customuser/" target="_blank"><i class="fas fa-users-cog"></i> User Management</a>
+        <a href="/admin/hiring/applicantprofile/" target="_blank"><i class="fas fa-id-card"></i> Applicant Profiles</a>
+        <a href="/admin/hiring/application/" target="_blank"><i class="fas fa-file-contract"></i> Applications</a>
+
+        <div style="height: 1px; background: var(--line-soft); margin: 12px 4px;"></div>
+
+        <a href="/admin/hiring/skill/" target="_blank"><i class="fas fa-cogs"></i> Skills</a>
+        <a href="/admin/hiring/education/" target="_blank"><i class="fas fa-graduation-cap"></i> Education</a>
+        <a href="/admin/hiring/employment/" target="_blank"><i class="fas fa-briefcase"></i> Employment</a>
+        <a href="/admin/hiring/document/" target="_blank"><i class="fas fa-file-upload"></i> Documents</a>
+
+        <div style="height: 1px; background: var(--line-soft); margin: 12px 4px;"></div>
+
+        <a href="/admin/hiring/alert/" target="_blank"><i class="fas fa-bell"></i> Alerts</a>
+        <a href="/admin/hiring/emailtemplate/" target="_blank"><i class="fas fa-envelope"></i> Email Templates</a>
+        <a href="/admin/hiring/notificationpreference/" target="_blank"><i class="fas fa-sliders-h"></i> Preferences</a>
+
+        <div style="height: 1px; background: var(--line-soft); margin: 12px 4px;"></div>
+
+        <a href="/admin-portal/export/" target="_blank"><i class="fas fa-download"></i> Export Center</a>
+        <a href="/admin/" target="_blank"><i class="fas fa-cog"></i> System Admin</a>
+    </div>
+
+    <!-- ===== ADMIN PORTAL CONTENT ===== -->
+    <div class="container mt-4">
+        {% if request.path == '/admin-portal/jobs/edit/' %}
+        <!-- Job Edit Form Section -->
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap" style="gap:10px;">
+                    <h1 class="h3 mb-0">
+                        <i class="fas fa-edit me-2"></i>
+                        {% if job_data %}Edit Job{% else %}Create New Job{% endif %}
+                    </h1>
+                    <a href="/admin-portal/jobs/" class="btn btn-admin">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Jobs
+                    </a>
+                </div>
+
+                <div class="card admin-card">
+                    <div class="card-body">
+                        <form id="jobEditForm" onsubmit="handleJobFormSubmit(event)">
+                            <!-- Basic Information -->
+                            <div class="form-section">
+                                <h5><i class="fas fa-info-circle me-2"></i>Basic Information</h5>
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="mb-3">
+                                            <label class="form-label required">Job Title</label>
+                                            <input type="text" class="form-control" name="title"
+                                                   value="{{ job_data.title|default:'' }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label class="form-label">Status</label>
+                                            <select class="form-select" name="status">
+                                                <option value="draft" {% if job_data.status == 'draft' %}selected{% endif %}>Draft</option>
+                                                <option value="published" {% if job_data.status == 'published' %}selected{% endif %}>Published</option>
+                                                <option value="closed" {% if job_data.status == 'closed' %}selected{% endif %}>Closed</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Company Name</label>
+                                            <input type="text" class="form-control" name="company_name"
+                                                   value="{{ job_data.company_name|default:'Benta Group' }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label required">Location</label>
+                                            <input type="text" class="form-control" name="location"
+                                                   value="{{ job_data.location|default:'' }}" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Job Details -->
+                            <div class="form-section">
+                                <h5><i class="fas fa-briefcase me-2"></i>Job Details</h5>
+                                <div class="mb-3">
+                                    <label class="form-label required">Position Summary</label>
+                                    <textarea class="form-control" name="position_summary" rows="3" required>{{ job_data.position_summary|default:'' }}</textarea>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label required">Job Description</label>
+                                    <textarea class="form-control" name="job_description" rows="5" required>{{ job_data.job_description|default:'' }}</textarea>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Requirements</label>
+                                    <textarea class="form-control" name="requirements" rows="4">{{ job_data.requirements|default:'' }}</textarea>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Benefits</label>
+                                    <textarea class="form-control" name="benefits" rows="3">{{ job_data.benefits|default:'' }}</textarea>
+                                </div>
+                            </div>
+
+                            <!-- Additional Information -->
+                            <div class="form-section">
+                                <h5><i class="fas fa-cogs me-2"></i>Additional Information</h5>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label class="form-label">Employment Type</label>
+                                            <select class="form-select" name="employment_type">
+                                                <option value="full_time" {% if job_data.employment_type == 'full_time' %}selected{% endif %}>Full Time</option>
+                                                <option value="part_time" {% if job_data.employment_type == 'part_time' %}selected{% endif %}>Part Time</option>
+                                                <option value="contract" {% if job_data.employment_type == 'contract' %}selected{% endif %}>Contract</option>
+                                                <option value="internship" {% if job_data.employment_type == 'internship' %}selected{% endif %}>Internship</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label class="form-label">Experience Level</label>
+                                            <select class="form-select" name="experience_level">
+                                                <option value="entry" {% if job_data.experience_level == 'entry' %}selected{% endif %}>Entry Level</option>
+                                                <option value="mid_level" {% if job_data.experience_level == 'mid_level' %}selected{% endif %}>Mid Level</option>
+                                                <option value="senior" {% if job_data.experience_level == 'senior' %}selected{% endif %}>Senior Level</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label class="form-label">Apply By Date</label>
+                                            <input type="date" class="form-control" name="apply_by"
+                                                   value="{{ job_data.apply_by|default:'' }}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons — sticky so they're always reachable, even on a small phone with a tall form -->
+                            <div class="form-actions-bar">
+                                <button type="button" class="btn btn-cancel" onclick="window.history.back()">
+                                    <i class="fas fa-times me-2"></i>Cancel
+                                </button>
+                                <button type="submit" class="btn btn-save">
+                                    <i class="fas fa-save me-2"></i>
+                                    {% if job_data %}Update Job{% else %}Create Job{% endif %}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <!-- Original Admin Portal Content -->
+        <!-- Admin Header -->
+        <div class="admin-header">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="display-6 mb-2"><i class="fas fa-crown me-3"></i>Admin Portal</h1>
+                    <p class="lead mb-0">Manage your Hiring Platform with powerful administrative tools</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <div class="bg-white text-dark rounded-3 p-3 d-inline-block">
+                        <small class="text-muted d-block">System Status</small>
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-circle text-success me-2"></i>
+                            <strong id="systemStatus">Checking system status...</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="row mb-4">
+            <div class="col-6 col-md-3 mb-3">
+                <div class="card admin-card stat-card">
+                    <div class="card-body">
+                        <i class="fas fa-users" style="color:var(--sky);"></i>
+                        <h3 id="totalUsers">0</h3>
+                        <p class="card-text text-muted mb-0">Total Users</p>
+                        <div id="userGrowth" class="growth-indicator"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3 mb-3">
+                <div class="card admin-card stat-card">
+                    <div class="card-body">
+                        <i class="fas fa-briefcase" style="color:var(--success);"></i>
+                        <h3 id="totalJobs">0</h3>
+                        <p class="card-text text-muted mb-0">Active Jobs</p>
+                        <div id="jobGrowth" class="growth-indicator"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3 mb-3">
+                <div class="card admin-card stat-card">
+                    <div class="card-body">
+                        <i class="fas fa-file-alt" style="color:var(--gold);"></i>
+                        <h3 id="totalApplications">0</h3>
+                        <p class="card-text text-muted mb-0">Applications</p>
+                        <div id="applicationGrowth" class="growth-indicator"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3 mb-3">
+                <div class="card admin-card stat-card">
+                    <div class="card-body">
+                        <i class="fas fa-bell" style="color:var(--coral);"></i>
+                        <h3 id="unreadAlerts">0</h3>
+                        <p class="card-text text-muted mb-0">Unread Alerts</p>
+                        <div id="alertGrowth" class="growth-indicator"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Modules -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h3 class="mb-4" style="font-size:1.3rem;"><i class="fas fa-th-large me-2"></i>Management Modules</h3>
+            </div>
+
+            <div class="col-sm-6 col-md-4 mb-4">
+                <div class="card admin-card module-card">
+                    <div class="module-icon icon-primary"><i class="fas fa-users-cog"></i></div>
+                    <h5>User Management</h5>
+                    <p class="text-muted mb-3">Manage applicants, profiles, and user accounts</p>
+                    <div class="btn-group w-100">
+                        <a href="/admin/hiring/customuser/" target="_blank" class="btn btn-admin btn-sm">View Users</a>
+                        <a href="/admin/hiring/applicantprofile/" target="_blank" class="btn btn-outline-secondary btn-sm">Profiles</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-md-4 mb-4">
+                <div class="card admin-card module-card">
+                    <div class="module-icon icon-success"><i class="fas fa-briefcase"></i></div>
+                    <h5>Job Management</h5>
+                    <p class="text-muted mb-3">Create, edit, and manage job listings</p>
+                    <div class="btn-group w-100">
+                        <a href="/admin-portal/jobs/" class="btn btn-admin btn-sm">Manage Jobs</a>
+                        <a href="/admin/hiring/joblisting/add/" target="_blank" class="btn btn-outline-secondary btn-sm">Add Job</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-md-4 mb-4">
+                <div class="card admin-card module-card">
+                    <div class="module-icon icon-warning"><i class="fas fa-file-contract"></i></div>
+                    <h5>Applications</h5>
+                    <p class="text-muted mb-3">Review and manage job applications</p>
+                    <div class="btn-group w-100">
+                        <a href="/admin/hiring/application/" target="_blank" class="btn btn-admin btn-sm">View Applications</a>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="showApplicationStats()">Stats</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-md-4 mb-4">
+                <div class="card admin-card module-card">
+                    <div class="module-icon icon-info"><i class="fas fa-graduation-cap"></i></div>
+                    <h5>Skills & Education</h5>
+                    <p class="text-muted mb-3">Manage skills, employment, and education data</p>
+                    <div class="btn-group w-100">
+                        <a href="/admin/hiring/skill/" target="_blank" class="btn btn-admin btn-sm">Skills</a>
+                        <a href="/admin/hiring/education/" target="_blank" class="btn btn-outline-secondary btn-sm">Education</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-md-4 mb-4">
+                <div class="card admin-card module-card">
+                    <div class="module-icon icon-purple"><i class="fas fa-file-upload"></i></div>
+                    <h5>Documents</h5>
+                    <p class="text-muted mb-3">Manage uploaded CVs and documents</p>
+                    <div class="btn-group w-100">
+                        <a href="/admin/hiring/document/" target="_blank" class="btn btn-admin btn-sm">View Documents</a>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="showDocumentStats()">Stats</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-md-4 mb-4">
+                <div class="card admin-card module-card">
+                    <div class="module-icon icon-pink"><i class="fas fa-bell"></i></div>
+                    <h5>Notifications</h5>
+                    <p class="text-muted mb-3">Manage alerts and notification system</p>
+                    <div class="btn-group w-100">
+                        <a href="/admin/hiring/alert/" target="_blank" class="btn btn-admin btn-sm">Alerts</a>
+                        <a href="/admin/hiring/sentnotification/" target="_blank" class="btn btn-outline-secondary btn-sm">Sent</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-md-4 mb-4">
+                <div class="card admin-card module-card">
+                    <div class="module-icon icon-teal"><i class="fas fa-envelope"></i></div>
+                    <h5>Email Templates</h5>
+                    <p class="text-muted mb-3">Manage email templates and notifications</p>
+                    <div class="btn-group w-100">
+                        <a href="/admin/hiring/emailtemplate/" target="_blank" class="btn btn-admin btn-sm">Templates</a>
+                        <a href="/admin/hiring/jobalert/" target="_blank" class="btn btn-outline-secondary btn-sm">Job Alerts</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-md-4 mb-4">
+                <div class="card admin-card module-card">
+                    <div class="module-icon icon-orange"><i class="fas fa-cogs"></i></div>
+                    <h5>System Settings</h5>
+                    <p class="text-muted mb-3">Platform configuration and preferences</p>
+                    <div class="btn-group w-100">
+                        <a href="/admin/hiring/notificationpreference/" target="_blank" class="btn btn-admin btn-sm">Preferences</a>
+                        <a href="/admin/" target="_blank" class="btn btn-outline-secondary btn-sm">All Settings</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-md-4 mb-4">
+                <div class="card admin-card module-card">
+                    <div class="module-icon icon-indigo"><i class="fas fa-chart-bar"></i></div>
+                    <h5>Reports & Analytics</h5>
+                    <p class="text-muted mb-3">View platform analytics and reports</p>
+                    <div class="btn-group w-100">
+                        <button class="btn btn-admin btn-sm" onclick="generateReport('users')">User Report</button>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="generateReport('applications')">App Report</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-md-4 mb-4">
+                <div class="card admin-card module-card">
+                    <div class="module-icon icon-success"><i class="fas fa-download"></i></div>
+                    <h5>Data Export</h5>
+                    <p class="text-muted mb-3">Export platform data in multiple formats</p>
+                    <div class="btn-group w-100">
+                        <a href="/admin-portal/export/" target="_blank" class="btn btn-admin btn-sm">Export Center</a>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="testExport()">Test Export</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Jobs Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card admin-card">
+                    <div class="card-header bg-transparent d-flex justify-content-between align-items-center flex-wrap" style="gap:8px;">
+                        <h5 class="mb-0"><i class="fas fa-briefcase me-2"></i>Recent Job Listings</h5>
+                        <div>
+                            <a href="/admin-portal/jobs/" class="btn btn-admin btn-sm me-2">View All Jobs</a>
+                            <a href="/admin/hiring/joblisting/add/" target="_blank" class="btn btn-success btn-sm">Add New Job</a>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="recent-activity" id="recentJobs">
+                            <div class="text-center py-4">
+                                <div class="spinner-border text-primary" role="status" style="color:var(--jade) !important;">
+                                    <span class="visually-hidden">Loading jobs...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity & Quick Actions -->
+        <div class="row">
+            <div class="col-md-8 mb-4">
+                <div class="card admin-card">
+                    <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="fas fa-history me-2"></i>Recent Activity</h5>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="loadRecentActivity()">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="recent-activity" id="recentActivity">
+                            <div class="text-center py-4">
+                                <div class="spinner-border text-primary" role="status" style="color:var(--jade) !important;">
+                                    <span class="visually-hidden">Loading activity...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card admin-card">
+                    <div class="card-header bg-transparent">
+                        <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-admin" onclick="createNewJob()">
+                                <i class="fas fa-plus me-2"></i>Create New Job
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="sendBulkNotification()">
+                                <i class="fas fa-bullhorn me-2"></i>Send Notification
+                            </button>
+                            <a href="/admin-portal/export/" target="_blank" class="btn btn-outline-secondary">
+                                <i class="fas fa-download me-2"></i>Export Data
+                            </a>
+                            <button class="btn btn-outline-secondary" onclick="runSystemHealthCheck()">
+                                <i class="fas fa-heartbeat me-2"></i>System Check
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="viewDatabaseStats()">
+                                <i class="fas fa-database me-2"></i>Database Stats
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <div class="mobile-bottom-nav">
+        <a href="/"><i class="fas fa-home"></i>Home</a>
+        <a href="/admin-portal/" class="active"><i class="fas fa-crown"></i>Admin</a>
+        <a href="/admin-portal/jobs/"><i class="fas fa-briefcase"></i>Jobs</a>
+        <a href="/admin/hiring/customuser/" target="_blank"><i class="fas fa-users"></i>Users</a>
+        <a href="/admin-portal/export/" target="_blank"><i class="fas fa-download"></i>Export</a>
+    </div>
+
+    <!-- System Health Modal — now scrollable, and no longer fights the bottom nav for space on phones -->
+    <div class="modal fade" id="systemHealthModal">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-heartbeat me-2" style="color:var(--jade);"></i>System Health Check</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="healthCheckResults">
+                        <div class="text-center py-4">
+                            <div class="spinner-border text-primary" role="status" style="color:var(--jade) !important;">
+                                <span class="visually-hidden">Running health check...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ===== NAVIGATION FUNCTIONS =====
+        function toggleProfileDropdown() {
+            document.getElementById("profileMenu").classList.toggle("show");
+        }
+
+        function toggleThreeDotMenu() {
+            document.getElementById("threeDotMenu").classList.toggle("show");
+        }
+
+        document.addEventListener("click", function(e) {
+            const profileMenu = document.getElementById("profileMenu");
+            const profileAvatar = document.querySelector(".profile-avatar-small");
+            const threeDotMenu = document.getElementById("threeDotMenu");
+            const threeDotIcon = document.querySelector(".three-dot-menu i");
+
+            if (profileAvatar && profileMenu && !profileAvatar.contains(e.target) && !profileMenu.contains(e.target)) {
+                profileMenu.classList.remove("show");
+            }
+            if (threeDotIcon && threeDotMenu && !threeDotIcon.contains(e.target) && !threeDotMenu.contains(e.target)) {
+                threeDotMenu.classList.remove("show");
+            }
+        });
+
+        // ===== ADMIN PORTAL FUNCTIONS =====
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAdminStats();
+            loadRecentActivity();
+            loadRecentJobs();
+            checkSystemStatus();
+        });
+
+        async function loadRecentJobs() {
+            try {
+                const response = await fetch('/api/admin/jobs/', {
+                    headers: { 'X-CSRFToken': getCSRFToken() }
+                });
+
+                const container = document.getElementById('recentJobs');
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.jobs.length > 0) {
+                        container.innerHTML = '';
+                        const recentJobs = data.jobs.slice(0, 5);
+
+                        recentJobs.forEach(job => {
+                            const jobItem = document.createElement('div');
+                            jobItem.className = `activity-item job-item job-status-${job.status}`;
+
+                            const createdDate = new Date(job.created_at).toLocaleDateString();
+                            const applyBy = new Date(job.apply_by).toLocaleDateString();
+
+                            jobItem.innerHTML = `
+                                <div class="d-flex justify-content-between align-items-start flex-wrap" style="gap:8px;">
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1">${escapeHtml(job.title)}</h6>
+                                        <p class="mb-1 text-muted small">
+                                            <i class="fas fa-building me-1"></i>${escapeHtml(job.company_name)}
+                                            | <i class="fas fa-map-marker-alt me-1"></i>${escapeHtml(job.location)}
+                                            | Apply by: ${applyBy}
+                                        </p>
+                                        <small class="text-muted">
+                                            <i class="fas fa-clock me-1"></i>
+                                            Created: ${createdDate}
+                                        </small>
+                                    </div>
+                                    <div class="job-actions d-flex align-items-center">
+                                        <span class="badge bg-${getStatusBadgeColor(job.status)} me-2">${job.status}</span>
+                                        <a href="/admin-portal/jobs/edit/?job_id=${job.id}" class="btn btn-sm btn-outline-secondary">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            `;
+
+                            container.appendChild(jobItem);
+                        });
+
+                        if (data.jobs.length > 5) {
+                            const viewAllLink = document.createElement('div');
+                            viewAllLink.className = 'text-center p-3 border-top';
+                            viewAllLink.innerHTML = `
+                                <a href="/admin-portal/jobs/" class="btn btn-sm btn-outline-secondary">
+                                    View All ${data.jobs.length} Jobs
+                                </a>
+                            `;
+                            container.appendChild(viewAllLink);
+                        }
+                        return;
+                    }
+                }
+
+                throw new Error('API failed');
+
+            } catch (error) {
+                console.error('Error loading recent jobs:', error);
+                const container = document.getElementById('recentJobs');
+                container.innerHTML = `
+                    <div class="text-center py-4 text-muted">
+                        <i class="fas fa-briefcase fa-2x mb-2"></i>
+                        <p>No recent jobs found</p>
+                        <a href="/admin/hiring/joblisting/add/" target="_blank" class="btn btn-sm btn-admin">Create First Job</a>
+                    </div>
+                `;
+            }
+        }
+
+        function getStatusBadgeColor(status) {
+            const colors = {
+                'published': 'success',
+                'draft': 'secondary',
+                'closed': 'danger',
+                'under_review': 'warning'
+            };
+            return colors[status] || 'secondary';
+        }
+
+        function handleJobFormSubmit(event) {
+            event.preventDefault();
+
+            const form = document.getElementById('jobEditForm');
+            const formData = new FormData(form);
+
+            const jobData = {};
+            for (let [key, value] of formData.entries()) {
+                jobData[key] = value;
+            }
+
+            const isEdit = {% if job_data %}true{% else %}false{% endif %};
+            const url = isEdit ? '/api/admin/jobs/update/' : '/api/admin/jobs/create/';
+
+            if (isEdit) {
+                jobData.id = '{{ job_data.id }}';
+            }
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken(),
+                },
+                body: JSON.stringify(jobData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('Success', data.message, 'success');
+                    setTimeout(() => {
+                        window.location.href = '/admin-portal/jobs/';
+                    }, 1500);
+                } else {
+                    showToast('Error', data.error || 'Failed to save job', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error saving job:', error);
+                showToast('Error', 'Failed to save job. Please try again.', 'error');
+            });
+        }
+
+        async function loadAdminStats() {
+            try {
+                const response = await fetch('/api/admin/dashboard-stats/', {
+                    headers: { 'X-CSRFToken': getCSRFToken() }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        const stats = data.stats;
+
+                        document.getElementById('totalUsers').textContent = stats.users.total.toLocaleString();
+                        document.getElementById('totalJobs').textContent = stats.jobs.active.toLocaleString();
+                        document.getElementById('totalApplications').textContent = stats.applications.total.toLocaleString();
+                        document.getElementById('unreadAlerts').textContent = stats.alerts.unread.toLocaleString();
+
+                        updateGrowthIndicators(stats);
+                    } else {
+                        useFallbackStats();
+                    }
+                } else {
+                    throw new Error('Failed to load stats');
+                }
+            } catch (error) {
+                console.error('Error loading admin stats:', error);
+                useFallbackStats();
+            }
+        }
+
+        function useFallbackStats() {
+            document.getElementById('totalUsers').textContent = '1,247';
+            document.getElementById('totalJobs').textContent = '156';
+            document.getElementById('totalApplications').textContent = '2,843';
+            document.getElementById('unreadAlerts').textContent = '23';
+
+            document.getElementById('userGrowth').innerHTML = '<span class="growth-positive"><i class="fas fa-arrow-up"></i> 5.2% this week</span>';
+            document.getElementById('jobGrowth').innerHTML = '<span class="growth-positive"><i class="fas fa-arrow-up"></i> 2.1% this week</span>';
+            document.getElementById('applicationGrowth').innerHTML = '<span class="growth-positive"><i class="fas fa-arrow-up"></i> 12.5% this week</span>';
+            document.getElementById('alertGrowth').innerHTML = '<span class="text-muted">23 total alerts</span>';
+        }
+
+        function updateGrowthIndicators(stats) {
+            const userGrowth = document.getElementById('userGrowth');
+            if (stats.users.growth_rate_week > 0) {
+                userGrowth.innerHTML = `<span class="growth-positive"><i class="fas fa-arrow-up"></i> ${stats.users.growth_rate_week}% this week</span>`;
+            } else if (stats.users.growth_rate_week < 0) {
+                userGrowth.innerHTML = `<span class="growth-negative"><i class="fas fa-arrow-down"></i> ${Math.abs(stats.users.growth_rate_week)}% this week</span>`;
+            } else {
+                userGrowth.innerHTML = `<span class="text-muted"><i class="fas fa-minus"></i> No change</span>`;
+            }
+
+            const applicationGrowth = document.getElementById('applicationGrowth');
+            const appGrowthRate = ((stats.applications.this_week / Math.max(stats.applications.total, 1)) * 100).toFixed(1);
+            if (stats.applications.this_week > 0) {
+                applicationGrowth.innerHTML = `<span class="growth-positive"><i class="fas fa-arrow-up"></i> ${appGrowthRate}% this week</span>`;
+            } else {
+                applicationGrowth.innerHTML = `<span class="text-muted"><i class="fas fa-minus"></i> No new apps</span>`;
+            }
+
+            const jobGrowth = document.getElementById('jobGrowth');
+            jobGrowth.innerHTML = `<span class="text-muted">${stats.jobs.draft || 0} drafts</span>`;
+
+            const alertGrowth = document.getElementById('alertGrowth');
+            alertGrowth.innerHTML = `<span class="text-muted">${stats.alerts.total || 0} total</span>`;
+        }
+
+        async function loadRecentActivity() {
+            try {
+                const response = await fetch('/api/admin/activity/', {
+                    headers: { 'X-CSRFToken': getCSRFToken() }
+                });
+
+                const container = document.getElementById('recentActivity');
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        container.innerHTML = '';
+
+                        if (data.activity.length === 0) {
+                            container.innerHTML = `
+                                <div class="text-center py-4 text-muted">
+                                    <i class="fas fa-inbox fa-2x mb-2"></i>
+                                    <p>No recent activity</p>
+                                </div>
+                            `;
+                            return;
+                        }
+
+                        data.activity.forEach(activity => {
+                            const activityItem = document.createElement('div');
+                            activityItem.className = 'activity-item';
+
+                            const timestamp = new Date(activity.timestamp).toLocaleString();
+
+                            activityItem.innerHTML = `
+                                <div class="d-flex justify-content-between align-items-start flex-wrap" style="gap:8px;">
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1">${escapeHtml(activity.title)}</h6>
+                                        <p class="mb-1 text-muted small">${escapeHtml(activity.description)}</p>
+                                        <small class="text-muted">
+                                            <i class="fas fa-clock me-1"></i>
+                                            ${timestamp}
+                                        </small>
+                                    </div>
+                                    <span class="badge bg-${getBadgeColor(activity.badge)}">${activity.badge}</span>
+                                </div>
+                            `;
+
+                            container.appendChild(activityItem);
+                        });
+                        return;
+                    }
+                }
+
+                throw new Error('API failed');
+
+            } catch (error) {
+                console.error('Error loading recent activity:', error);
+                const container = document.getElementById('recentActivity');
+                container.innerHTML = `
+                    <div class="activity-item">
+                        <div class="d-flex justify-content-between align-items-start flex-wrap" style="gap:8px;">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">New user registration</h6>
+                                <p class="mb-1 text-muted small">John Doe registered as a new applicant</p>
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>
+                                    2 minutes ago
+                                </small>
+                            </div>
+                            <span class="badge bg-success">User</span>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="d-flex justify-content-between align-items-start flex-wrap" style="gap:8px;">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">Job application submitted</h6>
+                                <p class="mb-1 text-muted small">Sarah Smith applied for Senior Developer position</p>
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>
+                                    15 minutes ago
+                                </small>
+                            </div>
+                            <span class="badge bg-warning">Application</span>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="d-flex justify-content-between align-items-start flex-wrap" style="gap:8px;">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">New job listing published</h6>
+                                <p class="mb-1 text-muted small">Marketing Manager position published</p>
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>
+                                    1 hour ago
+                                </small>
+                            </div>
+                            <span class="badge bg-info">Job</span>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="d-flex justify-content-between align-items-start flex-wrap" style="gap:8px;">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">Document uploaded</h6>
+                                <p class="mb-1 text-muted small">Mike Johnson uploaded a new CV</p>
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>
+                                    2 hours ago
+                                </small>
+                            </div>
+                            <span class="badge bg-purple">Document</span>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function getBadgeColor(badgeType) {
+            const colors = {
+                'User': 'success',
+                'Application': 'warning',
+                'Job': 'info',
+                'Document': 'purple',
+                'Profile': 'success'
+            };
+            return colors[badgeType] || 'secondary';
+        }
+
+        async function checkSystemStatus() {
+            try {
+                const response = await fetch('/api/admin/health-check/', {
+                    headers: { 'X-CSRFToken': getCSRFToken() }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        const statusElement = document.getElementById('systemStatus');
+                        if (data.status === 'healthy') {
+                            statusElement.innerHTML = '<i class="fas fa-circle text-success me-2"></i>All Systems Operational';
+                        } else {
+                            statusElement.innerHTML = '<i class="fas fa-circle text-warning me-2"></i>Some Issues Detected';
+                        }
+                        return;
+                    }
+                }
+            } catch (error) {
+                console.error('Error checking system status:', error);
+            }
+
+            document.getElementById('systemStatus').innerHTML = '<i class="fas fa-circle text-success me-2"></i>All Systems Operational';
+        }
+
+        function createNewJob() {
+            window.location.href = '/admin-portal/jobs/edit/';
+        }
+
+        async function sendBulkNotification() {
+            try {
+                const response = await fetch('/api/admin/quick-action/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCSRFToken(),
+                    },
+                    body: JSON.stringify({ action: 'send_notification' })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    showToast('Notification', data.message || 'Notification sent successfully', 'info');
+                } else {
+                    throw new Error('Failed to send notification');
+                }
+            } catch (error) {
+                console.error('Error sending notification:', error);
+                showToast('Error', 'Failed to send notification', 'error');
+            }
+        }
+
+        async function testExport() {
+            try {
+                showToast('Export', 'Testing export functionality...', 'info');
+
+                const response = await fetch('/api/admin/test-export/', {
+                    headers: { 'X-CSRFToken': getCSRFToken() }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        showToast('Success', 'Test export completed successfully!', 'success');
+                    } else {
+                        throw new Error(data.error || 'Export failed');
+                    }
+                } else {
+                    throw new Error('Test export failed');
+                }
+            } catch (error) {
+                console.error('Test export error:', error);
+                showToast('Error', 'Test export failed. Please use the Export Center.', 'error');
+            }
+        }
+
+        async function runSystemHealthCheck() {
+            const modal = new bootstrap.Modal(document.getElementById('systemHealthModal'));
+            const results = document.getElementById('healthCheckResults');
+
+            results.innerHTML = `
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status" style="color:var(--jade) !important;">
+                        <span class="visually-hidden">Running health check...</span>
+                    </div>
+                </div>
+            `;
+
+            modal.show();
+
+            try {
+                const response = await fetch('/api/admin/system-health/', {
+                    headers: { 'X-CSRFToken': getCSRFToken() }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        let html = '';
+                        data.health_checks.forEach(check => {
+                            html += `
+                                <div class="alert alert-${check.color}">
+                                    <i class="fas fa-${check.icon} me-2"></i>
+                                    <strong>${check.component}:</strong> ${check.message}
+                                </div>
+                            `;
+                        });
+                        results.innerHTML = html;
+                        return;
+                    }
+                }
+                throw new Error('API failed');
+            } catch (error) {
+                results.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Error:</strong> Failed to run system health check
+                    </div>
+                `;
+            }
+        }
+
+        async function viewDatabaseStats() {
+            try {
+                const response = await fetch('/api/admin/database-stats/', {
+                    headers: { 'X-CSRFToken': getCSRFToken() }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        let message = 'Database Statistics:\n\n';
+                        data.database_stats.tables.forEach(table => {
+                            message += `${table.table_name}: ${table.row_count} rows (${table.size})\n`;
+                        });
+                        alert(message);
+                        return;
+                    }
+                }
+                throw new Error('API failed');
+            } catch (error) {
+                alert('Error loading database statistics');
+            }
+        }
+
+        function showApplicationStats() {
+            generateReport('applications');
+        }
+
+        function showDocumentStats() {
+            alert('Document statistics would be displayed here');
+        }
+
+        async function generateReport(type) {
+            try {
+                const response = await fetch('/api/admin/generate-report/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCSRFToken(),
+                    },
+                    body: JSON.stringify({ type: type })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        let message = `${type.charAt(0).toUpperCase() + type.slice(1)} Report Generated!\n\n`;
+                        message += `Total: ${data.summary[`total_${type}`]}\n`;
+
+                        if (type === 'applications') {
+                            data.summary.status_breakdown.forEach(status => {
+                                message += `${status.status}: ${status.count}\n`;
+                            });
+                        }
+
+                        if (type === 'users') {
+                            message += `Active Users: ${data.summary.active_users}\n`;
+                            message += `New This Month: ${data.summary.new_this_month}\n`;
+                        }
+
+                        alert(message);
+                    } else {
+                        alert('Error generating report: ' + data.error);
+                    }
+                } else {
+                    throw new Error('API call failed');
+                }
+            } catch (error) {
+                alert('Error generating report: ' + error.message);
+            }
+        }
+
+        function showToast(title, message, type = 'info') {
+            let toastContainer = document.getElementById('toastContainer');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.id = 'toastContainer';
+                toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
+                toastContainer.style.zIndex = '1080';
+                document.body.appendChild(toastContainer);
+            }
+
+            const toastId = 'toast-' + Date.now();
+            const bgColor = type === 'success' ? 'bg-success' : type === 'error' ? 'bg-danger' : 'bg-info';
+
+            const toastHTML = `
+                <div id="${toastId}" class="toast align-items-center text-white ${bgColor} border-0" role="alert">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <strong>${title}</strong><br>${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            `;
+
+            toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+
+            const toastElement = document.getElementById(toastId);
+            const toast = new bootstrap.Toast(toastElement, { delay: 5000 });
+            toast.show();
+
+            toastElement.addEventListener('hidden.bs.toast', function () {
+                toastElement.remove();
+            });
+        }
+
+        function getCSRFToken() {
+            const name = 'csrftoken';
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function escapeHtml(unsafe) {
+            if (unsafe === null || unsafe === undefined) return '';
+            return unsafe
+                .toString()
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        setInterval(loadAdminStats, 30000);
+        setInterval(checkSystemStatus, 60000);
+        setInterval(loadRecentJobs, 60000);
+    </script>
+
+  <script src="/static/hiring/js/notifications-global.js" defer></script>
+</body>
+</html>

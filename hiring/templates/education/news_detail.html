@@ -1,0 +1,217 @@
+<!-- education/templates/education/news_detail.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ news.title }} - Education Hub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Same navbar styles */
+        .header-area { background-color: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: fixed; top: 0; left: 0; right: 0; z-index: 999; }
+        .main-nav { display: flex; align-items: center; justify-content: space-between; padding: 15px 0; }
+        .logo img { max-height: 40px; }
+        .nav-icons { display: flex; list-style: none; gap: 20px; align-items: center; margin: 0; padding: 0; }
+        .nav-icons a { font-size: 20px; color: #555; transition: 0.2s; text-decoration: none; }
+        .nav-icons a:hover { color: #ff589e; transform: translateY(-2px); }
+        .profile-avatar-small { width: 35px; height: 35px; background: linear-gradient(135deg, #ff589e 0%, #ff136f 100%); color: white; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; cursor: pointer; }
+        .profile-menu { position: absolute; top: 50px; right: 0; width: 220px; background: white; border-radius: 12px; box-shadow: 0 6px 20px rgba(0,0,0,0.15); padding: 10px 0; opacity: 0; visibility: hidden; transform: translateY(10px); transition: all 0.25s ease; z-index: 1000; }
+        .profile-menu.show { opacity: 1; visibility: visible; transform: translateY(0px); }
+        .profile-menu a { display: flex; align-items: center; gap: 10px; padding: 12px 20px; color: #444; text-decoration: none; transition: 0.2s; }
+        .profile-menu a:hover { background: #f5f7fa; color: #ff589e; }
+        .profile-divider { height: 1px; background: #eee; margin: 8px 0; }
+        .profile-dropdown { position: relative; }
+        
+        .desktop-sidebar { width: 250px; background: white; height: calc(100vh - 80px); position: fixed; top: 80px; left: 0; padding: 20px; border-right: 1px solid #eee; box-shadow: 2px 0 5px rgba(0,0,0,0.05); overflow-y: auto; z-index: 100; }
+        .desktop-sidebar a { display: block; padding: 12px 10px; color: #333; text-decoration: none; margin-bottom: 8px; border-radius: 8px; font-weight: 500; transition: all 0.3s; }
+        .desktop-sidebar a:hover, .desktop-sidebar a.active { background-color: rgba(255, 88, 158, 0.1); color: #ff589e; }
+        @media (max-width: 991px) { .desktop-sidebar { display: none; } }
+        @media (min-width: 992px) { body { padding-left: 270px !important; } }
+        
+        .mobile-bottom-nav { display: none; }
+        @media (max-width: 991px) {
+            .mobile-bottom-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; height: 65px; background: white; border-top: 1px solid #ddd; justify-content: space-around; align-items: center; z-index: 9999; }
+            .mobile-bottom-nav a { text-align: center; color: #333; font-size: 14px; text-decoration: none; flex: 1; padding: 10px 5px; }
+            .mobile-bottom-nav i { font-size: 20px; display: block; margin-bottom: 3px; }
+            .mobile-bottom-nav a.active { color: #ff589e; }
+        }
+        body { padding-top: 80px; background-color: #f8f9fa; padding-bottom: 80px; }
+
+        .back-link { display: inline-flex; align-items: center; gap: 8px; color: #1a1a2e; text-decoration: none; font-weight: 500; margin-bottom: 20px; padding: 8px 16px; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); transition: all 0.2s; }
+        .back-link:hover { transform: translateX(-4px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        
+        .detail-card { background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
+        .detail-header { padding: 30px 30px 20px; border-bottom: 1px solid #eee; }
+        .detail-header .category { display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; background: #3498db; color: #fff; margin-bottom: 8px; }
+        .detail-header h1 { font-size: 32px; margin-bottom: 8px; }
+        .detail-header .meta { display: flex; gap: 16px; flex-wrap: wrap; color: #888; font-size: 14px; }
+        .detail-header .meta i { margin-right: 4px; }
+        
+        .detail-image { width: 100%; max-height: 400px; object-fit: cover; }
+        .detail-body { padding: 30px; }
+        .detail-body .content { font-size: 16px; color: #444; line-height: 1.8; }
+        .detail-body .content p { margin-bottom: 16px; }
+        
+        .sidebar-card { background: #f8f9fa; border-radius: 12px; padding: 20px; margin-top: 24px; }
+        .sidebar-card h4 { font-size: 14px; margin-bottom: 12px; }
+        .sidebar-card .info-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #eee; font-size: 13px; }
+        .sidebar-card .info-row:last-child { border-bottom: none; }
+        
+        .btn { display: inline-block; padding: 10px 24px; border-radius: 8px; font-weight: 600; text-decoration: none; transition: all 0.2s; cursor: pointer; border: none; font-size: 14px; }
+        .btn-primary { background: #1a1a2e; color: #fff; }
+        .btn-primary:hover { background: #2d2d4a; transform: translateY(-2px); }
+        .btn-outline { background: transparent; color: #1a1a2e; border: 2px solid #ddd; }
+        .btn-outline:hover { border-color: #1a1a2e; }
+        
+        .share-buttons { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+        .share-btn { padding: 6px 14px; border-radius: 6px; border: none; font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.2s; color: #fff; }
+        .share-btn:hover { transform: scale(1.05); }
+        .share-btn.whatsapp { background: #25D366; }
+        .share-btn.twitter { background: #000; }
+        .share-btn.linkedin { background: #0A66C2; }
+        .share-btn.copy { background: #6c757d; }
+        
+        @media (max-width: 768px) {
+            .detail-header h1 { font-size: 24px; }
+            .detail-body { padding: 20px; }
+            .detail-body .content { font-size: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navigation -->
+    <header class="header-area">
+        <div class="container">
+            <nav class="main-nav">
+                <a href="/" class="logo">
+                    <img src="/static/images/logo.png" alt="OppoGlobe" style="max-height: 40px;" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\'font-weight:700;color:#1a1a2e;font-size:20px;\'>OppoGlobe</span>'">
+                </a>
+                <ul class="nav-icons">
+                    <li><a href="/" title="Home"><i class="fas fa-home"></i></a></li>
+                    <li><a href="/education/" title="Education Hub"><i class="fas fa-graduation-cap"></i></a></li>
+                    {% if user.is_authenticated %}
+                    <li class="profile-dropdown">
+                        <div class="profile-avatar-small" onclick="toggleProfileDropdown()">
+                            {{ user.username|first|upper }}
+                        </div>
+                        <div class="profile-menu" id="profileMenu">
+                            <a href="/profile/"><i class="fas fa-user"></i> Profile</a>
+                            <a href="/logout/"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        </div>
+                    </li>
+                    {% else %}
+                    <li><a href="#" onclick="alert('Login functionality')"><i class="fas fa-sign-in-alt"></i></a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Desktop Sidebar -->
+    <div class="desktop-sidebar">
+        <a href="/profile/"><i class="fas fa-user"></i> My Profile</a>
+        <hr>
+        <a href="/education/" class="active"><i class="fas fa-graduation-cap"></i> Education Hub</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <a href="/education/" class="back-link">← Back to Education Hub</a>
+
+        <div class="detail-card">
+            <div class="detail-header">
+                <span class="category">{{ news.get_category_display|default:"General" }}</span>
+                <h1>{{ news.title }}</h1>
+                <div class="meta">
+                    <span><i class="fas fa-user"></i> {{ news.author.username|default:"Admin" }}</span>
+                    <span><i class="fas fa-calendar-alt"></i> {{ news.published_at|date:"F d, Y" }}</span>
+                    <span><i class="fas fa-clock"></i> {{ news.published_at|time:"H:i" }}</span>
+                </div>
+            </div>
+
+            {% if news.image %}
+            <img src="{{ news.image.url }}" alt="{{ news.title }}" class="detail-image">
+            {% endif %}
+
+            <div class="detail-body">
+                <div class="content">
+                    {% if news.summary %}
+                    <p style="font-size:18px;color:#555;font-weight:500;border-left:4px solid #3498db;padding-left:16px;margin-bottom:20px;">
+                        {{ news.summary }}
+                    </p>
+                    {% endif %}
+                    {{ news.content|linebreaks }}
+                </div>
+
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin-top:30px;padding-top:20px;border-top:1px solid #eee;">
+                    <a href="/education/" class="btn btn-outline">← Back to All</a>
+
+                    <div class="share-buttons">
+                        <button class="share-btn whatsapp" onclick="shareLink('whatsapp')"><i class="fab fa-whatsapp"></i> WhatsApp</button>
+                        <button class="share-btn twitter" onclick="shareLink('twitter')"><i class="fab fa-twitter"></i> Twitter</button>
+                        <button class="share-btn linkedin" onclick="shareLink('linkedin')"><i class="fab fa-linkedin"></i> LinkedIn</button>
+                        <button class="share-btn copy" onclick="copyLink()"><i class="fas fa-copy"></i> Copy</button>
+                    </div>
+                </div>
+
+                <div class="sidebar-card">
+                    <h4>📊 Article Info</h4>
+                    <div class="info-row"><span>Category</span><span>{{ news.get_category_display|default:"General" }}</span></div>
+                    <div class="info-row"><span>Published</span><span>{{ news.published_at|date:"F d, Y" }}</span></div>
+                    <div class="info-row"><span>Status</span><span>{% if news.is_published %}✅ Published{% else %}📝 Draft{% endif %}</span></div>
+                    <div class="info-row"><span>Last Updated</span><span>{{ news.updated_at|date:"F d, Y" }}</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Nav -->
+    <div class="mobile-bottom-nav">
+        <a href="/"><i class="fas fa-home"></i>Home</a>
+        <a href="/education/" class="active"><i class="fas fa-graduation-cap"></i>Edu</a>
+        <a href="/profile/"><i class="fas fa-user"></i>Profile</a>
+    </div>
+
+    <script>
+        function toggleProfileDropdown() {
+            document.getElementById("profileMenu").classList.toggle("show");
+        }
+        document.addEventListener("click", function(e) {
+            const menu = document.getElementById("profileMenu");
+            const avatar = document.querySelector(".profile-avatar-small");
+            if (avatar && menu && !avatar.contains(e.target) && !menu.contains(e.target)) {
+                menu.classList.remove("show");
+            }
+        });
+
+        function copyLink() {
+            const url = window.location.href;
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(url).then(() => alert('Link copied!'));
+            } else {
+                const input = document.createElement('input');
+                input.value = url;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand('copy');
+                document.body.removeChild(input);
+                alert('Link copied!');
+            }
+        }
+
+        function shareLink(platform) {
+            const url = window.location.href;
+            const title = encodeURIComponent("{{ news.title }}");
+            let shareUrl = '';
+            if (platform === 'whatsapp') shareUrl = `https://wa.me/?text=${title}%20${encodeURIComponent(url)}`;
+            else if (platform === 'twitter') shareUrl = `https://twitter.com/intent/tweet?text=${title}&url=${encodeURIComponent(url)}`;
+            else if (platform === 'linkedin') shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+            if (shareUrl) window.open(shareUrl, '_blank');
+        }
+    </script>
+
+  <script src="/static/hiring/js/notifications-global.js" defer></script>
+</body>
+</html>

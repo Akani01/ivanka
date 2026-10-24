@@ -1,0 +1,321 @@
+/* static/css/black-theme.css */
+/* ====================================================
+   BLACK THEME - Add this to any page for dark mode
+   ==================================================== */
+
+[data-theme="dark"] {
+    /* Background Colors */
+    --bg-primary: #0d1117 !important;
+    --bg-secondary: #161b22 !important;
+    --bg-card: #1c2333 !important;
+    --bg-nav: #0d1117 !important;
+    --bg-input: #2d333b !important;
+    --bg-hover: #2d333b !important;
+    --bg-modal: #1c2333 !important;
+    --bg-dropdown: #1c2333 !important;
+    --bg-footer: #161b22 !important;
+    
+    /* Text Colors */
+    --text-primary: #e6edf3 !important;
+    --text-secondary: #b1bac4 !important;
+    --text-muted: #8b949e !important;
+    --text-white: #ffffff !important;
+    --text-black: #e6edf3 !important;
+    
+    /* Border Colors */
+    --border-color: #30363d !important;
+    --border-light: #21262d !important;
+    
+    /* Shadow */
+    --shadow-color: rgba(0, 0, 0, 0.4) !important;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.3) !important;
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.4) !important;
+    --shadow-lg: 0 8px 30px rgba(0,0,0,0.5) !important;
+    
+    /* Misc */
+    --chat-bg: #161b22 !important;
+    --chat-message-bg: #1c2333 !important;
+    --scrollbar-track: #161b22 !important;
+    --scrollbar-thumb: #30363d !important;
+}
+
+/* Apply Dark Theme */
+[data-theme="dark"] body {
+    background-color: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .header-area,
+[data-theme="dark"] header,
+[data-theme="dark"] .navbar,
+[data-theme="dark"] nav {
+    background-color: var(--bg-nav) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+}
+
+[data-theme="dark"] .card,
+[data-theme="dark"] .sidebar-card,
+[data-theme="dark"] .post-card,
+[data-theme="dark"] .job-card,
+[data-theme="dark"] .property-card,
+[data-theme="dark"] .management-card,
+[data-theme="dark"] .filter-section,
+[data-theme="dark"] .create-post-card,
+[data-theme="dark"] .maintenance-card,
+[data-theme="dark"] .comment-section,
+[data-theme="dark"] .profile-card {
+    background-color: var(--bg-card) !important;
+    border: 1px solid var(--border-color) !important;
+    box-shadow: var(--shadow-sm) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .card-body,
+[data-theme="dark"] .card-header,
+[data-theme="dark"] .card-footer {
+    background-color: transparent !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea,
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .post-input,
+[data-theme="dark"] .comment-input {
+    background-color: var(--bg-input) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder {
+    color: var(--text-muted) !important;
+}
+
+[data-theme="dark"] .tabs-nav {
+    background-color: var(--bg-card) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+[data-theme="dark"] .tab-btn {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .tab-btn.active {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+[data-theme="dark"] .tab-btn:hover:not(.active) {
+    background-color: var(--bg-hover) !important;
+}
+
+[data-theme="dark"] .modal-content {
+    background-color: var(--bg-modal) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+[data-theme="dark"] .modal-header,
+[data-theme="dark"] .modal-footer {
+    border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .dropdown-menu {
+    background-color: var(--bg-dropdown) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+[data-theme="dark"] .dropdown-item {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .dropdown-item:hover {
+    background-color: var(--bg-hover) !important;
+}
+
+[data-theme="dark"] .post-action-btn,
+[data-theme="dark"] .post-action {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .post-action-btn:hover,
+[data-theme="dark"] .post-action:hover {
+    background-color: var(--bg-hover) !important;
+}
+
+[data-theme="dark"] .post-actions-bar,
+[data-theme="dark"] .post-stats {
+    border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .mobile-bottom-nav {
+    background-color: var(--bg-nav) !important;
+    border-top: 1px solid var(--border-color) !important;
+}
+
+[data-theme="dark"] .mobile-bottom-nav a {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .mobile-bottom-nav a.active {
+    color: var(--primary-color) !important;
+}
+
+[data-theme="dark"] .profile-menu,
+[data-theme="dark"] .menu-content {
+    background-color: var(--bg-card) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+[data-theme="dark"] .profile-menu a,
+[data-theme="dark"] .menu-content a {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .profile-menu a:hover,
+[data-theme="dark"] .menu-content a:hover {
+    background-color: var(--bg-hover) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .empty-state i {
+    color: var(--text-muted) !important;
+}
+
+[data-theme="dark"] .empty-state h4 {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .empty-state p {
+    color: var(--text-muted) !important;
+}
+
+[data-theme="dark"] #aiChatPopup {
+    background-color: var(--bg-card) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+[data-theme="dark"] #aiChatMessages {
+    background-color: var(--chat-bg) !important;
+}
+
+[data-theme="dark"] .ai-chat-bubble.ai {
+    background-color: var(--chat-message-bg) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .desktop-icon-bar {
+    background-color: var(--bg-card) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+[data-theme="dark"] .theme-toggle-btn {
+    background: var(--bg-input) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .property-price {
+    color: var(--primary-color) !important;
+}
+
+[data-theme="dark"] .job-card .company-name {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .job-meta-item {
+    color: var(--text-muted) !important;
+}
+
+[data-theme="dark"] .property-detail-item {
+    color: var(--text-muted) !important;
+}
+
+[data-theme="dark"] .property-description {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .maintenance-comment {
+    background: var(--bg-input) !important;
+}
+
+[data-theme="dark"] .maintenance-comment .comment-author {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .maintenance-comment .comment-text {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .video-item video {
+    background: #000 !important;
+}
+
+[data-theme="dark"] .video-overlay {
+    background: linear-gradient(transparent, rgba(0,0,0,0.8)) !important;
+}
+
+/* Scrollbar for dark theme */
+[data-theme="dark"] ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 5px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+    background: #484f58;
+}
+
+/* Toast notifications in dark */
+[data-theme="dark"] .toast {
+    background-color: var(--bg-card) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .toast-header {
+    background-color: var(--bg-card) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .btn-close {
+    filter: invert(1) !important;
+}
+
+/* Badge colors in dark */
+[data-theme="dark"] .badge.bg-primary {
+    background-color: #1f6feb !important;
+}
+
+[data-theme="dark"] .badge.bg-success {
+    background-color: #238636 !important;
+}
+
+[data-theme="dark"] .badge.bg-danger {
+    background-color: #da3633 !important;
+}
+
+[data-theme="dark"] .badge.bg-warning {
+    background-color: #9e6a03 !important;
+    color: #fff !important;
+}
+
+[data-theme="dark"] .badge.bg-info {
+    background-color: #1f6feb !important;
+}
+
+[data-theme="dark"] .badge.bg-secondary {
+    background-color: #30363d !important;
+}

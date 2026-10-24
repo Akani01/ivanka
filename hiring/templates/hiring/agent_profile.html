@@ -1,0 +1,1079 @@
+<!-- hiring/templates/hiring/agent_profile.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{% if agent.display_name %}{{ agent.display_name }}{% else %}{{ agent.user.username }}{% endif %} - OppoGlobe Agent</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --primary-dark: #1557b0;
+            --primary-light: #e8f0fe;
+            --secondary: #34a853;
+            --accent: #ea4335;
+            --warning: #fbbc04;
+            --dark: #202124;
+            --gray: #5f6368;
+            --light-gray: #f1f3f4;
+            --border: #dadce0;
+            --shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            --shadow-hover: 0 4px 12px rgba(0,0,0,0.15);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #f8f9fa;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            padding-top: 72px;
+            padding-bottom: 40px;
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        button { cursor: pointer; border: none; background: none; }
+        img { max-width: 100%; }
+
+        /* ===== HEADER ===== */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 16px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        @media (min-width: 768px) {
+            .header { padding: 0 24px; height: 64px; }
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--primary);
+        }
+
+        @media (min-width: 768px) {
+            .header-brand { font-size: 20px; gap: 10px; }
+        }
+
+        .header-brand img { height: 28px; }
+        @media (min-width: 768px) {
+            .header-brand img { height: 36px; }
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        @media (min-width: 768px) {
+            .header-actions { gap: 8px; }
+        }
+
+        .header-actions .btn-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray);
+            transition: var(--transition);
+            position: relative;
+            font-size: 14px;
+        }
+
+        @media (min-width: 768px) {
+            .header-actions .btn-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+        }
+
+        .header-actions .btn-icon:hover {
+            background: var(--light-gray);
+            color: var(--primary);
+        }
+
+        .user-badge {
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
+            background: #fce8e6;
+            color: var(--accent);
+            display: none;
+        }
+
+        @media (min-width: 576px) {
+            .user-badge { display: inline-block; padding: 4px 14px; font-size: 12px; }
+        }
+
+        .avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 12px;
+            color: white;
+            background: linear-gradient(135deg, var(--primary), #4285f4);
+            cursor: pointer;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+
+        @media (min-width: 768px) {
+            .avatar { width: 36px; height: 36px; font-size: 14px; }
+        }
+
+        .avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(26,115,232,0.3);
+        }
+
+        .avatar.business {
+            background: linear-gradient(135deg, #ea4335, #fbbc04);
+        }
+
+        /* ===== DROPDOWNS ===== */
+        .dropdown-container { position: relative; }
+        
+        .dropdown-menu-custom {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            min-width: 200px;
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            padding: 8px 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px) scale(0.98);
+            transition: var(--transition);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+
+        @media (min-width: 768px) {
+            .dropdown-menu-custom { min-width: 220px; }
+        }
+
+        .dropdown-menu-custom.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+        .dropdown-menu-custom .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            color: var(--dark);
+            font-size: 13px;
+            transition: var(--transition);
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        @media (min-width: 768px) {
+            .dropdown-menu-custom .dropdown-item {
+                padding: 10px 20px;
+                font-size: 14px;
+                gap: 12px;
+            }
+        }
+
+        .dropdown-menu-custom .dropdown-item:hover {
+            background: var(--light-gray);
+            color: var(--primary);
+        }
+
+        .dropdown-menu-custom .dropdown-item i {
+            width: 18px;
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        @media (min-width: 768px) {
+            .dropdown-menu-custom .dropdown-item i { width: 20px; font-size: 16px; }
+        }
+
+        .dropdown-menu-custom .dropdown-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 4px 12px;
+        }
+
+        @media (min-width: 768px) {
+            .dropdown-menu-custom .dropdown-divider { margin: 6px 16px; }
+        }
+
+        /* ===== AGENT PROFILE ===== */
+        .agent-header {
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+        }
+
+        .agent-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--primary);
+        }
+
+        @media (max-width: 768px) {
+            .agent-avatar {
+                width: 80px;
+                height: 80px;
+            }
+        }
+
+        .stars {
+            color: #ffc107;
+            font-size: 18px;
+            letter-spacing: 2px;
+        }
+
+        /* ===== SOCIAL BUTTONS ===== */
+        .social-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 12px;
+            border: none;
+            min-width: 80px;
+        }
+
+        .social-btn:hover {
+            transform: translateY(-2px);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .social-btn.whatsapp { background: #25D366; }
+        .social-btn.linkedin { background: #0A66C2; }
+        .social-btn.facebook { background: #1877F2; }
+        .social-btn.instagram { background: #E4405F; }
+        .social-btn.twitter { background: #000000; }
+        .social-btn.youtube { background: #FF0000; }
+        .social-btn.tiktok { background: #000000; }
+        .social-btn.website { background: var(--primary); }
+        .social-btn.email { background: #ea4335; }
+        .social-btn.phone { background: var(--secondary); }
+        .social-btn.telegram { background: #0088cc; }
+        .social-btn.signal { background: #3a76f0; }
+        .social-btn.viber { background: #7360f2; }
+        .social-btn.wechat { background: #07C160; }
+        .social-btn.line { background: #00b900; }
+        .social-btn.kakao { background: #FEE500; color: #000; }
+        .social-btn.property24 { background: #ff6b00; }
+        .social-btn.privateproperty { background: #004d99; }
+        .social-btn.zillow { background: #006aff; }
+        .social-btn.realtor { background: #d2222a; }
+        .social-btn.rightmove { background: #00b894; }
+        .social-btn.zoopla { background: #ff3850; }
+        .social-btn.propertyguru { background: #ed1c24; }
+
+        .social-btn.message {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            font-weight: 600;
+            padding: 12px 20px;
+            font-size: 14px;
+            width: 100%;
+        }
+
+        .social-btn.message:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(102,126,234,0.4);
+        }
+
+        .social-btn .badge-internal {
+            background: rgba(255,255,255,0.2);
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 9px;
+            font-weight: 600;
+            margin-left: 4px;
+        }
+
+        .contact-methods {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .contact-methods .method-divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #999;
+            font-size: 11px;
+            margin: 4px 0;
+        }
+
+        .contact-methods .method-divider::before,
+        .contact-methods .method-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e0e0e0;
+        }
+
+        /* ===== STAT CARDS ===== */
+        .stat-card {
+            background: var(--primary-light);
+            padding: 16px;
+            border-radius: var(--radius);
+            text-align: center;
+            height: 100%;
+        }
+
+        .stat-card .number {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-card .label {
+            color: var(--gray);
+            font-size: 12px;
+        }
+
+        /* ===== REVIEWS ===== */
+        .review-card {
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .review-card .review-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 16px;
+            color: white;
+            background: linear-gradient(135deg, var(--primary), #4285f4);
+            flex-shrink: 0;
+        }
+
+        .badge-verified {
+            background: #34a853;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+        }
+
+        /* ===== SPECIALIZATIONS ===== */
+        .spec-tag {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 20px;
+            background: var(--primary-light);
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 500;
+            border: 1px solid rgba(26,115,232,0.15);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .agent-header {
+                padding: 16px;
+                text-align: center;
+            }
+            .social-btn {
+                font-size: 11px;
+                padding: 6px 10px;
+                min-width: 60px;
+            }
+            .social-btn.message {
+                font-size: 13px;
+                padding: 10px 16px;
+            }
+            .stat-card .number {
+                font-size: 22px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .social-btn {
+                font-size: 10px;
+                padding: 4px 8px;
+                min-width: 50px;
+                gap: 4px;
+            }
+            .social-btn i {
+                font-size: 12px;
+            }
+        }
+
+        /* ===== TOAST ===== */
+        .toast-container {
+            position: fixed;
+            top: 72px;
+            right: 12px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-width: calc(100vw - 24px);
+        }
+
+        @media (min-width: 768px) {
+            .toast-container {
+                top: 80px;
+                right: 20px;
+                max-width: 400px;
+            }
+        }
+
+        .toast-item {
+            padding: 10px 16px;
+            border-radius: var(--radius-sm);
+            color: white;
+            font-size: 13px;
+            animation: slideIn 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: auto;
+            width: 100%;
+            box-shadow: var(--shadow-hover);
+        }
+
+        @media (min-width: 768px) {
+            .toast-item {
+                padding: 12px 20px;
+                font-size: 14px;
+                gap: 10px;
+                min-width: 280px;
+                width: auto;
+            }
+        }
+
+        .toast-item.success { background: var(--secondary); }
+        .toast-item.error { background: var(--accent); }
+        .toast-item.info { background: var(--primary); }
+        .toast-item.warning { background: var(--warning); color: var(--dark); }
+
+        .toast-item .close-toast {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.7);
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        @media (min-width: 768px) {
+            .toast-item .close-toast { font-size: 18px; }
+        }
+
+        .toast-item .close-toast:hover { color: white; }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(60px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* ===== MOBILE NAV ===== */
+        .mobile-nav {
+            display: flex;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid var(--border);
+            padding: 4px 0 env(safe-area-inset-bottom);
+            z-index: 999;
+            justify-content: space-around;
+            align-items: center;
+            height: 56px;
+        }
+
+        @media (min-width: 992px) {
+            .mobile-nav { display: none; }
+            body { padding-bottom: 40px; }
+        }
+
+        @media (min-width: 768px) {
+            .mobile-nav { height: 60px; padding: 6px 0; }
+        }
+
+        .mobile-nav a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1px;
+            font-size: 9px;
+            color: var(--gray);
+            padding: 2px 8px;
+            transition: var(--transition);
+            border: none;
+            background: none;
+        }
+
+        @media (min-width: 576px) {
+            .mobile-nav a { font-size: 10px; padding: 4px 12px; gap: 2px; }
+        }
+
+        .mobile-nav a i { font-size: 18px; }
+        @media (min-width: 576px) { .mobile-nav a i { font-size: 20px; } }
+        .mobile-nav a.active { color: var(--primary); }
+        .mobile-nav a:hover { color: var(--primary); }
+    </style>
+</head>
+<body data-user-logged-in="{% if user.is_authenticated %}true{% else %}false{% endif %}" data-user-id="{% if user.is_authenticated %}{{ user.id }}{% else %}0{% endif %}" data-username="{% if user.is_authenticated %}{{ user.username }}{% else %}{% endif %}" data-agent-id="{{ agent.id }}">
+
+    <!-- ===== HEADER ===== -->
+    <header class="header">
+        <a href="/" class="header-brand">
+            <img src="/static/images/logo.png" alt="OppoGlobe" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\'font-weight:700;color:#191919;font-size:20px;\'>OppoGlobe</span>'">
+            <span>OppoGlobe</span>
+        </a>
+
+        <div class="header-actions">
+            <span class="user-badge"><i class="fas fa-building me-1"></i>Business</span>
+            <a href="/messaging/" class="btn-icon hide-mobile"><i class="fas fa-comment-dots"></i></a>
+
+            <div class="dropdown-container">
+                <div class="avatar business" onclick="toggleDropdown('profileMenu')">
+                    {{ user.username|first|upper }}
+                </div>
+                <div class="dropdown-menu-custom" id="profileMenu">
+                    <a href="/admin-portal/" class="dropdown-item"><i class="fas fa-th-large"></i> Dashboard</a>
+                    <a href="/properties/manage/" class="dropdown-item"><i class="fas fa-home"></i> Properties</a>
+                    <a href="/properties/add/" class="dropdown-item"><i class="fas fa-plus-circle"></i> Add Property</a>
+                    <a href="/properties/bookings/" class="dropdown-item"><i class="fas fa-calendar-check"></i> Bookings</a>
+                    <a href="/properties/analytics/" class="dropdown-item"><i class="fas fa-chart-bar"></i> Analytics</a>
+                    <a href="/property-map/" class="dropdown-item"><i class="fas fa-map"></i> Map View</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="/logout/" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+
+            <div class="dropdown-container">
+                <button class="btn-icon" onclick="toggleDropdown('moreMenu')">
+                    <i class="bi bi-three-dots-vertical"></i>
+                </button>
+                <div class="dropdown-menu-custom" id="moreMenu">
+                    <a href="/properties/reports/" class="dropdown-item"><i class="fas fa-file-pdf"></i> Reports</a>
+                    <a href="/admin-portal/settings/" class="dropdown-item"><i class="fas fa-cog"></i> Settings</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="container py-3">
+
+        <!-- Agent Header -->
+        <div class="agent-header">
+            <div class="row align-items-center">
+                <div class="col-md-3 text-center">
+                    <img src="{% if agent.profile_image %}{{ agent.profile_image.url }}{% else %}data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Crect fill='%23667eea' width='120' height='120' rx='60'/%3E%3Ctext x='60' y='72' text-anchor='middle' font-size='48' fill='white' font-family='Arial'%3E{{ agent.display_name|default:agent.user.username|first|upper }}%3C/text%3E%3C/svg%3E{% endif %}" alt="{{ agent.display_name }}" class="agent-avatar">
+                    {% if agent.is_verified %}
+                    <div class="mt-2">
+                        <span class="badge-verified"><i class="fas fa-check-circle"></i> Verified Agent</span>
+                    </div>
+                    {% endif %}
+                    {% if agent.is_featured %}
+                    <div class="mt-1">
+                        <span class="badge bg-warning text-dark"><i class="fas fa-star"></i> Featured</span>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="col-md-6">
+                    <h1 class="display-6">{{ agent.display_name|default:agent.user.username }}</h1>
+                    <p class="text-muted mb-1">
+                        <i class="fas fa-briefcase"></i> {{ agent.get_agent_type_display }}
+                        {% if agent.agency_name %} at <strong>{{ agent.agency_name }}</strong>{% endif %}
+                    </p>
+                    <p class="text-muted mb-2">
+                        <i class="fas fa-map-marker-alt"></i> 
+                        {% if agent.city %}{{ agent.city }}, {% endif %}
+                        {% if agent.state_province %}{{ agent.state_province }}, {% endif %}
+                        {% if agent.country %}{{ agent.country.name }}{% endif %}
+                    </p>
+                    <div class="mb-2">
+                        <span class="stars">{{ agent.get_rating_stars_html|safe }}</span>
+                        <span class="text-muted ms-2">({{ agent.total_reviews }} reviews)</span>
+                    </div>
+                    <p>{{ agent.bio|truncatewords:50 }}</p>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% if agent.years_experience %}
+                        <span class="badge bg-secondary"><i class="fas fa-calendar-alt"></i> {{ agent.years_experience }} years</span>
+                        {% endif %}
+                        {% if agent.total_deals %}
+                        <span class="badge bg-primary"><i class="fas fa-handshake"></i> {{ agent.total_deals }} deals</span>
+                        {% endif %}
+                        {% if agent.properties_sold %}
+                        <span class="badge bg-success"><i class="fas fa-home"></i> {{ agent.properties_sold }} sold</span>
+                        {% endif %}
+                        {% if agent.properties_rented %}
+                        <span class="badge bg-info"><i class="fas fa-key"></i> {{ agent.properties_rented }} rented</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="d-grid gap-2">
+                        <!-- INTERNAL MESSAGING - ALWAYS FIRST -->
+                        <button onclick="messageAgent('{{ agent.user.id }}', '{{ agent.display_name|default:agent.user.username|escapejs }}')" class="social-btn message">
+                            <i class="fas fa-comment"></i> Message {{ agent.display_name|default:agent.user.username }}
+                            <span class="badge-internal">Stay on OppoGlobe</span>
+                        </button>
+                        {% if agent.phone_primary %}
+                        <a href="tel:{{ agent.phone_primary }}" class="social-btn phone">
+                            <i class="fas fa-phone"></i> Call
+                        </a>
+                        {% endif %}
+                        {% if agent.email_primary %}
+                        <a href="mailto:{{ agent.email_primary }}" class="social-btn email">
+                            <i class="fas fa-envelope"></i> Email
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-md-3">
+                <div class="stat-card">
+                    <div class="number">{{ agent.total_deals|default:0 }}</div>
+                    <div class="label">Total Deals</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-card">
+                    <div class="number">{{ agent.properties_sold|default:0 }}</div>
+                    <div class="label">Properties Sold</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-card">
+                    <div class="number">{{ agent.properties_rented|default:0 }}</div>
+                    <div class="label">Properties Rented</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-card">
+                    <div class="number">{{ agent.years_experience|default:0 }}+</div>
+                    <div class="label">Years Experience</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- About -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-user"></i> About {{ agent.display_name|default:agent.user.username }}</h5>
+                        <p>{{ agent.bio|default:"No bio provided." }}</p>
+                        {% if agent.achievements %}
+                        <h6 class="mt-3"><i class="fas fa-trophy"></i> Achievements</h6>
+                        <p>{{ agent.achievements }}</p>
+                        {% endif %}
+                        {% if agent.services_offered %}
+                        <h6 class="mt-3"><i class="fas fa-concierge-bell"></i> Services Offered</h6>
+                        <p>{{ agent.services_offered }}</p>
+                        {% endif %}
+                        {% if agent.areas_served %}
+                        <h6 class="mt-3"><i class="fas fa-globe"></i> Areas Served</h6>
+                        <p>{{ agent.areas_served }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Specializations -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-tags"></i> Specializations</h5>
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for spec in agent.get_all_specializations %}
+                            <span class="spec-tag">{{ spec|title }}</span>
+                            {% empty %}
+                            <span class="text-muted">No specializations listed</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Languages -->
+                {% if agent.languages_spoken %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-language"></i> Languages</h5>
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for lang in agent.languages_spoken %}
+                            <span class="badge bg-secondary">{{ lang|title }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Reviews -->
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-star"></i> Reviews ({{ agent.total_reviews }})</h5>
+                        {% if reviews %}
+                            {% for review in reviews %}
+                            <div class="review-card">
+                                <div class="d-flex gap-3">
+                                    <div class="review-avatar">{{ review.user.username|first|upper }}</div>
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <strong>{{ review.user.username }}</strong>
+                                                <span class="stars ms-2">{{ review.get_stars }}</span>
+                                            </div>
+                                            <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
+                                        </div>
+                                        {% if review.review_title %}
+                                        <p class="mb-1 fw-bold">{{ review.review_title }}</p>
+                                        {% endif %}
+                                        <p class="mb-1">{{ review.review_text }}</p>
+                                        {% if review.agent_response %}
+                                        <div class="mt-2 p-2 bg-light rounded">
+                                            <small><strong>Agent Response:</strong> {{ review.agent_response }}</small>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-muted">No reviews yet</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <!-- Contact Card -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-address-card"></i> Contact Information</h5>
+                        
+                        {% if agent.phone_primary %}
+                        <p><i class="fas fa-phone text-success"></i> <a href="tel:{{ agent.phone_primary }}">{{ agent.get_phone_display|default:agent.phone_primary }}</a></p>
+                        {% endif %}
+                        {% if agent.email_primary %}
+                        <p><i class="fas fa-envelope text-primary"></i> <a href="mailto:{{ agent.email_primary }}">{{ agent.email_primary }}</a></p>
+                        {% endif %}
+                        {% if agent.website %}
+                        <p><i class="fas fa-globe text-info"></i> <a href="{{ agent.website }}" target="_blank">{{ agent.website|cut:"https://"|cut:"http://"|truncatechars:30 }}</a></p>
+                        {% endif %}
+                        {% if agent.business_address %}
+                        <p><i class="fas fa-map-pin text-danger"></i> {{ agent.business_address }}</p>
+                        {% endif %}
+                        {% if agent.license_number %}
+                        <p><i class="fas fa-id-card text-warning"></i> License: {{ agent.license_number }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Social Media -->
+                {% if agent.get_active_social_links %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-share-alt"></i> Social Media</h5>
+                        <div class="d-flex flex-wrap gap-2">
+                            {% if agent.linkedin_url %}
+                            <a href="{{ agent.linkedin_url }}" target="_blank" class="social-btn linkedin"><i class="fab fa-linkedin-in"></i></a>
+                            {% endif %}
+                            {% if agent.twitter_url %}
+                            <a href="{{ agent.twitter_url }}" target="_blank" class="social-btn twitter"><i class="fab fa-twitter"></i></a>
+                            {% endif %}
+                            {% if agent.facebook_url %}
+                            <a href="{{ agent.facebook_url }}" target="_blank" class="social-btn facebook"><i class="fab fa-facebook-f"></i></a>
+                            {% endif %}
+                            {% if agent.instagram_url %}
+                            <a href="{{ agent.instagram_url }}" target="_blank" class="social-btn instagram"><i class="fab fa-instagram"></i></a>
+                            {% endif %}
+                            {% if agent.youtube_url %}
+                            <a href="{{ agent.youtube_url }}" target="_blank" class="social-btn youtube"><i class="fab fa-youtube"></i></a>
+                            {% endif %}
+                            {% if agent.tiktok_url %}
+                            <a href="{{ agent.tiktok_url }}" target="_blank" class="social-btn tiktok"><i class="fab fa-tiktok"></i></a>
+                            {% endif %}
+                            {% if agent.whatsapp_number %}
+                            <a href="{{ agent.get_whatsapp_link }}" target="_blank" class="social-btn whatsapp"><i class="fab fa-whatsapp"></i></a>
+                            {% endif %}
+                            {% if agent.telegram_username %}
+                            <a href="{{ agent.get_telegram_link }}" target="_blank" class="social-btn telegram"><i class="fab fa-telegram-plane"></i></a>
+                            {% endif %}
+                            {% if agent.wechat_id %}
+                            <a href="#" onclick="showToast('WeChat ID: {{ agent.wechat_id }}', 'info')" class="social-btn wechat"><i class="fab fa-weixin"></i></a>
+                            {% endif %}
+                            {% if agent.signal_number %}
+                            <a href="{{ agent.get_signal_link }}" target="_blank" class="social-btn signal"><i class="fas fa-lock"></i></a>
+                            {% endif %}
+                            {% if agent.viber_number %}
+                            <a href="{{ agent.get_viber_link }}" target="_blank" class="social-btn viber"><i class="fab fa-viber"></i></a>
+                            {% endif %}
+                            {% if agent.line_id %}
+                            <a href="{{ agent.get_line_link }}" target="_blank" class="social-btn line"><i class="fab fa-line"></i></a>
+                            {% endif %}
+                            {% if agent.kakao_id %}
+                            <a href="{{ agent.get_kakao_link }}" target="_blank" class="social-btn kakao"><i class="fas fa-comment"></i></a>
+                            {% endif %}
+                            {% if agent.property24_url %}
+                            <a href="{{ agent.property24_url }}" target="_blank" class="social-btn property24"><i class="fas fa-building"></i></a>
+                            {% endif %}
+                            {% if agent.privateproperty_url %}
+                            <a href="{{ agent.privateproperty_url }}" target="_blank" class="social-btn privateproperty"><i class="fas fa-home"></i></a>
+                            {% endif %}
+                            {% if agent.zillow_url %}
+                            <a href="{{ agent.zillow_url }}" target="_blank" class="social-btn zillow"><i class="fas fa-home"></i></a>
+                            {% endif %}
+                            {% if agent.realtor_url %}
+                            <a href="{{ agent.realtor_url }}" target="_blank" class="social-btn realtor"><i class="fas fa-building"></i></a>
+                            {% endif %}
+                            {% if agent.rightmove_url %}
+                            <a href="{{ agent.rightmove_url }}" target="_blank" class="social-btn rightmove"><i class="fas fa-home"></i></a>
+                            {% endif %}
+                            {% if agent.zoopla_url %}
+                            <a href="{{ agent.zoopla_url }}" target="_blank" class="social-btn zoopla"><i class="fas fa-home"></i></a>
+                            {% endif %}
+                            {% if agent.propertyguru_url %}
+                            <a href="{{ agent.propertyguru_url }}" target="_blank" class="social-btn propertyguru"><i class="fas fa-home"></i></a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Properties by this Agent -->
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-home"></i> Properties by {{ agent.display_name|default:agent.user.username }}</h5>
+                        {% if properties %}
+                            {% for prop in properties %}
+                            <div class="d-flex align-items-center gap-3 mb-2 p-2 border rounded">
+                                <img src="{% if prop.main_image_url %}{{ prop.main_image_url }}{% else %}data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Crect fill='%23e0e0e0' width='60' height='60'/%3E%3Ctext x='30' y='35' text-anchor='middle' font-size='12' fill='%23999'%3ENo Image%3C/text%3E%3C/svg%3E{% endif %}" alt="{{ prop.title }}" style="width:60px;height:60px;object-fit:cover;border-radius:8px;flex-shrink:0;">
+                                <div class="flex-grow-1">
+                                    <a href="/properties/{{ prop.id }}/" class="fw-bold">{{ prop.title|truncatechars:30 }}</a>
+                                    <div class="text-muted small">{{ prop.city }}{% if prop.country %}, {{ prop.country }}{% endif %}</div>
+                                    <div class="text-primary fw-bold">{{ prop.price_currency|default:"ZAR" }} {{ prop.base_price|floatformat:0 }}</div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-muted">No properties listed yet</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ===== MOBILE NAV ===== -->
+    <nav class="mobile-nav">
+        <a href="/admin-portal/"><i class="fas fa-th-large"></i><span>Dashboard</span></a>
+        <a href="/properties/manage/"><i class="fas fa-home"></i><span>Properties</span></a>
+        <a href="/properties/add/"><i class="fas fa-plus"></i><span>Add</span></a>
+        <a href="/properties/bookings/"><i class="fas fa-calendar-check"></i><span>Bookings</span></a>
+        <a href="/profile/"><i class="fas fa-user"></i><span>Profile</span></a>
+    </nav>
+
+    <!-- ===== TOAST CONTAINER ===== -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ============================================================
+        // TOGGLE DROPDOWN
+        // ============================================================
+        function toggleDropdown(id) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            document.querySelectorAll('.dropdown-menu-custom.show').forEach(d => {
+                if (d.id !== id) d.classList.remove('show');
+            });
+            el.classList.toggle('show');
+        }
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.dropdown-container')) {
+                document.querySelectorAll('.dropdown-menu-custom.show').forEach(d => d.classList.remove('show'));
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.dropdown-menu-custom.show').forEach(d => d.classList.remove('show'));
+            }
+        });
+
+        // ============================================================
+        // TOAST
+        // ============================================================
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast-item ${type}`;
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                info: 'fa-info-circle',
+                warning: 'fa-exclamation-triangle'
+            };
+            toast.innerHTML = `
+                <i class="fas ${icons[type] || icons.info}"></i>
+                ${message}
+                <button class="close-toast" onclick="this.parentElement.remove()">&times;</button>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 5000);
+        }
+
+        // ============================================================
+        // GET CSRF TOKEN
+        // ============================================================
+        function getCSRFToken() {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                const [name, value] = cookie.trim().split('=');
+                if (name === 'csrftoken') return decodeURIComponent(value);
+            }
+            return null;
+        }
+
+        // ============================================================
+        // GET CURRENT USER INFO
+        // ============================================================
+        const currentUserId = parseInt(document.body.dataset.userId || '0');
+        const currentUsername = document.body.dataset.username || '';
+        const isLoggedIn = document.body.dataset.userLoggedIn === 'true';
+
+        // ============================================================
+        // MESSAGE AGENT - INTERNAL MESSAGING (PRIMARY)
+        // ============================================================
+        function messageAgent(userId, agentName) {
+            if (!userId) {
+                showToast('Agent not available', 'warning');
+                return;
+            }
+
+            if (!isLoggedIn) {
+                showToast('Please login to message the agent', 'warning');
+                return;
+            }
+
+            if (userId == currentUserId) {
+                showToast('This is you! You cannot message yourself.', 'info');
+                return;
+            }
+
+            // Go to internal messaging - STAY ON OPPOGLOBE
+            const encodedName = encodeURIComponent(agentName || 'Agent');
+            window.location.href = `/messaging/?user_id=${userId}&agent=${encodedName}`;
+        }
+
+        // ============================================================
+        // SHARE AGENT PROFILE
+        // ============================================================
+        function shareAgent(platform) {
+            const url = window.location.href;
+            const name = "{{ agent.display_name|default:agent.user.username|escapejs }}";
+            const agency = "{{ agent.agency_name|escapejs }}";
+            const text = `Check out ${name}${agency ? ' from ' + agency : ''} on OppoGlobe!`;
+            
+            let shareUrl = '';
+            switch(platform) {
+                case 'whatsapp':
+                    shareUrl = `https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`;
+                    break;
+                case 'facebook':
+                    shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+                    break;
+                case 'twitter':
+                    shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+                    break;
+                case 'linkedin':
+                    shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+                    break;
+                case 'copy':
+                    if (navigator.clipboard) {
+                        navigator.clipboard.writeText(`${text} ${url}`).then(() => {
+                            showToast('Link copied to clipboard!', 'success');
+                        });
+                    } else {
+                        const input = document.createElement('input');
+                        input.value = `${text} ${url}`;
+                        document.body.appendChild(input);
+                        input.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(input);
+                        showToast('Link copied to clipboard!', 'success');
+                    }
+                    return;
+                default:
+                    showToast('Share this agent with others!', 'info');
+                    return;
+            }
+            
+            if (shareUrl) {
+                window.open(shareUrl, '_blank', 'width=600,height=500');
+            }
+        }
+    </script>
+
+  <script src="/static/hiring/js/notifications-global.js" defer></script>
+</body>
+</html>

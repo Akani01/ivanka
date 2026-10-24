@@ -1,0 +1,1306 @@
+{% load admin_tags %}
+
+{% if user|has_admin_access %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Applications Management - Hiring Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        /* ===== ORGANIZED NAVIGATION STYLES ===== */
+        .header-area {
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+        }
+        .main-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 0;
+        }
+        .logo img {
+            max-height: 40px;
+        }
+
+        /* Desktop Sidebar */
+        .desktop-sidebar {
+            width: 250px;
+            background: white;
+            height: calc(100vh - 80px);
+            position: fixed;
+            top: 80px;
+            left: 0;
+            padding: 20px;
+            border-right: 1px solid #eee;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+            overflow-y: auto;
+        }
+
+        .desktop-sidebar a {
+            display: block;
+            padding: 12px 10px;
+            color: #333;
+            text-decoration: none;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .desktop-sidebar a:hover,
+        .desktop-sidebar a.active {
+            background-color: rgba(255, 88, 158, 0.1);
+            color: #ff589e;
+        }
+
+        /* Hide sidebar on mobile */
+        @media (max-width: 991px) {
+            .desktop-sidebar {
+                display: none;
+            }
+        }
+
+        /* Push page content right on desktop */
+        @media (min-width: 992px) {
+            body {
+                padding-left: 270px !important;
+            }
+        }
+
+        /* Mobile Bottom Navbar */
+        .mobile-bottom-nav {
+            display: none;
+        }
+
+        @media (max-width: 991px) {
+            .mobile-bottom-nav {
+                display: flex;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 65px;
+                background: white;
+                border-top: 1px solid #ddd;
+                justify-content: space-around;
+                align-items: center;
+                z-index: 9999;
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+            .mobile-bottom-nav a {
+                text-align: center;
+                color: #333;
+                font-size: 14px;
+                text-decoration: none;
+                flex: 1;
+                padding: 10px 5px;
+            }
+            .mobile-bottom-nav i {
+                font-size: 20px;
+                display: block;
+                margin-bottom: 3px;
+            }
+            .mobile-bottom-nav a.active {
+                color: #ff589e;
+            }
+        }
+
+        /* Body padding adjustments */
+        body {
+            padding-top: 80px;
+            background-color: #f8f9fa;
+            padding-bottom: 80px;
+        }
+
+        /* ===== ORGANIZED TOP NAVBAR ===== */
+        .nav-icons {
+            display: flex;
+            list-style: none;
+            gap: 15px;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-icons a {
+            font-size: 20px;
+            color: #555;
+            transition: 0.2s;
+            text-decoration: none;
+            padding: 8px;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .nav-icons a:hover {
+            color: #ff589e;
+            background-color: rgba(255, 88, 158, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Profile Dropdown */
+        .profile-dropdown {
+            position: relative;
+        }
+
+        .profile-avatar-small {
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, #ff589e 0%, #ff136f 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Profile Menu */
+        .profile-menu {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            width: 220px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            padding: 10px 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.25s ease;
+            z-index: 1000;
+        }
+
+        .profile-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0px);
+        }
+
+        .profile-menu a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            color: #444;
+            text-decoration: none;
+            transition: 0.2s;
+            font-size: 14px;
+        }
+
+        .profile-menu a:hover {
+            background: #f5f7fa;
+            color: #ff589e;
+        }
+
+        .profile-divider {
+            height: 1px;
+            background: #eee;
+            margin: 8px 0;
+        }
+
+        /* Three Dot Menu Styles */
+        .three-dot-menu {
+            position: relative;
+            display: inline-block;
+        }
+
+        .three-dot-menu i {
+            font-size: 20px;
+            color: #555;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .three-dot-menu i:hover {
+            background-color: rgba(255, 88, 158, 0.1);
+            color: #ff589e;
+        }
+
+        .three-dot-menu .menu-content {
+            position: absolute;
+            top: 45px;
+            right: 0;
+            width: 200px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            padding: 10px 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.25s ease;
+            z-index: 1000;
+        }
+
+        .three-dot-menu .menu-content.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0px);
+        }
+
+        .three-dot-menu .menu-content a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            color: #444;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+
+        .three-dot-menu .menu-content a:hover {
+            background: rgba(255, 88, 158, 0.1);
+            color: #ff589e;
+        }
+
+        .three-dot-menu .menu-content a.active {
+            background: rgba(255, 88, 158, 0.1);
+            color: #ff589e;
+            font-weight: 500;
+        }
+
+        .three-dot-menu .menu-content a i {
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Notification Badge */
+        .nav-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ff136f;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ===== APPLICATIONS MANAGEMENT STYLES ===== */
+        .admin-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 40px 0;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .admin-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 25px;
+        }
+        .admin-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+        .stat-card {
+            text-align: center;
+            padding: 30px 20px;
+        }
+        .stat-card i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        .stat-card h3 {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .btn-admin {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            transition: all 0.3s;
+        }
+        .btn-admin:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(44, 62, 80, 0.3);
+            color: white;
+        }
+        
+        .growth-indicator {
+            font-size: 0.875rem;
+            margin-top: 5px;
+        }
+        .growth-positive {
+            color: #28a745;
+        }
+        .growth-negative {
+            color: #dc3545;
+        }
+
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+        }
+
+        .toast-container {
+            z-index: 9999;
+        }
+
+        /* Application Status Badges */
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+        .status-submitted { background-color: #e3f2fd; color: #1976d2; }
+        .status-under_review { background-color: #fff3e0; color: #f57c00; }
+        .status-shortlisted { background-color: #f3e5f5; color: #7b1fa2; }
+        .status-interview { background-color: #e8f5e8; color: #388e3c; }
+        .status-successful { background-color: #e8f5e8; color: #2e7d32; }
+        .status-unsuccessful { background-color: #ffebee; color: #c62828; }
+
+        /* Application Table Styles */
+        .applications-table {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .table th {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            font-weight: 600;
+        }
+        .table td {
+            padding: 15px 20px;
+            vertical-align: middle;
+            border-color: #f0f0f0;
+        }
+        .table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .applicant-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff589e 0%, #ff136f 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .filter-section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            padding: 10px 15px;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #ff589e;
+            box-shadow: 0 0 0 0.2rem rgba(255, 88, 158, 0.25);
+        }
+
+        .btn-action {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            margin: 0 2px;
+        }
+        .btn-view {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            border: none;
+        }
+        .btn-status {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+        }
+        .btn-action:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+            color: white;
+        }
+
+        .loading-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .pagination-container {
+            background: white;
+            padding: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        /* Modal Styles */
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            border-bottom: none;
+            border-radius: 10px 10px 0 0;
+        }
+        .modal-content {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .btn-close-white {
+            filter: invert(1);
+        }
+    </style>
+</head>
+<body>
+    {% load api_utils %}
+    {% api_js_functions %}
+    <!-- ===== ORGANIZED TOP NAVBAR ===== -->
+    <!-- Top Navigation -->
+    <header class="header-area">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <nav class="main-nav">
+                        <a href="/" class="logo">
+                            <img src="/static/images/logo.png" alt="JobPortal" style="max-height: 40px;">
+                        </a>
+
+                        <!-- Top Right Icons -->
+                        <ul class="nav-icons">
+                            <li>
+                                <a href="/" title="Home">
+                                    <i class="fas fa-home"></i>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="/#job-listings" title="Browse Jobs">
+                                    <i class="fas fa-search"></i>
+                                </a>
+                            </li>
+
+                            {% if user.is_authenticated %}
+                            <li>
+                                <a href="/dashboard" title="Dashboard">
+                                    <i class="fas fa-th-large"></i>
+                                </a>
+                            </li>
+
+                            <!-- Profile Dropdown Icon -->
+                            <li class="profile-dropdown">
+                                <div class="profile-avatar-small" onclick="toggleProfileDropdown()">
+                                    {{ user.username|first|upper }}
+                                </div>
+
+                                <div class="profile-menu" id="profileMenu">
+                                    {% if user.is_superuser %}
+                                        <a href="/admin-portal/"><i class="fas fa-crown me-2"></i>Admin Portal</a>
+                                        <a href="/admin-portal/jobs/"><i class="fas fa-briefcase me-2"></i>Job Management</a>
+                                        <a href="/admin-portal/applications/" class="active"><i class="fas fa-file-alt me-2"></i>Applications</a>
+                                        <a href="/admin-portal/export/" target="_blank"><i class="fas fa-download me-2"></i>Export Data</a>
+                                        <a href="/admin/" target="_blank"><i class="fas fa-cog me-2"></i>System Admin</a>
+                                        <div class="profile-divider"></div>
+                                    {% else %}
+                                        <a href="/profile/"><i class="fas fa-user"></i> Profile</a>
+                                        <a href="/applications/"><i class="fas fa-file-alt"></i> Applications</a>
+                                        <div class="profile-divider"></div>
+                                    {% endif %}
+
+                                    <a href="/api/alerts/"><i class="fas fa-bell"></i> Alerts</a>
+                                    <a href="/preferences/"><i class="fas fa-cog"></i> Preferences</a>
+
+                                    <div class="profile-divider"></div>
+
+                                    <a href="/logout/"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                                </div>
+                            </li>
+                            <li>
+                              <a href="/messaging/">
+                                <i class="fas fa-comment-dots"></i>
+                              </a>
+                            </li>  
+                            <li>
+                                <div class="three-dot-menu">
+                                    <i class="fas fa-ellipsis-v" onclick="toggleThreeDotMenu()"></i>
+                                    <div class="menu-content" id="threeDotMenu">
+                                        {% if user.is_superuser %}
+                                            <a href="/admin/hiring/customuser/" target="_blank"><i class="fas fa-users-cog"></i> User Management</a>
+                                            <a href="/admin/hiring/applicantprofile/" target="_blank"><i class="fas fa-id-card"></i> Applicant Profiles</a>
+                                            <a href="/admin/hiring/application/" target="_blank"><i class="fas fa-file-contract"></i> Applications</a>
+                                            <a href="/admin/hiring/skill/" target="_blank"><i class="fas fa-cogs"></i> Skills</a>
+                                            <a href="/admin/hiring/education/" target="_blank"><i class="fas fa-graduation-cap"></i> Education</a>
+                                            <a href="/admin/hiring/employment/" target="_blank"><i class="fas fa-briefcase"></i> Employment</a>
+                                            <a href="/admin/hiring/document/" target="_blank"><i class="fas fa-file-upload"></i> Documents</a>
+                                        {% else %}
+                                            <a href="/profile/skills/"><i class="fas fa-cogs"></i> Skills</a>
+                                            <a href="/profile/employment/"><i class="fas fa-briefcase"></i> Employment</a>
+                                            <a href="/profile/education/"><i class="fas fa-graduation-cap"></i> Education</a>
+                                            <a href="/profile/documents/"><i class="fas fa-file-upload"></i> Documents</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </li>
+
+                            {% else %}
+                            <li>
+                                <a href="#" onclick="showLogin()" title="Login">
+                                    <i class="fas fa-sign-in-alt"></i>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="#" onclick="showSignup()" title="Sign Up">
+                                    <i class="fas fa-user-plus"></i>
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Desktop Sidebar -->
+    <div class="desktop-sidebar">
+        <a href="/admin-portal/"><i class="fas fa-crown"></i> Admin Portal</a>
+        <div style="height: 1px; background: #eee; margin: 15px 0;"></div>
+        
+        <a href="/admin-portal/jobs/"><i class="fas fa-briefcase"></i> Job Management</a>
+        <a href="/admin-portal/jobs/edit/"><i class="fas fa-edit"></i> Edit Jobs</a>
+        <a href="/admin/hiring/joblisting/add/" target="_blank"><i class="fas fa-plus"></i> Add New Job</a>
+        
+        <div style="height: 1px; background: #eee; margin: 15px 0;"></div>
+        
+        <a href="/admin-portal/applications/" class="active"><i class="fas fa-file-contract"></i> Applications Management</a>
+        <a href="/admin/hiring/customuser/" target="_blank"><i class="fas fa-users-cog"></i> User Management</a>
+        <a href="/admin/hiring/applicantprofile/" target="_blank"><i class="fas fa-id-card"></i> Applicant Profiles</a>
+        <a href="/admin/hiring/application/" target="_blank"><i class="fas fa-file-alt"></i> All Applications</a>
+        
+        <div style="height: 1px; background: #eee; margin: 15px 0;"></div>
+        
+        <a href="/admin/hiring/skill/" target="_blank"><i class="fas fa-cogs"></i> Skills</a>
+        <a href="/admin/hiring/education/" target="_blank"><i class="fas fa-graduation-cap"></i> Education</a>
+        <a href="/admin/hiring/employment/" target="_blank"><i class="fas fa-briefcase"></i> Employment</a>
+        <a href="/admin/hiring/document/" target="_blank"><i class="fas fa-file-upload"></i> Documents</a>
+        
+        <div style="height: 1px; background: #eee; margin: 15px 0;"></div>
+        
+        <a href="/admin/hiring/alert/" target="_blank"><i class="fas fa-bell"></i> Alerts</a>
+        <a href="/admin/hiring/emailtemplate/" target="_blank"><i class="fas fa-envelope"></i> Email Templates</a>
+        <a href="/admin/hiring/notificationpreference/" target="_blank"><i class="fas fa-sliders-h"></i> Preferences</a>
+        
+        <div style="height: 1px; background: #eee; margin: 15px 0;"></div>
+        
+        <a href="/admin-portal/export/" target="_blank"><i class="fas fa-download"></i> Export Center</a>
+        <a href="/admin/" target="_blank"><i class="fas fa-cog"></i> System Admin</a>
+    </div>
+
+    <!-- ===== APPLICATIONS MANAGEMENT CONTENT ===== -->
+    <div class="container mt-4">
+        <!-- Admin Header -->
+        <div class="admin-header">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="display-5 mb-2"><i class="fas fa-file-contract me-3"></i>Applications Management</h1>
+                    <p class="lead mb-0">Review and manage all job applications in your hiring platform</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <div class="bg-white text-dark rounded p-3 d-inline-block">
+                        <small class="text-muted d-block">Applications Status</small>
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-circle text-success me-2"></i>
+                            <strong id="applicationsStatus">Loading...</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card admin-card stat-card border-primary">
+                    <div class="card-body">
+                        <i class="fas fa-file-alt text-primary"></i>
+                        <h3 id="total-applications">0</h3>
+                        <p class="card-text text-muted">Total Applications</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card admin-card stat-card border-success">
+                    <div class="card-body">
+                        <i class="fas fa-check-circle text-success"></i>
+                        <h3 id="successful-applications">0</h3>
+                        <p class="card-text text-muted">Successful</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card admin-card stat-card border-warning">
+                    <div class="card-body">
+                        <i class="fas fa-clock text-warning"></i>
+                        <h3 id="review-applications">0</h3>
+                        <p class="card-text text-muted">Under Review</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card admin-card stat-card border-danger">
+                    <div class="card-body">
+                        <i class="fas fa-times-circle text-danger"></i>
+                        <h3 id="unsuccessful-applications">0</h3>
+                        <p class="card-text text-muted">Unsuccessful</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters and Search -->
+        <div class="filter-section">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Status</label>
+                    <select id="status-filter" class="form-select">
+                        <option value="all">All Statuses</option>
+                        <option value="submitted">Submitted</option>
+                        <option value="under_review">Under Review</option>
+                        <option value="shortlisted">Shortlisted</option>
+                        <option value="interview">Interview</option>
+                        <option value="successful">Successful</option>
+                        <option value="unsuccessful">Unsuccessful</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Job Position</label>
+                    <select id="job-filter" class="form-select">
+                        <option value="all">All Jobs</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Applied Date</label>
+                    <input type="date" id="date-filter" class="form-control">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Search</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" id="search-input" class="form-control" placeholder="Search applications...">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Applications Table -->
+        <div class="applications-table">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Applicant</th>
+                            <th>Job Position</th>
+                            <th>Applied Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="applications-table-body">
+                        <!-- Applications will be loaded here dynamically -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loading-state" class="loading-state">
+                <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;" role="status">
+                    <span class="visually-hidden">Loading applications...</span>
+                </div>
+                <p class="text-muted">Loading applications...</p>
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty-state" class="empty-state d-none">
+                <i class="fas fa-file-alt"></i>
+                <h4 class="text-muted">No applications found</h4>
+                <p class="text-muted">There are no applications matching your current filters.</p>
+            </div>
+
+            <!-- Pagination -->
+            <div id="pagination" class="pagination-container d-none">
+                <!-- Pagination will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Update Modal -->
+    <div class="modal fade" id="statusModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update Application Status</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Select Status</label>
+                        <select id="status-select" class="form-select">
+                            <option value="submitted">Submitted</option>
+                            <option value="under_review">Under Review</option>
+                            <option value="shortlisted">Shortlisted</option>
+                            <option value="interview">Interview</option>
+                            <option value="successful">Successful</option>
+                            <option value="unsuccessful">Unsuccessful</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Notes (Optional)</label>
+                        <textarea id="status-notes" rows="3" class="form-control" placeholder="Add any notes about this status change..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" id="save-status-update" class="btn btn-success">
+                        <i class="fas fa-save me-2"></i>Update Status
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Details Modal -->
+    <div class="modal fade" id="detailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Application Details</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="application-details-content">
+                        <!-- Application details will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <div class="mobile-bottom-nav">
+        <a href="/"><i class="fas fa-home"></i>Home</a>
+        <a href="/admin-portal/"><i class="fas fa-crown"></i>Admin</a>
+        <a href="/admin-portal/jobs/"><i class="fas fa-briefcase"></i>Jobs</a>
+        <a href="/admin-portal/applications/" class="active"><i class="fas fa-file-contract"></i>Applications</a>
+        <a href="/admin-portal/export/" target="_blank"><i class="fas fa-download"></i>Export</a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ===== ORGANIZED NAVIGATION FUNCTIONS =====
+        function toggleProfileDropdown() {
+            document.getElementById("profileMenu").classList.toggle("show");
+        }
+
+        function toggleThreeDotMenu() {
+            document.getElementById("threeDotMenu").classList.toggle("show");
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener("click", function(e) {
+            const profileMenu = document.getElementById("profileMenu");
+            const profileAvatar = document.querySelector(".profile-avatar-small");
+            const threeDotMenu = document.getElementById("threeDotMenu");
+            const threeDotIcon = document.querySelector(".three-dot-menu i");
+
+            // Close profile dropdown
+            if (profileAvatar && profileMenu && !profileAvatar.contains(e.target) && !profileMenu.contains(e.target)) {
+                profileMenu.classList.remove("show");
+            }
+
+            // Close three-dot menu
+            if (threeDotIcon && threeDotMenu && !threeDotIcon.contains(e.target) && !threeDotMenu.contains(e.target)) {
+                threeDotMenu.classList.remove("show");
+            }
+        });
+
+        // ===== APPLICATIONS MANAGEMENT FUNCTIONS =====
+        let currentApplicationId = null;
+        let currentPage = 1;
+        const applicationsPerPage = 10;
+
+        // Load applications when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadApplications();
+            loadJobFilters();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            // Filter event listeners
+            document.getElementById('status-filter').addEventListener('change', loadApplications);
+            document.getElementById('job-filter').addEventListener('change', loadApplications);
+            document.getElementById('date-filter').addEventListener('change', loadApplications);
+            document.getElementById('search-input').addEventListener('input', debounce(loadApplications, 300));
+
+            // Modal event listeners
+            document.getElementById('save-status-update').addEventListener('click', updateApplicationStatus);
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        async function loadApplications() {
+            showLoadingState();
+            
+            const statusFilter = document.getElementById('status-filter').value;
+            const jobFilter = document.getElementById('job-filter').value;
+            const dateFilter = document.getElementById('date-filter').value;
+            const searchQuery = document.getElementById('search-input').value;
+
+            try {
+                const response = await fetch('/api/admin/applications/list/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCSRFToken()
+                    },
+                    body: JSON.stringify({
+                        status: statusFilter !== 'all' ? statusFilter : null,
+                        job_id: jobFilter !== 'all' ? jobFilter : null,
+                        date: dateFilter || null,
+                        search: searchQuery || null,
+                        page: currentPage,
+                        page_size: applicationsPerPage
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    displayApplications(data.applications);
+                    updateStats(data.stats);
+                    updatePagination(data.total_pages);
+                    document.getElementById('applicationsStatus').textContent = 'Applications Loaded';
+                } else {
+                    showError('Failed to load applications');
+                    document.getElementById('applicationsStatus').textContent = 'Error Loading';
+                }
+            } catch (error) {
+                console.error('Error loading applications:', error);
+                showError('Error loading applications');
+                document.getElementById('applicationsStatus').textContent = 'Connection Error';
+            }
+        }
+
+        function displayApplications(applications) {
+            const tbody = document.getElementById('applications-table-body');
+            const emptyState = document.getElementById('empty-state');
+            const loadingState = document.getElementById('loading-state');
+
+            loadingState.classList.add('d-none');
+
+            if (applications.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.classList.remove('d-none');
+                return;
+            }
+
+            emptyState.classList.add('d-none');
+
+            tbody.innerHTML = applications.map(app => `
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="applicant-avatar me-3">
+                                ${app.applicant_name.charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                                <div class="fw-bold">${escapeHtml(app.applicant_name)}</div>
+                                <small class="text-muted">${escapeHtml(app.applicant_email)}</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="fw-bold">${escapeHtml(app.job_title)}</div>
+                        <small class="text-muted">${escapeHtml(app.company_name)}</small>
+                    </td>
+                    <td>
+                        <div class="text-muted">${new Date(app.applied_date).toLocaleDateString()}</div>
+                        <small class="text-muted">${new Date(app.applied_date).toLocaleTimeString()}</small>
+                    </td>
+                    <td>
+                        <span class="status-badge status-${app.status}">
+                            ${getStatusDisplayName(app.status)}
+                        </span>
+                    </td>
+                    <td>
+                        <button onclick="viewApplicationDetails('${app.id}')" class="btn btn-action btn-view">
+                            <i class="fas fa-eye me-1"></i>View
+                        </button>
+                        <button onclick="openStatusModal('${app.id}', '${app.status}')" class="btn btn-action btn-status">
+                            <i class="fas fa-edit me-1"></i>Status
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function getStatusDisplayName(status) {
+            const names = {
+                'submitted': 'Submitted',
+                'under_review': 'Under Review',
+                'shortlisted': 'Shortlisted',
+                'interview': 'Interview',
+                'successful': 'Successful',
+                'unsuccessful': 'Unsuccessful'
+            };
+            return names[status] || status;
+        }
+
+        function updateStats(stats) {
+            document.getElementById('total-applications').textContent = stats.total || 0;
+            document.getElementById('successful-applications').textContent = stats.successful || 0;
+            document.getElementById('review-applications').textContent = stats.under_review || 0;
+            document.getElementById('unsuccessful-applications').textContent = stats.unsuccessful || 0;
+        }
+
+        async function loadJobFilters() {
+            try {
+                const response = await fetch('/api/admin/jobs/simple-list/');
+                const data = await response.json();
+
+                if (data.success) {
+                    const jobFilter = document.getElementById('job-filter');
+                    jobFilter.innerHTML = '<option value="all">All Jobs</option>' +
+                        data.jobs.map(job => 
+                            `<option value="${job.id}">${escapeHtml(job.title)} - ${escapeHtml(job.company_name)}</option>`
+                        ).join('');
+                }
+            } catch (error) {
+                console.error('Error loading job filters:', error);
+            }
+        }
+
+        function openStatusModal(applicationId, currentStatus) {
+            currentApplicationId = applicationId;
+            document.getElementById('status-select').value = currentStatus;
+            document.getElementById('status-notes').value = '';
+            
+            const modal = new bootstrap.Modal(document.getElementById('statusModal'));
+            modal.show();
+        }
+
+        async function updateApplicationStatus() {
+            if (!currentApplicationId) return;
+
+            const newStatus = document.getElementById('status-select').value;
+            const notes = document.getElementById('status-notes').value;
+
+            try {
+                const response = await fetch(`/api/admin/applications/${currentApplicationId}/status/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCSRFToken()
+                    },
+                    body: JSON.stringify({
+                        status: newStatus,
+                        notes: notes
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('statusModal'));
+                    modal.hide();
+                    loadApplications(); // Refresh the list
+                    showToast('Success', 'Application status updated successfully', 'success');
+                } else {
+                    showError(data.error || 'Failed to update status');
+                }
+            } catch (error) {
+                console.error('Error updating status:', error);
+                showError('Error updating application status');
+            }
+        }
+
+        async function viewApplicationDetails(applicationId) {
+            try {
+                const response = await fetch(`/api/admin/applications/${applicationId}/`);
+                const data = await response.json();
+
+                if (data.success) {
+                    displayApplicationDetails(data.application);
+                    const modal = new bootstrap.Modal(document.getElementById('detailsModal'));
+                    modal.show();
+                } else {
+                    showError('Failed to load application details');
+                }
+            } catch (error) {
+                console.error('Error loading application details:', error);
+                showError('Error loading application details');
+            }
+        }
+
+        function displayApplicationDetails(application) {
+            const content = document.getElementById('application-details-content');
+            content.innerHTML = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-header bg-primary text-white">
+                                <h6 class="mb-0"><i class="fas fa-user me-2"></i>Applicant Information</h6>
+                            </div>
+                            <div class="card-body">
+                                <p><strong>Name:</strong> ${escapeHtml(application.applicant_name)}</p>
+                                <p><strong>Email:</strong> ${escapeHtml(application.applicant_email)}</p>
+                                <p><strong>Phone:</strong> ${application.applicant_phone || 'Not provided'}</p>
+                                <p><strong>Applied:</strong> ${new Date(application.applied_date).toLocaleString()}</p>
+                                ${application.profile_completeness ? `<p><strong>Profile Completeness:</strong> ${application.profile_completeness}%</p>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-header bg-success text-white">
+                                <h6 class="mb-0"><i class="fas fa-briefcase me-2"></i>Job Information</h6>
+                            </div>
+                            <div class="card-body">
+                                <p><strong>Position:</strong> ${escapeHtml(application.job_title)}</p>
+                                <p><strong>Company:</strong> ${escapeHtml(application.company_name)}</p>
+                                <p><strong>Location:</strong> ${escapeHtml(application.job_location)}</p>
+                                <p><strong>Reference:</strong> ${escapeHtml(application.job_reference)}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-info text-white">
+                                <h6 class="mb-0"><i class="fas fa-file-alt me-2"></i>Application Details</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <p><strong>Status:</strong> 
+                                            <span class="status-badge status-${application.status}">
+                                                ${getStatusDisplayName(application.status)}
+                                            </span>
+                                        </p>
+                                        <p><strong>Reference Number:</strong> ${application.reference_number}</p>
+                                    </div>
+                                </div>
+                                
+                                ${application.cover_letter ? `
+                                <div class="mb-3">
+                                    <h6>Cover Letter</h6>
+                                    <div class="border rounded p-3 bg-light">
+                                        <p class="mb-0">${escapeHtml(application.cover_letter)}</p>
+                                    </div>
+                                </div>
+                                ` : ''}
+
+                                ${application.notes ? `
+                                <div class="mb-3">
+                                    <h6>Admin Notes</h6>
+                                    <div class="border rounded p-3 bg-warning bg-opacity-10">
+                                        <p class="mb-0">${escapeHtml(application.notes)}</p>
+                                    </div>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function updatePagination(totalPages) {
+            const paginationDiv = document.getElementById('pagination');
+            
+            if (totalPages <= 1) {
+                paginationDiv.classList.add('d-none');
+                return;
+            }
+
+            paginationDiv.classList.remove('d-none');
+            
+            let paginationHTML = `
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <button onclick="changePage(${currentPage - 1})" 
+                                ${currentPage === 1 ? 'disabled' : ''}
+                                class="btn btn-outline-primary btn-sm ${currentPage === 1 ? 'disabled' : ''}">
+                            <i class="fas fa-chevron-left me-1"></i>Previous
+                        </button>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <span class="me-3 text-muted">Page ${currentPage} of ${totalPages}</span>
+                        <div class="btn-group">
+                            ${Array.from({length: totalPages}, (_, i) => i + 1).map(page => `
+                                <button onclick="changePage(${page})" 
+                                        class="btn btn-sm ${currentPage === page ? 'btn-primary' : 'btn-outline-primary'}">
+                                    ${page}
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <div>
+                        <button onclick="changePage(${currentPage + 1})" 
+                                ${currentPage === totalPages ? 'disabled' : ''}
+                                class="btn btn-outline-primary btn-sm ${currentPage === totalPages ? 'disabled' : ''}">
+                            Next<i class="fas fa-chevron-right ms-1"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            paginationDiv.innerHTML = paginationHTML;
+        }
+
+        function changePage(page) {
+            currentPage = page;
+            loadApplications();
+        }
+
+        function showLoadingState() {
+            document.getElementById('loading-state').classList.remove('d-none');
+            document.getElementById('empty-state').classList.add('d-none');
+            document.getElementById('applications-table-body').innerHTML = '';
+            document.getElementById('pagination').classList.add('d-none');
+        }
+
+        function showToast(title, message, type = 'info') {
+            // Create toast container if it doesn't exist
+            let toastContainer = document.getElementById('toastContainer');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.id = 'toastContainer';
+                toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
+                toastContainer.style.zIndex = '9999';
+                document.body.appendChild(toastContainer);
+            }
+            
+            const toastId = 'toast-' + Date.now();
+            const bgColor = type === 'success' ? 'bg-success' : type === 'error' ? 'bg-danger' : 'bg-info';
+            
+            const toastHTML = `
+                <div id="${toastId}" class="toast align-items-center text-white ${bgColor} border-0" role="alert">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <strong>${title}</strong><br>${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            `;
+            
+            toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+            
+            const toastElement = document.getElementById(toastId);
+            const toast = new bootstrap.Toast(toastElement, { delay: 5000 });
+            toast.show();
+            
+            // Remove toast from DOM after it's hidden
+            toastElement.addEventListener('hidden.bs.toast', function () {
+                toastElement.remove();
+            });
+        }
+
+        function showError(message) {
+            showToast('Error', message, 'error');
+        }
+
+        function getCSRFToken() {
+            const name = 'csrftoken';
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function escapeHtml(unsafe) {
+            if (unsafe === null || unsafe === undefined) return '';
+            return unsafe
+                .toString()
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // Auto-refresh applications every 30 seconds
+        setInterval(loadApplications, 30000);
+    </script>
+
+  <script src="/static/hiring/js/notifications-global.js" defer></script>
+</body>
+</html>
+{% endif %}

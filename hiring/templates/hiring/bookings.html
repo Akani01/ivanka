@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My bookings · OppoGlobe{% endblock %}
+{% block meta_description %}View your OppoGlobe property bookings, payment status and Yoco payments.{% endblock %}
+
+{% block content %}
+<style>
+:root{--bk-ink:#16241f;--bk-muted:#68736d;--bk-line:#e4e7e2;--bk-paper:#f5f7f5;--bk-card:#fff;--bk-jade:#1f6f5c;--bk-jade2:#154f41;--bk-jade-wash:#e7f1ec;--bk-gold:#e8a93b;--bk-gold-wash:#fbf0da;--bk-coral:#ff6b4a;--bk-red:#d64545;--bk-shadow:0 12px 34px rgba(22,36,31,.09)}
+.booking-page{min-height:100vh;background:var(--bk-paper);color:var(--bk-ink);padding:26px 16px 100px}.booking-shell{width:min(1180px,100%);margin:auto}.booking-head{display:flex;justify-content:space-between;gap:18px;align-items:end;margin-bottom:18px}.booking-eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--bk-jade)}.booking-head h1{font-size:clamp(28px,4vw,46px);margin:3px 0 6px}.booking-head p{margin:0;color:var(--bk-muted);max-width:650px}.booking-home{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid var(--bk-line);border-radius:999px;background:#fff;font-weight:700}.payment-banner{border-radius:18px;padding:13px 15px;margin:0 0 18px;font-weight:700;display:flex;align-items:center;gap:9px}.payment-banner.success{background:#e8f5ed;color:#17603a}.payment-banner.pending{background:var(--bk-gold-wash);color:#77530d}.payment-banner.warning{background:#fff3df;color:#7d5310}.payment-banner.error{background:#fdeaea;color:#8a2828}.booking-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:18px}.summary-card{background:#fff;border:1px solid var(--bk-line);border-radius:18px;padding:15px}.summary-card strong{display:block;font-size:23px}.summary-card span{font-size:12px;color:var(--bk-muted)}.booking-list{display:grid;gap:14px}.booking-card{background:#fff;border:1px solid var(--bk-line);border-radius:22px;overflow:hidden;box-shadow:0 2px 10px rgba(22,36,31,.04)}.booking-card.highlight{border-color:var(--bk-jade);box-shadow:0 0 0 3px rgba(31,111,92,.09),var(--bk-shadow)}.booking-top{display:grid;grid-template-columns:150px minmax(0,1fr);gap:16px;padding:15px}.booking-img{height:130px;border-radius:16px;overflow:hidden;background:linear-gradient(135deg,var(--bk-jade-wash),#d9e9e2);display:flex;align-items:center;justify-content:center;color:var(--bk-jade);font-size:34px}.booking-img img{width:100%;height:100%;object-fit:cover}.booking-copy{min-width:0}.booking-row{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.booking-copy h3{font-size:19px;margin:1px 0 4px}.booking-ref{font-family:monospace;font-size:10px;color:var(--bk-muted)}.pill{display:inline-flex;align-items:center;gap:5px;padding:5px 9px;border-radius:999px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;background:#eef1ef;color:#52605a;white-space:nowrap}.pill.paid,.pill.confirmed,.pill.completed{background:#e8f5ed;color:#17603a}.pill.processing,.pill.pending{background:var(--bk-gold-wash);color:#77530d}.pill.failed,.pill.cancelled{background:#fdeaea;color:#8a2828}.booking-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:11px}.meta-chip{padding:6px 9px;border:1px solid var(--bk-line);border-radius:10px;font-size:11px;color:#52605a}.booking-pay{border-top:1px solid var(--bk-line);padding:13px 15px;display:flex;justify-content:space-between;gap:12px;align-items:center;background:#fbfcfb}.amount strong{display:block;font-size:19px}.amount small{color:var(--bk-muted)}.booking-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.bk-btn{border:0;border-radius:999px;padding:10px 14px;font-weight:800;font-size:12px;cursor:pointer}.bk-btn.primary{background:var(--bk-jade);color:#fff}.bk-btn.primary:hover{background:var(--bk-jade2)}.bk-btn.gold{background:var(--bk-gold);color:#352506}.bk-btn.ghost{background:#fff;border:1px solid var(--bk-line);color:var(--bk-ink)}.bk-btn.danger{background:#fff;border:1px solid #f1caca;color:var(--bk-red)}.empty-bookings{text-align:center;padding:70px 20px;background:#fff;border:1px solid var(--bk-line);border-radius:22px}.empty-bookings i{font-size:36px;color:var(--bk-jade);margin-bottom:10px}.empty-bookings p{color:var(--bk-muted)}.pay-note{font-size:10.5px;color:var(--bk-muted);margin-top:4px}.spinner{width:13px;height:13px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;display:inline-block;animation:spin .7s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:700px){.booking-page{padding:14px 10px 95px}.booking-head{align-items:flex-start;flex-direction:column}.booking-summary{grid-template-columns:repeat(3,1fr);gap:7px}.summary-card{padding:11px}.summary-card strong{font-size:18px}.booking-top{grid-template-columns:92px minmax(0,1fr);gap:11px;padding:11px}.booking-img{height:96px}.booking-copy h3{font-size:15px}.booking-row{gap:6px}.booking-pay{align-items:flex-start;flex-direction:column}.booking-actions{justify-content:flex-start;width:100%}.bk-btn{flex:1;text-align:center}.meta-chip{font-size:10px;padding:5px 7px}}
+@media(max-width:430px){.booking-summary{grid-template-columns:1fr}.summary-card{display:flex;justify-content:space-between;align-items:center}.booking-top{grid-template-columns:1fr}.booking-img{height:170px}.booking-row{align-items:flex-start}.pill{font-size:9px}}
+</style>
+
+<div class="booking-page">
+  <main class="booking-shell">
+    <div class="booking-head">
+      <div>
+        <div class="booking-eyebrow">Property stays & rentals</div>
+        <h1>My bookings</h1>
+        <p>Your reservations, payment method and payment status stay here after checkout.</p>
+      </div>
+      <a href="/" class="booking-home"><i class="fas fa-compass"></i> Explore properties</a>
+    </div>
+
+    {% if payment_message %}
+      <div class="payment-banner {{ payment_message_type|default:'pending' }}">
+        {% if payment_message_type == 'success' %}<i class="fas fa-circle-check"></i>
+        {% elif payment_message_type == 'error' %}<i class="fas fa-circle-xmark"></i>
+        {% else %}<i class="fas fa-circle-info"></i>{% endif %}
+        {{ payment_message }}
+      </div>
+    {% endif %}
+
+    <section class="booking-summary">
+      <div class="summary-card"><strong>{{ bookings|length }}</strong><span>Total bookings</span></div>
+      <div class="summary-card"><strong id="paidCount">—</strong><span>Paid bookings</span></div>
+      <div class="summary-card"><strong id="activeCount">—</strong><span>Active bookings</span></div>
+    </section>
+
+    <section class="booking-list" id="bookingList">
+      {% for booking in bookings %}
+      <article class="booking-card {% if selected_booking and selected_booking.id == booking.id %}highlight{% endif %}" data-status="{{ booking.status }}" data-payment="{{ booking.payment_status }}" id="booking-{{ booking.id }}">
+        <div class="booking-top">
+          <div class="booking-img">
+            {% if booking.property.main_image %}<img src="{{ booking.property.main_image.url }}" alt="{{ booking.property.title }}">{% else %}<i class="fas fa-building"></i>{% endif %}
+          </div>
+          <div class="booking-copy">
+            <div class="booking-row">
+              <div>
+                <div class="booking-ref">{{ booking.booking_reference }}</div>
+                <h3>{{ booking.property.title }}</h3>
+              </div>
+              <span class="pill {{ booking.status }}">{{ booking.get_status_display }}</span>
+            </div>
+            <div class="booking-meta">
+              <span class="meta-chip"><i class="far fa-calendar"></i> {{ booking.check_in|date:"d M Y" }} → {{ booking.check_out|date:"d M Y" }}</span>
+              <span class="meta-chip"><i class="fas fa-user-group"></i> {{ booking.number_of_guests }} guest{{ booking.number_of_guests|pluralize }}</span>
+              <span class="meta-chip"><i class="fas fa-clock"></i> {{ booking.duration_days }} day{{ booking.duration_days|pluralize }}</span>
+              <span class="meta-chip"><i class="fas fa-wallet"></i> {{ booking.payment_method|default:"Not selected"|title }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="booking-pay">
+          <div class="amount">
+            <strong>{{ booking.currency }} {{ booking.total_amount|floatformat:2 }}</strong>
+            <small>Payment: <span class="pill {{ booking.payment_status }}">{{ booking.get_payment_status_display }}</span></small>
+            {% if booking.payment_method == 'card' %}<div class="pay-note"><i class="fas fa-lock"></i> Card checkout is handled securely by Yoco.</div>{% endif %}
+          </div>
+          <div class="booking-actions">
+            <a class="bk-btn ghost" href="/properties/{{ booking.property.id }}/"><i class="fas fa-house"></i> Property</a>
+            {% if booking.payment_status != 'paid' and booking.status != 'cancelled' and booking.payment_method == 'card' %}
+              <button class="bk-btn gold" type="button" onclick="retryYoco('{{ booking.id }}', this)"><i class="fas fa-credit-card"></i> Pay with Yoco</button>
+            {% endif %}
+            {% if booking.status == 'pending' or booking.status == 'confirmed' %}
+              <button class="bk-btn danger" type="button" onclick="cancelBooking('{{ booking.id }}', this)"><i class="fas fa-xmark"></i> Cancel</button>
+            {% endif %}
+          </div>
+        </div>
+      </article>
+      {% empty %}
+      <div class="empty-bookings">
+        <i class="fas fa-calendar-check"></i>
+        <h3>No property bookings yet</h3>
+        <p>When you reserve a stay or rental, its booking and payment history will appear here.</p>
+        <a class="bk-btn primary" href="/">Explore properties</a>
+      </div>
+      {% endfor %}
+    </section>
+  </main>
+</div>
+
+<script>
+function getCookie(name){const row=document.cookie.split('; ').find(v=>v.startsWith(name+'='));return row?decodeURIComponent(row.split('=')[1]):'';}
+function refreshCounts(){const cards=[...document.querySelectorAll('.booking-card')];document.getElementById('paidCount').textContent=cards.filter(x=>x.dataset.payment==='paid').length;document.getElementById('activeCount').textContent=cards.filter(x=>['pending','confirmed','checked_in'].includes(x.dataset.status)).length;}
+refreshCounts();
+
+async function retryYoco(id, btn){const old=btn.innerHTML;btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Opening Yoco…';try{const r=await fetch(`/api/bookings/${encodeURIComponent(id)}/retry-payment/`,{method:'POST',credentials:'same-origin',headers:{'X-CSRFToken':getCookie('csrftoken'),'Accept':'application/json'}});const d=await r.json();if(!r.ok||!d.success)throw new Error(d.error||'Could not start Yoco checkout.');if(!d.redirect_url)throw new Error('Yoco did not return a checkout page.');window.location.href=d.redirect_url;}catch(e){alert(e.message||'Could not start Yoco checkout.');btn.disabled=false;btn.innerHTML=old;}}
+
+async function cancelBooking(id, btn){if(!confirm('Cancel this booking?'))return;const old=btn.innerHTML;btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Cancelling…';try{const r=await fetch(`/api/bookings/${encodeURIComponent(id)}/cancel/`,{method:'POST',credentials:'same-origin',headers:{'X-CSRFToken':getCookie('csrftoken'),'Accept':'application/json'}});const d=await r.json();if(!r.ok||d.success===false)throw new Error(d.error||d.message||'Could not cancel booking.');location.reload();}catch(e){alert(e.message||'Could not cancel booking.');btn.disabled=false;btn.innerHTML=old;}}
+
+const highlighted=document.querySelector('.booking-card.highlight');if(highlighted)setTimeout(()=>highlighted.scrollIntoView({behavior:'smooth',block:'center'}),250);
+</script>
+{% endblock %}

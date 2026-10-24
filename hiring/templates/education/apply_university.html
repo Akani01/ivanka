@@ -1,0 +1,4724 @@
+
+{% load static %}
+{% load pwa %}
+{% progressive_web_app_meta %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+    <title>Apply to University - OppoGlobe Education</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap"
+          rel="stylesheet">
+
+    <style>
+        /* ============================================================
+           OPPOGLOBE DESIGN SYSTEM
+           ============================================================ */
+
+        :root {
+            --ink: #16241F;
+            --ink-soft: #5B6660;
+            --ink-faint: #8B958F;
+
+            --paper: #F6F7F5;
+            --surface: #FFFFFF;
+
+            --line: #E4E7E2;
+            --line-soft: #EEF0ED;
+
+            --jade: #1F6F5C;
+            --jade-deep: #154F41;
+            --jade-wash: #E7F1EC;
+
+            --coral: #FF6B4A;
+            --coral-deep: #E24E2F;
+            --coral-wash: #FFEAE3;
+
+            --gold: #E8A93B;
+            --gold-wash: #FBF0DA;
+
+            --plum: #7A5AA3;
+            --plum-wash: #F1EBF9;
+
+            --sky: #2E8BC0;
+            --sky-wash: #E7F3FA;
+
+            --danger: #D64545;
+            --success: #2C9A5B;
+
+            --radius-xs: 8px;
+            --radius-sm: 12px;
+            --radius-md: 16px;
+            --radius-lg: 22px;
+            --radius-pill: 999px;
+
+            --shadow-sm:
+                0 1px 3px rgba(22,36,31,.06),
+                0 1px 2px rgba(22,36,31,.04);
+
+            --shadow-md:
+                0 8px 24px rgba(22,36,31,.08);
+
+            --shadow-lg:
+                0 20px 48px rgba(22,36,31,.14);
+
+            --font-display: 'Fraunces', Georgia, serif;
+            --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
+
+            --ease: cubic-bezier(.34,1.2,.4,1);
+
+            --header-h: 64px;
+            --bottom-nav-h: 66px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-text-size-adjust: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            margin: 0;
+            background: var(--paper);
+            color: var(--ink);
+            font-family: var(--font-body);
+            font-size: 15px;
+            line-height: 1.55;
+            padding-top: var(--header-h);
+            padding-bottom: 30px;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button,
+        input,
+        select,
+        textarea {
+            font-family: inherit;
+        }
+
+        img {
+            max-width: 100%;
+            display: block;
+        }
+
+        :focus-visible {
+            outline: 2.5px solid var(--jade);
+            outline-offset: 2px;
+            border-radius: 6px;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: var(--font-display);
+            letter-spacing: -.015em;
+        }
+
+        /* ============================================================
+           HEADER
+           ============================================================ */
+
+        .header-area {
+            position: fixed;
+            inset: 0 0 auto 0;
+            height: var(--header-h);
+            background: rgba(255,255,255,.96);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--line);
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+        }
+
+        .header-inner {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 clamp(10px, 3vw, 24px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            min-width: 0;
+            flex-shrink: 0;
+        }
+
+        .brand-mark {
+            width: 35px;
+            height: 35px;
+            border-radius: 11px;
+            background: linear-gradient(135deg, var(--jade), var(--jade-deep));
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 17px;
+            box-shadow: 0 5px 14px rgba(31,111,92,.18);
+        }
+
+        .brand-word {
+            font-family: var(--font-display);
+            font-size: 20px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .brand-word span {
+            color: var(--jade);
+        }
+
+        .header-context {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: auto;
+            margin-right: 8px;
+        }
+
+        .context-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 11px;
+            border-radius: var(--radius-pill);
+            background: var(--jade-wash);
+            color: var(--jade-deep);
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .context-chip i {
+            font-size: 10px;
+        }
+
+        .nav-icons {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .icon-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--ink-soft);
+            font-size: 16px;
+            transition: .16s ease;
+        }
+
+        .icon-btn:hover {
+            background: var(--jade-wash);
+            color: var(--jade-deep);
+        }
+
+        .avatar-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, var(--coral), var(--gold));
+            color: #fff;
+            font-size: 13px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .profile-dropdown {
+            position: relative;
+        }
+
+        .dropdown-panel {
+            position: absolute;
+            top: calc(100% + 9px);
+            right: 0;
+            width: 225px;
+            max-width: calc(100vw - 16px);
+            padding: 6px;
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(6px) scale(.98);
+            transition: .16s var(--ease);
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .dropdown-panel.show {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translateY(0) scale(1);
+        }
+
+        .dropdown-panel a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 10px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            color: var(--ink);
+        }
+
+        .dropdown-panel a:hover {
+            background: var(--paper);
+        }
+
+        .dropdown-panel i {
+            width: 18px;
+            text-align: center;
+            color: var(--ink-faint);
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: var(--line-soft);
+            margin: 5px 6px;
+        }
+
+        /* ============================================================
+           DESKTOP SIDE RAIL
+           ============================================================ */
+
+        .page-shell {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 18px clamp(10px, 2.5vw, 22px) 80px;
+            display: grid;
+            grid-template-columns: 220px minmax(0, 900px);
+            gap: 18px;
+            justify-content: center;
+        }
+
+        .side-rail {
+            min-width: 0;
+        }
+
+        .side-card {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            padding: 13px;
+            position: sticky;
+            top: 82px;
+        }
+
+        .side-heading {
+            font-family: var(--font-body);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            font-weight: 800;
+            color: var(--ink-faint);
+            padding: 4px 8px 8px;
+        }
+
+        .side-link {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 11px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--ink-soft);
+            transition: .15s ease;
+            margin-bottom: 2px;
+        }
+
+        .side-link i {
+            width: 19px;
+            text-align: center;
+            color: var(--ink-faint);
+        }
+
+        .side-link:hover {
+            background: var(--paper);
+            color: var(--ink);
+            transform: translateX(2px);
+        }
+
+        .side-link.active {
+            background: var(--jade-wash);
+            color: var(--jade-deep);
+        }
+
+        .side-link.active i {
+            color: var(--jade);
+        }
+
+        .side-divider {
+            height: 1px;
+            background: var(--line-soft);
+            margin: 9px 4px;
+        }
+
+        .side-tip {
+            margin-top: 13px;
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            background:
+                radial-gradient(circle at 90% 10%, rgba(255,107,74,.13), transparent 50%),
+                linear-gradient(135deg, var(--gold-wash), #fff);
+            border: 1px solid rgba(232,169,59,.18);
+        }
+
+        .side-tip-icon {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9px;
+            background: rgba(232,169,59,.18);
+            color: #956817;
+            margin-bottom: 8px;
+        }
+
+        .side-tip strong {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 3px;
+        }
+
+        .side-tip p {
+            margin: 0;
+            color: var(--ink-soft);
+            font-size: 10.5px;
+            line-height: 1.55;
+        }
+
+        /* ============================================================
+           MAIN
+           ============================================================ */
+
+        .main-content {
+            min-width: 0;
+            width: 100%;
+        }
+
+        .page-intro {
+            position: relative;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at 92% 12%, rgba(31,111,92,.10), transparent 35%),
+                radial-gradient(circle at 8% 90%, rgba(255,107,74,.07), transparent 35%),
+                var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            padding: 20px;
+            margin-bottom: 14px;
+        }
+
+        .page-intro::after {
+            content: "";
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            right: -60px;
+            bottom: -75px;
+            border-radius: 50%;
+            border: 1px solid rgba(31,111,92,.10);
+            pointer-events: none;
+        }
+
+        .intro-topline {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 9px;
+            border-radius: var(--radius-pill);
+            background: var(--jade-wash);
+            color: var(--jade-deep);
+            font-size: 9px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+        }
+
+        .eyebrow i {
+            color: var(--jade);
+        }
+
+        .page-intro h1 {
+            font-size: clamp(25px, 4vw, 38px);
+            line-height: 1.08;
+            font-weight: 600;
+            margin: 0 0 7px;
+            max-width: 650px;
+        }
+
+        .page-intro h1 span {
+            color: var(--jade);
+        }
+
+        .page-intro p {
+            margin: 0;
+            max-width: 680px;
+            color: var(--ink-soft);
+            font-size: 13px;
+        }
+
+        .intro-meta {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 7px;
+            margin-top: 14px;
+        }
+
+        .meta-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius-pill);
+            background: rgba(255,255,255,.8);
+            color: var(--ink-soft);
+            font-size: 10.5px;
+            font-weight: 600;
+        }
+
+        .meta-pill i {
+            color: var(--jade);
+        }
+
+        /* ============================================================
+           BACK BUTTON
+           ============================================================ */
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            margin-bottom: 12px;
+            color: var(--ink-soft);
+            font-size: 12px;
+            font-weight: 700;
+            transition: .15s ease;
+        }
+
+        .back-link:hover {
+            color: var(--jade-deep);
+            transform: translateX(-3px);
+        }
+
+        /* ============================================================
+           PROGRESS
+           ============================================================ */
+
+        .progress-card {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            padding: 14px 16px;
+            margin-bottom: 14px;
+        }
+
+        .progress-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 13px;
+        }
+
+        .progress-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: var(--font-display);
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .progress-title i {
+            color: var(--coral);
+            font-size: 13px;
+        }
+
+        .progress-counter {
+            font-family: var(--font-mono);
+            color: var(--ink-faint);
+            font-size: 9px;
+            font-weight: 700;
+        }
+
+        .steps {
+            display: flex;
+            align-items: flex-start;
+            width: 100%;
+        }
+
+        .step-wrap {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .step-item {
+            flex: 0 0 auto;
+            min-width: 48px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--paper);
+            border: 2px solid var(--line);
+            color: var(--ink-faint);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            font-weight: 700;
+            transition: .25s var(--ease);
+        }
+
+        .step-item.active .step-circle {
+            background: var(--jade);
+            border-color: var(--jade);
+            color: #fff;
+            box-shadow: 0 5px 14px rgba(31,111,92,.22);
+            transform: scale(1.06);
+        }
+
+        .step-item.completed .step-circle {
+            background: var(--success);
+            border-color: var(--success);
+            color: #fff;
+        }
+
+        .step-label {
+            margin-top: 5px;
+            font-size: 8.5px;
+            line-height: 1.1;
+            text-align: center;
+            font-weight: 800;
+            color: var(--ink-faint);
+            white-space: nowrap;
+        }
+
+        .step-item.active .step-label {
+            color: var(--jade-deep);
+        }
+
+        .step-item.completed .step-label {
+            color: var(--success);
+        }
+
+        .step-line {
+            flex: 1;
+            height: 2px;
+            min-width: 8px;
+            background: var(--line);
+            margin-top: -13px;
+            transition: .25s ease;
+        }
+
+        .step-line.active,
+        .step-line.completed {
+            background: var(--jade);
+        }
+
+        .progress-bar-track {
+            width: 100%;
+            height: 4px;
+            border-radius: 99px;
+            background: var(--line-soft);
+            overflow: hidden;
+            margin-top: 13px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 16.66%;
+            background: linear-gradient(90deg, var(--jade), var(--coral));
+            border-radius: inherit;
+            transition: width .3s var(--ease);
+        }
+
+        /* ============================================================
+           FORM CARD
+           ============================================================ */
+
+        .form-card {
+            display: none;
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+            animation: cardIn .28s var(--ease);
+        }
+
+        .form-card.active {
+            display: block;
+        }
+
+        @keyframes cardIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-header {
+            position: relative;
+            padding: 17px 20px;
+            border-bottom: 1px solid var(--line);
+            background:
+                linear-gradient(135deg, rgba(231,241,236,.55), rgba(255,255,255,.8));
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .form-header-main {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            min-width: 0;
+        }
+
+        .form-header-icon {
+            width: 39px;
+            height: 39px;
+            flex: 0 0 39px;
+            border-radius: 12px;
+            background: var(--jade-wash);
+            color: var(--jade);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .form-header h2 {
+            margin: 0;
+            font-size: 19px;
+            font-weight: 600;
+        }
+
+        .form-header p {
+            margin: 2px 0 0;
+            color: var(--ink-faint);
+            font-size: 10.5px;
+        }
+
+        .step-tag {
+            flex: 0 0 auto;
+            padding: 5px 9px;
+            border-radius: var(--radius-pill);
+            background: var(--paper);
+            border: 1px solid var(--line);
+            color: var(--ink-faint);
+            font-family: var(--font-mono);
+            font-size: 9px;
+            font-weight: 700;
+        }
+
+        .form-body {
+            padding: 20px;
+        }
+
+        /* ============================================================
+           UNIVERSITY
+           ============================================================ */
+
+        .university-selected {
+            position: relative;
+            overflow: hidden;
+            padding: 17px;
+            border-radius: var(--radius-md);
+            background:
+                radial-gradient(circle at 90% 20%, rgba(31,111,92,.13), transparent 35%),
+                linear-gradient(135deg, var(--jade-wash), #fff);
+            border: 1px solid rgba(31,111,92,.16);
+        }
+
+        .university-selected::before {
+            content: "";
+            position: absolute;
+            width: 90px;
+            height: 90px;
+            right: -30px;
+            bottom: -35px;
+            border-radius: 50%;
+            border: 1px solid rgba(31,111,92,.12);
+        }
+
+        .university-selected-top {
+            display: flex;
+            align-items: flex-start;
+            gap: 13px;
+        }
+
+        .university-icon {
+            width: 42px;
+            height: 42px;
+            flex: 0 0 42px;
+            border-radius: 13px;
+            background: #fff;
+            border: 1px solid rgba(31,111,92,.14);
+            color: var(--jade);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .university-selected h3 {
+            font-size: 19px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .university-location {
+            margin-top: 3px;
+            color: var(--ink-soft);
+            font-size: 11.5px;
+        }
+
+        .university-location i {
+            color: var(--coral);
+            margin-right: 3px;
+        }
+
+        .university-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 11px;
+        }
+
+        .university-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 9px;
+            border-radius: var(--radius-pill);
+            background: rgba(255,255,255,.85);
+            border: 1px solid rgba(31,111,92,.10);
+            color: var(--jade-deep);
+            font-size: 9.5px;
+            font-weight: 700;
+        }
+
+        .university-meta i {
+            font-size: 8px;
+        }
+
+        .selection-note {
+            display: flex;
+            align-items: flex-start;
+            gap: 7px;
+            margin-top: 11px;
+            color: var(--ink-soft);
+            font-size: 10.5px;
+        }
+
+        .selection-note i {
+            color: var(--jade);
+            margin-top: 2px;
+        }
+
+        /* ============================================================
+           FIELD SYSTEM
+           ============================================================ */
+
+        .field-group {
+            margin-bottom: 15px;
+        }
+
+        .field-label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 6px;
+            color: var(--ink);
+            font-size: 11.5px;
+            font-weight: 800;
+        }
+
+        .field-label .required {
+            color: var(--coral);
+        }
+
+        .field-label .optional {
+            color: var(--ink-faint);
+            font-size: 9px;
+            font-weight: 600;
+        }
+
+        .field-control,
+        .form-control,
+        .form-select {
+            width: 100%;
+            min-height: 42px;
+            padding: 9px 12px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius-sm);
+            background: var(--surface);
+            color: var(--ink);
+            font-size: 12.5px;
+            transition:
+                border-color .15s ease,
+                box-shadow .15s ease,
+                background .15s ease;
+        }
+
+        textarea.field-control,
+        textarea.form-control {
+            min-height: 90px;
+            resize: vertical;
+        }
+
+        .field-control::placeholder,
+        .form-control::placeholder {
+            color: #A2AAA5;
+        }
+
+        .field-control:hover,
+        .form-control:hover,
+        .form-select:hover {
+            border-color: #CCD3CD;
+        }
+
+        .field-control:focus,
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--jade);
+            box-shadow: 0 0 0 3px rgba(31,111,92,.10);
+            background: #fff;
+            outline: none;
+        }
+
+        .field-control.is-invalid,
+        .form-control.is-invalid,
+        .form-select.is-invalid {
+            border-color: var(--danger);
+            box-shadow: 0 0 0 3px rgba(214,69,69,.08);
+        }
+
+        .helper {
+            color: var(--ink-faint);
+            font-size: 9.5px;
+            margin-top: 5px;
+        }
+
+        /* ============================================================
+           QUICK FILL
+           ============================================================ */
+
+        .quick-fill {
+            position: relative;
+            padding: 15px;
+            margin-bottom: 18px;
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(122,90,163,.16);
+            background:
+                radial-gradient(circle at 92% 8%, rgba(122,90,163,.10), transparent 35%),
+                linear-gradient(135deg, var(--plum-wash), #fff);
+        }
+
+        .quick-fill-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .quick-fill-title {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-family: var(--font-display);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .quick-fill-title i {
+            color: var(--plum);
+        }
+
+        .magic-badge {
+            padding: 4px 8px;
+            border-radius: var(--radius-pill);
+            background: #fff;
+            border: 1px solid rgba(122,90,163,.14);
+            color: var(--plum);
+            font-size: 8.5px;
+            font-weight: 800;
+        }
+
+        .quick-fill textarea {
+            width: 100%;
+            min-height: 125px;
+            border: 1px solid rgba(122,90,163,.16);
+            border-radius: var(--radius-sm);
+            padding: 11px 12px;
+            background: rgba(255,255,255,.82);
+            color: var(--ink);
+            font-size: 11.5px;
+            resize: vertical;
+            outline: none;
+        }
+
+        .quick-fill textarea:focus {
+            border-color: var(--plum);
+            box-shadow: 0 0 0 3px rgba(122,90,163,.08);
+            background: #fff;
+        }
+
+        .quick-fill-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 7px;
+            margin-top: 8px;
+        }
+
+        .hint-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .hint {
+            padding: 3px 7px;
+            border-radius: var(--radius-pill);
+            background: rgba(255,255,255,.8);
+            color: var(--plum);
+            border: 1px solid rgba(122,90,163,.10);
+            font-size: 8px;
+            font-weight: 700;
+        }
+
+        .btn-auto-fill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 12px;
+            border: none;
+            border-radius: var(--radius-pill);
+            background: var(--plum);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: .15s ease;
+        }
+
+        .btn-auto-fill:hover {
+            background: #67488c;
+            transform: translateY(-1px);
+        }
+
+        /* ============================================================
+           FILE UPLOADS
+           ============================================================ */
+
+        .upload-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0,1fr));
+            gap: 12px;
+        }
+
+        .upload-grid.three {
+            grid-template-columns: repeat(3, minmax(0,1fr));
+        }
+
+        .upload-field {
+            min-width: 0;
+        }
+
+        .upload-zone {
+            position: relative;
+            min-height: 116px;
+            padding: 15px;
+            border: 1.5px dashed #D4DAD5;
+            border-radius: var(--radius-md);
+            background:
+                radial-gradient(circle at 90% 10%, rgba(31,111,92,.06), transparent 40%),
+                var(--paper);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            cursor: pointer;
+            transition: .18s var(--ease);
+        }
+
+        .upload-zone:hover {
+            border-color: var(--jade);
+            background: var(--jade-wash);
+            transform: translateY(-2px);
+        }
+
+        .upload-zone:focus-within {
+            border-color: var(--jade);
+            box-shadow: 0 0 0 3px rgba(31,111,92,.08);
+        }
+
+        .upload-icon {
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 11px;
+            background: #fff;
+            color: var(--jade);
+            border: 1px solid var(--line);
+            margin-bottom: 7px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .upload-title {
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--ink);
+        }
+
+        .upload-subtitle {
+            color: var(--ink-faint);
+            font-size: 8.5px;
+            margin-top: 2px;
+        }
+
+        .upload-zone input[type="file"] {
+            display: none;
+        }
+
+        .file-list {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-top: 7px;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 6px 8px;
+            border-radius: 8px;
+            background: #fff;
+            border: 1px solid var(--line);
+            font-size: 9px;
+            color: var(--ink-soft);
+            overflow: hidden;
+        }
+
+        .file-item i {
+            color: var(--jade);
+        }
+
+        .file-item span:first-of-type {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .remove-file {
+            margin-left: auto;
+            color: var(--danger);
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        /* ============================================================
+           SECTION DIVIDER
+           ============================================================ */
+
+        .section-divider {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 20px 0 14px;
+        }
+
+        .section-divider::after {
+            content: "";
+            height: 1px;
+            flex: 1;
+            background: var(--line-soft);
+        }
+
+        .section-divider span {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--ink-soft);
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+        }
+
+        .section-divider i {
+            color: var(--coral);
+        }
+
+        /* ============================================================
+           REVIEW
+           ============================================================ */
+
+        .review-alert {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 13px 14px;
+            margin-bottom: 15px;
+            border-radius: var(--radius-md);
+            background: var(--sky-wash);
+            border: 1px solid rgba(46,139,192,.14);
+            color: #235B76;
+        }
+
+        .review-alert i {
+            margin-top: 2px;
+        }
+
+        .review-alert strong {
+            display: block;
+            font-size: 11.5px;
+            margin-bottom: 2px;
+        }
+
+        .review-alert span {
+            display: block;
+            font-size: 10px;
+            line-height: 1.5;
+        }
+
+        .preview-section {
+            margin-bottom: 12px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            background: var(--surface);
+        }
+
+        .preview-head {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 11px 13px;
+            background: var(--paper);
+            border-bottom: 1px solid var(--line);
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .preview-head i {
+            color: var(--jade);
+        }
+
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0,1fr));
+        }
+
+        .preview-item {
+            min-width: 0;
+            padding: 9px 12px;
+            border-bottom: 1px solid var(--line-soft);
+        }
+
+        .preview-item:nth-child(odd) {
+            border-right: 1px solid var(--line-soft);
+        }
+
+        .preview-label {
+            display: block;
+            color: var(--ink-faint);
+            font-size: 8.5px;
+            font-weight: 700;
+            margin-bottom: 2px;
+            text-transform: uppercase;
+            letter-spacing: .03em;
+        }
+
+        .preview-value {
+            display: block;
+            color: var(--ink);
+            font-size: 11px;
+            font-weight: 600;
+            overflow-wrap: anywhere;
+        }
+
+        /* ============================================================
+           ACTIONS
+           ============================================================ */
+
+        .form-actions {
+            display: flex;
+            align-items: stretch;
+            gap: 9px;
+            margin-top: 18px;
+        }
+
+        .btn-action {
+            min-height: 43px;
+            padding: 9px 17px;
+            border-radius: var(--radius-pill);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            border: none;
+            font-size: 11.5px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: .16s var(--ease);
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-back {
+            background: var(--paper);
+            color: var(--ink-soft);
+            border: 1px solid var(--line);
+        }
+
+        .btn-back:hover {
+            color: var(--ink);
+            border-color: #CBD1CC;
+        }
+
+        .btn-next {
+            background: var(--ink);
+            color: #fff;
+        }
+
+        .btn-next:hover {
+            background: var(--jade-deep);
+            box-shadow: 0 7px 18px rgba(22,36,31,.13);
+        }
+
+        .btn-draft {
+            background: var(--paper);
+            color: var(--ink);
+            border: 1px solid var(--line);
+            flex: 1;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, var(--jade), var(--jade-deep));
+            color: #fff;
+            flex: 1.35;
+            box-shadow: 0 7px 18px rgba(31,111,92,.15);
+        }
+
+        .btn-submit:hover {
+            box-shadow: 0 10px 24px rgba(31,111,92,.22);
+        }
+
+        /* ============================================================
+           TOASTS
+           ============================================================ */
+
+        .toast-container {
+            position: fixed;
+            top: 76px;
+            right: 14px;
+            width: min(360px, calc(100vw - 28px));
+            z-index: 99999;
+        }
+
+        .toast-item {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 11px 12px;
+            margin-bottom: 7px;
+            border-radius: var(--radius-sm);
+            color: #fff;
+            box-shadow: var(--shadow-lg);
+            font-size: 11px;
+            font-weight: 700;
+            animation: toastIn .25s var(--ease);
+        }
+
+        .toast-item.success {
+            background: var(--jade);
+        }
+
+        .toast-item.error {
+            background: var(--danger);
+        }
+
+        .toast-item.info {
+            background: var(--sky);
+        }
+
+        .toast-item.warning {
+            background: var(--gold);
+            color: var(--ink);
+        }
+
+        .toast-item .close-toast {
+            margin-left: auto;
+            background: transparent;
+            border: none;
+            color: inherit;
+            opacity: .75;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* ============================================================
+           MOBILE BOTTOM NAV
+           ============================================================ */
+
+        .mobile-bottom-nav {
+            display: none;
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 62px;
+            padding-bottom: env(safe-area-inset-bottom);
+            background: rgba(255,255,255,.97);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-top: 1px solid var(--line);
+            z-index: 2900;
+        }
+
+        .mobile-bottom-nav a {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            color: var(--ink-faint);
+            font-size: 8.5px;
+            font-weight: 700;
+        }
+
+        .mobile-bottom-nav a i {
+            font-size: 16px;
+        }
+
+        .mobile-bottom-nav a.active {
+            color: var(--jade);
+        }
+
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
+
+        @media (max-width: 999px) {
+            body {
+                padding-bottom: 78px;
+            }
+
+            .page-shell {
+                grid-template-columns: 1fr;
+                max-width: 920px;
+                padding-bottom: 85px;
+            }
+
+            .side-rail {
+                display: none;
+            }
+
+            .mobile-bottom-nav {
+                display: flex;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .header-context {
+                display: none;
+            }
+
+            .page-shell {
+                padding: 12px 9px 85px;
+            }
+
+            .page-intro {
+                padding: 17px;
+                border-radius: var(--radius-md);
+            }
+
+            .page-intro h1 {
+                font-size: 27px;
+            }
+
+            .progress-card {
+                padding: 12px 9px;
+            }
+
+            .progress-title {
+                font-size: 14px;
+            }
+
+            .form-header {
+                padding: 14px;
+            }
+
+            .form-body {
+                padding: 14px;
+            }
+
+            .form-header-icon {
+                width: 35px;
+                height: 35px;
+                flex-basis: 35px;
+            }
+
+            .form-header h2 {
+                font-size: 16px;
+            }
+
+            .step-label {
+                font-size: 7px;
+            }
+
+            .step-circle {
+                width: 28px;
+                height: 28px;
+            }
+
+            .step-item {
+                min-width: 39px;
+            }
+
+            .step-line {
+                margin-top: -12px;
+            }
+
+            .upload-grid,
+            .upload-grid.three {
+                grid-template-columns: 1fr;
+            }
+
+            .preview-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .preview-item:nth-child(odd) {
+                border-right: none;
+            }
+
+            .form-actions {
+                flex-wrap: wrap;
+            }
+
+            .btn-action {
+                width: 100%;
+            }
+
+            .btn-draft,
+            .btn-submit {
+                flex: 1 1 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .brand-word {
+                font-size: 17px;
+            }
+
+            .brand-mark {
+                width: 32px;
+                height: 32px;
+                border-radius: 9px;
+            }
+
+            .icon-btn {
+                width: 33px;
+                height: 33px;
+                font-size: 14px;
+            }
+
+            .avatar-btn {
+                width: 30px;
+                height: 30px;
+                font-size: 11px;
+            }
+
+            .page-intro h1 {
+                font-size: 24px;
+            }
+
+            .page-intro p {
+                font-size: 11.5px;
+            }
+
+            .meta-pill {
+                font-size: 9px;
+            }
+
+            .step-label {
+                display: none;
+            }
+
+            .step-item {
+                min-width: 30px;
+            }
+
+            .step-circle {
+                width: 26px;
+                height: 26px;
+                font-size: 8px;
+            }
+
+            .progress-head {
+                margin-bottom: 9px;
+            }
+
+            .quick-fill-footer {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .hint-list {
+                width: 100%;
+            }
+
+            .btn-auto-fill {
+                justify-content: center;
+                width: 100%;
+            }
+
+            .university-selected h3 {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .brand-word {
+                display: none;
+            }
+
+            .page-shell {
+                padding-left: 6px;
+                padding-right: 6px;
+            }
+
+            .form-body {
+                padding: 11px;
+            }
+
+            .form-header {
+                padding: 12px;
+            }
+
+            .progress-card {
+                padding-left: 6px;
+                padding-right: 6px;
+            }
+        }
+
+        /* ============================================================
+           SCROLLBAR
+           ============================================================ */
+
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--paper);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #C9D0CB;
+            border-radius: 99px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #AEB8B1;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- ================================================================
+     HEADER
+     ================================================================ -->
+
+<header class="header-area">
+    <div class="header-inner">
+
+        <a href="/" class="brand">
+            <div class="brand-mark">O</div>
+            <div class="brand-word">
+                Oppo<span>Globe</span>
+            </div>
+        </a>
+
+        <div class="header-context">
+            <div class="context-chip">
+                <i class="fas fa-graduation-cap"></i>
+                University Application
+            </div>
+        </div>
+
+        <ul class="nav-icons">
+
+            <li>
+                <a href="/" class="icon-btn" title="Home">
+                    <i class="fas fa-house"></i>
+                </a>
+            </li>
+
+            <li>
+                <a href="/education/" class="icon-btn" title="Education Hub">
+                    <i class="fas fa-graduation-cap"></i>
+                </a>
+            </li>
+
+            {% if user.is_authenticated %}
+
+            <li>
+                <a href="/dashboard" class="icon-btn" title="Dashboard">
+                    <i class="fas fa-th-large"></i>
+                </a>
+            </li>
+
+            <li>
+                <a href="/messaging/" class="icon-btn" title="Messages">
+                    <i class="fas fa-comment-dots"></i>
+                </a>
+            </li>
+
+            <li class="profile-dropdown">
+
+                <button
+                    type="button"
+                    class="avatar-btn"
+                    id="profileAvatar"
+                    onclick="toggleProfileDropdown()"
+                    aria-label="Open profile menu">
+
+                    {{ user.username|first|upper }}
+
+                </button>
+
+                <div class="dropdown-panel" id="profileMenu">
+
+                    <a href="/profile/">
+                        <i class="fas fa-user"></i>
+                        Profile
+                    </a>
+
+                    <a href="/api/education/my-applications/">
+                        <i class="fas fa-file-lines"></i>
+                        My Applications
+                    </a>
+
+                    <div class="dropdown-divider"></div>
+
+                    <a href="/logout/">
+                        <i class="fas fa-right-from-bracket"></i>
+                        Logout
+                    </a>
+
+                </div>
+
+            </li>
+
+            {% else %}
+
+            <li>
+                <a href="/login/" class="icon-btn" title="Login">
+                    <i class="fas fa-right-to-bracket"></i>
+                </a>
+            </li>
+
+            {% endif %}
+
+        </ul>
+
+    </div>
+</header>
+
+
+<!-- ================================================================
+     PAGE SHELL
+     ================================================================ -->
+
+<div class="page-shell">
+
+    <!-- ============================================================
+         LEFT RAIL
+         ============================================================ -->
+
+    <aside class="side-rail">
+
+        <div class="side-card">
+
+            <div class="side-heading">
+                Profile
+            </div>
+
+            <a href="/profile/" class="side-link">
+                <i class="fas fa-user"></i>
+                My Profile
+            </a>
+
+            <a href="/api/education/my-applications/" class="side-link">
+                <i class="fas fa-file-lines"></i>
+                Applications
+            </a>
+
+            <div class="side-divider"></div>
+
+            <div class="side-heading">
+                Education
+            </div>
+
+            <a href="/education/" class="side-link">
+                <i class="fas fa-graduation-cap"></i>
+                Education Hub
+            </a>
+
+            <a href="/api/education/apply/" class="side-link active">
+                <i class="fas fa-pen-to-square"></i>
+                Apply Now
+            </a>
+
+            <div class="side-divider"></div>
+
+            <div class="side-heading">
+                Quick Links
+            </div>
+
+            <a href="/profile/skills/" class="side-link">
+                <i class="fas fa-cogs"></i>
+                Skills
+            </a>
+
+            <a href="/profile/employment/" class="side-link">
+                <i class="fas fa-briefcase"></i>
+                Employment
+            </a>
+
+            <a href="/profile/documents/" class="side-link">
+                <i class="fas fa-file-arrow-up"></i>
+                Documents
+            </a>
+
+            <div class="side-tip">
+
+                <div class="side-tip-icon">
+                    <i class="fas fa-lightbulb"></i>
+                </div>
+
+                <strong>Application tip</strong>
+
+                <p>
+                    Take your time and check every section before submitting.
+                    You can also save your application as a draft.
+                </p>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- ============================================================
+         MAIN CONTENT
+         ============================================================ -->
+
+    <main class="main-content">
+
+        <!-- INTRO -->
+
+        <section class="page-intro">
+
+            <div class="intro-topline">
+
+                <div class="eyebrow">
+                    <i class="fas fa-sparkles"></i>
+                    Education
+                </div>
+
+            </div>
+
+            <h1>
+                Build your
+                <span>university application.</span>
+            </h1>
+
+            <p>
+                Complete your application step by step. Your information stays
+                organised so you can review everything before sending it.
+            </p>
+
+            <div class="intro-meta">
+
+                <span class="meta-pill">
+                    <i class="fas fa-list-check"></i>
+                    6 simple steps
+                </span>
+
+                <span class="meta-pill">
+                    <i class="fas fa-cloud-arrow-up"></i>
+                    Document uploads
+                </span>
+
+                <span class="meta-pill">
+                    <i class="fas fa-floppy-disk"></i>
+                    Save as draft
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <a href="{% url 'education_apply_selection' %}" class="back-link">
+            <i class="fas fa-arrow-left"></i>
+            Back to selection
+        </a>
+
+
+        <!-- ========================================================
+             PROGRESS
+             ======================================================== -->
+
+        <section class="progress-card">
+
+            <div class="progress-head">
+
+                <div class="progress-title">
+                    <i class="fas fa-route"></i>
+                    Application progress
+                </div>
+
+                <div class="progress-counter" id="progressCounter">
+                    STEP 1 / 6
+                </div>
+
+            </div>
+
+            <div class="steps" id="progressSteps">
+
+                <div class="step-wrap">
+
+                    <div class="step-item active" data-step="1">
+
+                        <div class="step-circle">
+                            1
+                        </div>
+
+                        <div class="step-label">
+                            Select
+                        </div>
+
+                    </div>
+
+                    <div class="step-line" id="line1"></div>
+
+                </div>
+
+
+                <div class="step-wrap">
+
+                    <div class="step-item" data-step="2">
+
+                        <div class="step-circle">
+                            2
+                        </div>
+
+                        <div class="step-label">
+                            Personal
+                        </div>
+
+                    </div>
+
+                    <div class="step-line" id="line2"></div>
+
+                </div>
+
+
+                <div class="step-wrap">
+
+                    <div class="step-item" data-step="3">
+
+                        <div class="step-circle">
+                            3
+                        </div>
+
+                        <div class="step-label">
+                            Academic
+                        </div>
+
+                    </div>
+
+                    <div class="step-line" id="line3"></div>
+
+                </div>
+
+
+                <div class="step-wrap">
+
+                    <div class="step-item" data-step="4">
+
+                        <div class="step-circle">
+                            4
+                        </div>
+
+                        <div class="step-label">
+                            Guardian
+                        </div>
+
+                    </div>
+
+                    <div class="step-line" id="line4"></div>
+
+                </div>
+
+
+                <div class="step-wrap">
+
+                    <div class="step-item" data-step="5">
+
+                        <div class="step-circle">
+                            5
+                        </div>
+
+                        <div class="step-label">
+                            Documents
+                        </div>
+
+                    </div>
+
+                    <div class="step-line" id="line5"></div>
+
+                </div>
+
+
+                <div class="step-item" data-step="6">
+
+                    <div class="step-circle">
+                        6
+                    </div>
+
+                    <div class="step-label">
+                        Review
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="progress-bar-track">
+                <div class="progress-bar-fill" id="progressFill"></div>
+            </div>
+
+        </section>
+
+
+        <!-- ========================================================
+             APPLICATION FORM
+             ======================================================== -->
+
+        <form
+            method="POST"
+            enctype="multipart/form-data"
+            id="applicationForm">
+
+            {% csrf_token %}
+
+
+            <!-- ====================================================
+                 STEP 1
+                 ==================================================== -->
+
+            <section class="form-card active" data-step="1">
+
+                <div class="form-header">
+
+                    <div class="form-header-main">
+
+                        <div class="form-header-icon">
+                            <i class="fas fa-university"></i>
+                        </div>
+
+                        <div>
+                            <h2>Select University</h2>
+                            <p>Choose where you want to study.</p>
+                        </div>
+
+                    </div>
+
+                    <span class="step-tag">
+                        01 / 06
+                    </span>
+
+                </div>
+
+
+                <div class="form-body">
+
+                    {% if university %}
+
+                    <div class="university-selected">
+
+                        <div class="university-selected-top">
+
+                            <div class="university-icon">
+                                <i class="fas fa-building-columns"></i>
+                            </div>
+
+                            <div>
+
+                                <h3>
+                                    {{ university.name }}
+                                </h3>
+
+                                <div class="university-location">
+
+                                    <i class="fas fa-location-dot"></i>
+
+                                    {{ university.city }},
+                                    {{ university.province }}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="university-meta">
+
+                            <span>
+                                <i class="fas fa-tag"></i>
+                                {{ university.get_type_display|default:"University" }}
+                            </span>
+
+                            <span>
+                                <i class="fas fa-circle-check"></i>
+                                Selected
+                            </span>
+
+                        </div>
+
+                        <input
+                            type="hidden"
+                            name="selected_university"
+                            value="{{ university.id }}">
+
+                        <div class="selection-note">
+
+                            <i class="fas fa-circle-info"></i>
+
+                            <span>
+                                You are applying to
+                                <strong>{{ university.name }}</strong>.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    {% else %}
+
+                    <div class="field-group">
+
+                        <label class="field-label">
+                            Select a University
+                            <span class="required">*</span>
+                        </label>
+
+                        <select
+                            name="selected_university"
+                            class="form-select"
+                            required>
+
+                            <option value="">
+                                -- Select a university --
+                            </option>
+
+                            {% for u in available_universities %}
+
+                            <option
+                                value="{{ u.id }}"
+                                {% if draft_data.selected_university == u.id|stringformat:"s" %}
+                                selected
+                                {% endif %}>
+
+                                {{ u.name }} -
+                                {{ u.city }},
+                                {{ u.province }}
+
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                        <div class="helper">
+                            Choose the university you want to apply to.
+                        </div>
+
+                    </div>
+
+                    {% endif %}
+
+
+                    <div class="form-actions justify-content-end">
+
+                        <button
+                            type="button"
+                            class="btn-action btn-next"
+                            onclick="goToStep(2)">
+
+                            Continue
+
+                            <i class="fas fa-arrow-right"></i>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ====================================================
+                 STEP 2
+                 ==================================================== -->
+
+            <section class="form-card" data-step="2">
+
+                <div class="form-header">
+
+                    <div class="form-header-main">
+
+                        <div class="form-header-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+
+                        <div>
+                            <h2>Personal Details</h2>
+                            <p>Tell us about yourself.</p>
+                        </div>
+
+                    </div>
+
+                    <span class="step-tag">
+                        02 / 06
+                    </span>
+
+                </div>
+
+
+                <div class="form-body">
+
+                    <!-- QUICK FILL -->
+
+                    <div class="quick-fill">
+
+                        <div class="quick-fill-head">
+
+                            <div class="quick-fill-title">
+                                <i class="fas fa-wand-magic-sparkles"></i>
+                                Quick Fill
+                            </div>
+
+                            <span class="magic-badge">
+                                SMART ENTRY
+                            </span>
+
+                        </div>
+
+                        <textarea
+                            id="messageInput"
+                            placeholder="Paste your application information here...
+
+Example:
+Full Names: John Doe
+Email: john@email.com
+Phone: 0712345678
+ID Number: 9001011234567
+Birth Date: 1990-01-01
+Address: 123 Main Street
+Province: Gauteng"></textarea>
+
+                        <div class="quick-fill-footer">
+
+                            <div class="hint-list">
+
+                                <span class="hint">Full Names</span>
+                                <span class="hint">Email</span>
+                                <span class="hint">Phone</span>
+                                <span class="hint">ID Number</span>
+                                <span class="hint">Birth Date</span>
+                                <span class="hint">Address</span>
+                                <span class="hint">Province</span>
+
+                            </div>
+
+                            <button
+                                type="button"
+                                class="btn-auto-fill"
+                                onclick="parseMessage()">
+
+                                <i class="fas fa-wand-magic-sparkles"></i>
+                                Auto-Fill
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PERSONAL -->
+
+                    <div class="row">
+
+                        <div class="col-md-6">
+
+                            <div class="field-group">
+
+                                <label class="field-label">
+                                    Full Names
+                                    <span class="required">*</span>
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="full_names"
+                                    class="form-control"
+                                    required
+                                    value="{{ draft_data.full_names|default:'' }}"
+                                    placeholder="John Doe">
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <div class="field-group">
+
+                                <label class="field-label">
+                                    Email Address
+                                    <span class="required">*</span>
+                                </label>
+
+                                <input
+                                    type="email"
+                                    name="email"
+                                    class="form-control"
+                                    required
+                                    value="{{ draft_data.email|default:user.email }}"
+                                    placeholder="john@email.com">
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="row">
+
+                        <div class="col-md-6">
+
+                            <div class="field-group">
+
+                                <label class="field-label">
+                                    Phone Number
+                                    <span class="required">*</span>
+                                </label>
+
+                                <input
+                                    type="tel"
+                                    name="phone"
+                                    class="form-control"
+                                    required
+                                    value="{{ draft_data.phone|default:'' }}"
+                                    placeholder="0712345678">
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <div class="field-group">
+
+                                <label class="field-label">
+                                    ID Number
+                                    <span class="required">*</span>
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="id_number"
+                                    class="form-control"
+                                    required
+                                    value="{{ draft_data.id_number|default:'' }}"
+                                    placeholder="9001011234567">
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="row">
+
+                        <div class="col-md-6">
+
+                            <div class="field-group">
+
+                                <label class="field-label">
+                                    Date of Birth
+                                    <span class="required">*</span>
+                                </label>
+
+                                <input
+                                    type="date"
+                                    name="birth_date"
+                                    class="form-control"
+                                    required
+                                    value="{{ draft_data.birth_date|default:'' }}">
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <div class="field-group">
+
+                                <label class="field-label">
+                                    Province
+                                    <span class="optional">Optional</span>
+                                </label>
+
+                                <select
+                                    name="province"
+                                    class="form-select">
+
+                                    <option value="">
+                                        Select Province
+                                    </option>
+
+                                    {% for p in provinces %}
+
+                                    <option
+                                        value="{{ p }}"
+                                        {% if draft_data.province == p %}
+                                        selected
+                                        {% endif %}>
+
+                                        {{ p }}
+
+                                    </option>
+
+                                    {% endfor %}
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="field-group">
+
+                        <label class="field-label">
+                            Physical Address
+                            <span class="optional">Optional</span>
+                        </label>
+
+                        <textarea
+                            name="address"
+                            class="form-control"
+                            rows="2"
+                            placeholder="123 Main Street, City, Province">{{ draft_data.address|default:'' }}</textarea>
+
+                    </div>
+
+
+                    <div class="row">
+
+                        <div class="col-md-6">
+
+                            <div class="field-group">
+
+                                <label class="field-label">
+                                    City
+                                    <span class="optional">Optional</span>
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="city"
+                                    class="form-control"
+                                    value="{{ draft_data.city|default:'' }}"
+                                    placeholder="Johannesburg">
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <div class="field-group">
+
+                                <label class="field-label">
+                                    Postal Code
+                                    <span class="optional">Optional</span>
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="postal_code"
+                                    class="form-control"
+                                    value="{{ draft_data.postal_code|default:'' }}"
+                                    placeholder="2000">
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-actions">
+
+                        <button
+                            type="button"
+                            class="btn-action btn-back"
+                            onclick="goToStep(1)">
+
+                            <i class="fas fa-arrow-left"></i>
+                            Back
+
+                        </button>
+
+                        <button
+                            type="button"
+                            class="btn-action btn-next ms-auto"
+                            onclick="goToStep(3)">
+
+                            Continue
+                            <i class="fas fa-arrow-right"></i>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ====================================================
+                 STEP 3
+                 ==================================================== -->
+
+            <section class="form-card" data-step="3">
+
+                <div class="form-header">
+
+                    <div class="form-header-main">
+
+                        <div class="form-header-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+
+                        <div>
+                            <h2>Academic Details</h2>
+                            <p>Share your study and academic information.</p>
+                        </div>
+
+                    </div>
+
+                    <span class="step-tag">
+                        03 / 06
+                    </span>
+
+                </div>
+
+
+                <div class="form-body">
+
+                    <div class="row">
+
+                        <div class="col-md-6">
+
+                            <div class="field-group">
+
+                                <label class="field-label">
+                                    Faculty
+                                    <span class="optional">Optional</span>
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="faculty"
+                                    class="form-control"
+                                    value="{{ draft_data.faculty|default:'' }}"
+                                    placeholder="Faculty of Science">
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <div class="field-group">
+
+                                <label class="field-label">
+                                    Course / Program
+                                    <span class="required">*</span>
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="course"
+                                    class="form-control"
+                                    required
+                                    value="{{ draft_data.course|default:'' }}"
+                                    placeholder="BSc Computer Science">
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="section-divider">
+                        <span>
+                            <i class="fas fa-route"></i>
+                            Programme choices
+                        </span>
+                    </div>
+
+
+                    <div class="row">
+
+                        <div class="col-md-6">
+
+                            <div class="field-group">
+
+                                <label class="field-label">
+                                    First Choice
+                                    <span class="required">*</span>
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="first_choice"
+                                    class="form-control"
+                                    required
+                                    value="{{ draft_data.first_choice|default:'' }}"
+                                    placeholder="BSc Computer Science">
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <div class="field-group">
+
+                                <label class="field-label">
+                                    Second Choice
+                                    <span class="optional">Optional</span>
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="second_choice"
+                                    class="form-control"
+                                    value="{{ draft_data.second_choice|default:'' }}"
+                                    placeholder="BSc Information Technology">
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="row">
+
+                        <div class="col-md-6">
+
+                            <div class="field-group">
+
+                                <label class="field-label">
+                                    Academic Year
+                                    <span class="optional">Optional</span>
+                                </label>
+
+                                <select
+                                    name="academic_year"
+                                    class="form-select">
+
+                                    <option value="">
+                                        Select Year
+                                    </option>
+
+                                    {% for y in academic_years %}
+
+                                    <option
+                                        value="{{ y }}"
+                                        {% if draft_data.academic_year == y|stringformat:"s" %}
+                                        selected
+                                        {% endif %}>
+
+                                        {{ y }}
+
+                                    </option>
+
+                                    {% endfor %}
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <div class="field-group">
+
+                                <label class="field-label">
+                                    Current Institution
+                                    <span class="optional">Optional</span>
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="current_institution"
+                                    class="form-control"
+                                    value="{{ draft_data.current_institution|default:'' }}"
+                                    placeholder="School or University">
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="section-divider">
+                        <span>
+                            <i class="fas fa-chart-line"></i>
+                            Academic results
+                        </span>
+                    </div>
+
+
+                    <div class="row">
+
+                        <div class="col-md-4">
+
+                            <div class="field-group">
+
+                                <label class="field-label">
+                                    Grade 11 Final
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="grade_11_final"
+                                    class="form-control"
+                                    value="{{ draft_data.grade_11_final|default:'' }}"
+                                    placeholder="e.g. 75%">
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-4">
+
+                            <div class="field-group">
+
+                                <label class="field-label">
+                                    Grade 11 June
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="grade_11_june"
+                                    class="form-control"
+                                    value="{{ draft_data.grade_11_june|default:'' }}"
+                                    placeholder="e.g. 70%">
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-4">
+
+                            <div class="field-group">
+
+                                <label class="field-label">
+                                    Grade 12 Midyear
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="grade_12_midyear"
+                                    class="form-control"
+                                    value="{{ draft_data.grade_12_midyear|default:'' }}"
+                                    placeholder="e.g. 80%">
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="section-divider">
+                        <span>
+                            <i class="fas fa-feather-pointed"></i>
+                            Motivation
+                        </span>
+                    </div>
+
+
+                    <div class="field-group">
+
+                        <label class="field-label">
+                            Motivation
+                            <span class="required">*</span>
+                        </label>
+
+                        <textarea
+                            name="motivation"
+                            class="form-control"
+                            rows="5"
+                            required
+                            placeholder="Why do you want to study at this university? Tell us about yourself, your goals and what motivates you.">{{ draft_data.motivation|default:'' }}</textarea>
+
+                        <div class="helper">
+                            Give a clear and genuine explanation of your study goals.
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-actions">
+
+                        <button
+                            type="button"
+                            class="btn-action btn-back"
+                            onclick="goToStep(2)">
+
+                            <i class="fas fa-arrow-left"></i>
+                            Back
+
+                        </button>
+
+                        <button
+                            type="button"
+                            class="btn-action btn-next ms-auto"
+                            onclick="goToStep(4)">
+
+                            Continue
+                            <i class="fas fa-arrow-right"></i>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ====================================================
+                 STEP 4
+                 ==================================================== -->
+
+            <section class="form-card" data-step="4">
+
+                <div class="form-header">
+
+                    <div class="form-header-main">
+
+                        <div class="form-header-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+
+                        <div>
+                            <h2>Guardian / Parent</h2>
+                            <p>Add someone who can support your application.</p>
+                        </div>
+
+                    </div>
+
+                    <span class="step-tag">
+                        04 / 06
+                    </span>
+
+                </div>
+
+
+                <div class="form-body">
+
+                    <div class="row">
+
+                        <div class="col-md-6">
+
+                            <div class="field-group">
+
+                                <label class="field-label">
+                                    Guardian Full Names
+                                    <span class="required">*</span>
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="guardian_full_names"
+                                    class="form-control"
+                                    required
+                                    value="{{ draft_data.guardian_full_names|default:'' }}"
+                                    placeholder="Jane Doe">
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <div class="field-group">
+
+                                <label class="field-label">
+                                    Relationship
+                                    <span class="required">*</span>
+                                </label>
+
+                                <select
+                                    name="guardian_relationship"
+                                    class="form-select"
+                                    required>
+
+                                    <option value="">
+                                        Select Relationship
+                                    </option>
+
+                                    <option
+                                        value="father"
+                                        {% if draft_data.guardian_relationship == 'father' %}
+                                        selected
+                                        {% endif %}>
+                                        Father
+                                    </option>
+
+                                    <option
+                                        value="mother"
+                                        {% if draft_data.guardian_relationship == 'mother' %}
+                                        selected
+                                        {% endif %}>
+                                        Mother
+                                    </option>
+
+                                    <option
+                                        value="guardian"
+                                        {% if draft_data.guardian_relationship == 'guardian' %}
+                                        selected
+                                        {% endif %}>
+                                        Guardian
+                                    </option>
+
+                                    <option
+                                        value="sibling"
+                                        {% if draft_data.guardian_relationship == 'sibling' %}
+                                        selected
+                                        {% endif %}>
+                                        Sibling
+                                    </option>
+
+                                    <option
+                                        value="relative"
+                                        {% if draft_data.guardian_relationship == 'relative' %}
+                                        selected
+                                        {% endif %}>
+                                        Relative
+                                    </option>
+
+                                    <option
+                                        value="other"
+                                        {% if draft_data.guardian_relationship == 'other' %}
+                                        selected
+                                        {% endif %}>
+                                        Other
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="row">
+
+                        <div class="col-md-6">
+
+                            <div class="field-group">
+
+                                <label class="field-label">
+                                    Guardian Phone
+                                    <span class="required">*</span>
+                                </label>
+
+                                <input
+                                    type="tel"
+                                    name="guardian_phone"
+                                    class="form-control"
+                                    required
+                                    value="{{ draft_data.guardian_phone|default:'' }}"
+                                    placeholder="0712345678">
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <div class="field-group">
+
+                                <label class="field-label">
+                                    Guardian Email
+                                    <span class="optional">Optional</span>
+                                </label>
+
+                                <input
+                                    type="email"
+                                    name="guardian_email"
+                                    class="form-control"
+                                    value="{{ draft_data.guardian_email|default:'' }}"
+                                    placeholder="guardian@email.com">
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="field-group">
+
+                        <label class="field-label">
+                            Guardian Address
+                            <span class="optional">Optional</span>
+                        </label>
+
+                        <textarea
+                            name="guardian_address"
+                            class="form-control"
+                            rows="3"
+                            placeholder="Guardian's physical address">{{ draft_data.guardian_address|default:'' }}</textarea>
+
+                    </div>
+
+
+                    <div class="form-actions">
+
+                        <button
+                            type="button"
+                            class="btn-action btn-back"
+                            onclick="goToStep(3)">
+
+                            <i class="fas fa-arrow-left"></i>
+                            Back
+
+                        </button>
+
+                        <button
+                            type="button"
+                            class="btn-action btn-next ms-auto"
+                            onclick="goToStep(5)">
+
+                            Continue
+                            <i class="fas fa-arrow-right"></i>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ====================================================
+                 STEP 5
+                 ==================================================== -->
+
+            <section class="form-card" data-step="5">
+
+                <div class="form-header">
+
+                    <div class="form-header-main">
+
+                        <div class="form-header-icon">
+                            <i class="fas fa-cloud-arrow-up"></i>
+                        </div>
+
+                        <div>
+                            <h2>Upload Documents</h2>
+                            <p>Attach the documents supporting your application.</p>
+                        </div>
+
+                    </div>
+
+                    <span class="step-tag">
+                        05 / 06
+                    </span>
+
+                </div>
+
+
+                <div class="form-body">
+
+                    <div class="review-alert">
+
+                        <i class="fas fa-circle-info"></i>
+
+                        <div>
+
+                            <strong>Document checklist</strong>
+
+                            <span>
+                                Supported formats include PDF, JPG, PNG, DOC and DOCX.
+                                Your ID document is required.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- MAIN DOCUMENTS -->
+
+                    <div class="upload-grid">
+
+                        <!-- CV -->
+
+                        <div class="upload-field">
+
+                            <div class="field-label">
+                                CV / Resume
+                                <span class="optional">Optional</span>
+                            </div>
+
+                            <label class="upload-zone">
+
+                                <div class="upload-icon">
+                                    <i class="fas fa-file-lines"></i>
+                                </div>
+
+                                <div class="upload-title">
+                                    Upload CV
+                                </div>
+
+                                <div class="upload-subtitle">
+                                    PDF, DOC or DOCX
+                                </div>
+
+                                <input
+                                    type="file"
+                                    name="cv"
+                                    id="cv_input"
+                                    accept=".pdf,.doc,.docx">
+
+                            </label>
+
+                            <div
+                                class="file-list"
+                                id="cv_list"></div>
+
+                        </div>
+
+
+                        <!-- TRANSCRIPT -->
+
+                        <div class="upload-field">
+
+                            <div class="field-label">
+                                Academic Transcript
+                                <span class="optional">Optional</span>
+                            </div>
+
+                            <label class="upload-zone">
+
+                                <div class="upload-icon">
+                                    <i class="fas fa-file-pdf"></i>
+                                </div>
+
+                                <div class="upload-title">
+                                    Upload Transcript
+                                </div>
+
+                                <div class="upload-subtitle">
+                                    PDF only
+                                </div>
+
+                                <input
+                                    type="file"
+                                    name="academic_transcript"
+                                    id="transcript_input"
+                                    accept=".pdf">
+
+                            </label>
+
+                            <div
+                                class="file-list"
+                                id="transcript_list"></div>
+
+                        </div>
+
+
+                        <!-- ID -->
+
+                        <div class="upload-field">
+
+                            <div class="field-label">
+                                ID Document
+                                <span class="required">*</span>
+                            </div>
+
+                            <label class="upload-zone">
+
+                                <div class="upload-icon">
+                                    <i class="fas fa-id-card"></i>
+                                </div>
+
+                                <div class="upload-title">
+                                    Upload ID
+                                </div>
+
+                                <div class="upload-subtitle">
+                                    PDF, JPG, JPEG or PNG
+                                </div>
+
+                                <input
+                                    type="file"
+                                    name="id_document"
+                                    id="id_doc_input"
+                                    accept=".pdf,.jpg,.jpeg,.png"
+                                    required>
+
+                            </label>
+
+                            <div
+                                class="file-list"
+                                id="id_doc_list"></div>
+
+                        </div>
+
+
+                        <!-- GUARDIAN ID -->
+
+                        <div class="upload-field">
+
+                            <div class="field-label">
+                                Guardian ID
+                                <span class="optional">Optional</span>
+                            </div>
+
+                            <label class="upload-zone">
+
+                                <div class="upload-icon">
+                                    <i class="fas fa-address-card"></i>
+                                </div>
+
+                                <div class="upload-title">
+                                    Upload Guardian ID
+                                </div>
+
+                                <div class="upload-subtitle">
+                                    PDF, JPG, JPEG or PNG
+                                </div>
+
+                                <input
+                                    type="file"
+                                    name="guardian_id"
+                                    id="guardian_id_input"
+                                    accept=".pdf,.jpg,.jpeg,.png">
+
+                            </label>
+
+                            <div
+                                class="file-list"
+                                id="guardian_id_list"></div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- SCHOOL REPORTS -->
+
+                    <div class="section-divider">
+
+                        <span>
+                            <i class="fas fa-school"></i>
+                            School reports
+                        </span>
+
+                    </div>
+
+
+                    <div class="upload-grid three">
+
+                        <!-- G11 FINAL -->
+
+                        <div class="upload-field">
+
+                            <div class="field-label">
+                                Grade 11 Final Report
+                                <span class="optional">Optional</span>
+                            </div>
+
+                            <label class="upload-zone">
+
+                                <div class="upload-icon">
+                                    <i class="fas fa-file-pdf"></i>
+                                </div>
+
+                                <div class="upload-title">
+                                    Gr11 Final
+                                </div>
+
+                                <div class="upload-subtitle">
+                                    PDF
+                                </div>
+
+                                <input
+                                    type="file"
+                                    name="grade_11_final_file"
+                                    id="g11final_input"
+                                    accept=".pdf">
+
+                            </label>
+
+                            <div
+                                class="file-list"
+                                id="g11final_list"></div>
+
+                        </div>
+
+
+                        <!-- G11 JUNE -->
+
+                        <div class="upload-field">
+
+                            <div class="field-label">
+                                Grade 11 June Report
+                                <span class="optional">Optional</span>
+                            </div>
+
+                            <label class="upload-zone">
+
+                                <div class="upload-icon">
+                                    <i class="fas fa-file-pdf"></i>
+                                </div>
+
+                                <div class="upload-title">
+                                    Gr11 June
+                                </div>
+
+                                <div class="upload-subtitle">
+                                    PDF
+                                </div>
+
+                                <input
+                                    type="file"
+                                    name="grade_11_june_file"
+                                    id="g11june_input"
+                                    accept=".pdf">
+
+                            </label>
+
+                            <div
+                                class="file-list"
+                                id="g11june_list"></div>
+
+                        </div>
+
+
+                        <!-- G12 MIDYEAR -->
+
+                        <div class="upload-field">
+
+                            <div class="field-label">
+                                Grade 12 Midyear
+                                <span class="optional">Optional</span>
+                            </div>
+
+                            <label class="upload-zone">
+
+                                <div class="upload-icon">
+                                    <i class="fas fa-file-pdf"></i>
+                                </div>
+
+                                <div class="upload-title">
+                                    Gr12 Midyear
+                                </div>
+
+                                <div class="upload-subtitle">
+                                    PDF
+                                </div>
+
+                                <input
+                                    type="file"
+                                    name="grade_12_midyear_file"
+                                    id="g12midyear_input"
+                                    accept=".pdf">
+
+                            </label>
+
+                            <div
+                                class="file-list"
+                                id="g12midyear_list"></div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ADDITIONAL -->
+
+                    <div class="section-divider">
+
+                        <span>
+                            <i class="fas fa-folder-open"></i>
+                            Additional information
+                        </span>
+
+                    </div>
+
+
+                    <div class="field-group">
+
+                        <div class="field-label">
+                            Additional Documents
+                            <span class="optional">Optional</span>
+                        </div>
+
+                        <label class="upload-zone">
+
+                            <div class="upload-icon">
+                                <i class="fas fa-folder-plus"></i>
+                            </div>
+
+                            <div class="upload-title">
+                                Add supporting documents
+                            </div>
+
+                            <div class="upload-subtitle">
+                                Certificates, achievements and other useful documents
+                            </div>
+
+                            <input
+                                type="file"
+                                name="additional_documents"
+                                id="additional_input"
+                                multiple>
+
+                        </label>
+
+                        <div
+                            class="file-list"
+                            id="additional_list"></div>
+
+                    </div>
+
+
+                    <div class="field-group">
+
+                        <label class="field-label">
+                            Additional Notes
+                            <span class="optional">Optional</span>
+                        </label>
+
+                        <textarea
+                            name="additional_notes"
+                            class="form-control"
+                            rows="3"
+                            placeholder="Any additional information you'd like to share">{{ draft_data.additional_notes|default:'' }}</textarea>
+
+                    </div>
+
+
+                    <div class="form-actions">
+
+                        <button
+                            type="button"
+                            class="btn-action btn-back"
+                            onclick="goToStep(4)">
+
+                            <i class="fas fa-arrow-left"></i>
+                            Back
+
+                        </button>
+
+                        <button
+                            type="button"
+                            class="btn-action btn-next ms-auto"
+                            onclick="goToStep(6)">
+
+                            Review Application
+                            <i class="fas fa-arrow-right"></i>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ====================================================
+                 STEP 6
+                 ==================================================== -->
+
+            <section class="form-card" data-step="6">
+
+                <div class="form-header">
+
+                    <div class="form-header-main">
+
+                        <div class="form-header-icon">
+                            <i class="fas fa-circle-check"></i>
+                        </div>
+
+                        <div>
+                            <h2>Review & Submit</h2>
+                            <p>Check everything before sending your application.</p>
+                        </div>
+
+                    </div>
+
+                    <span class="step-tag">
+                        06 / 06
+                    </span>
+
+                </div>
+
+
+                <div class="form-body">
+
+                    <div class="review-alert">
+
+                        <i class="fas fa-circle-info"></i>
+
+                        <div>
+
+                            <strong>Almost there</strong>
+
+                            <span>
+                                Review your information carefully. You can save this
+                                application as a draft or submit it when you're ready.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PERSONAL -->
+
+                    <div class="preview-section">
+
+                        <div class="preview-head">
+
+                            <i class="fas fa-user"></i>
+
+                            Personal Information
+
+                        </div>
+
+                        <div
+                            class="preview-grid"
+                            id="previewPersonal"></div>
+
+                    </div>
+
+
+                    <!-- ACADEMIC -->
+
+                    <div class="preview-section">
+
+                        <div class="preview-head">
+
+                            <i class="fas fa-graduation-cap"></i>
+
+                            Academic Information
+
+                        </div>
+
+                        <div
+                            class="preview-grid"
+                            id="previewAcademic"></div>
+
+                    </div>
+
+
+                    <!-- GUARDIAN -->
+
+                    <div class="preview-section">
+
+                        <div class="preview-head">
+
+                            <i class="fas fa-users"></i>
+
+                            Guardian Information
+
+                        </div>
+
+                        <div
+                            class="preview-grid"
+                            id="previewGuardian"></div>
+
+                    </div>
+
+
+                    <div class="form-actions">
+
+                        <button
+                            type="button"
+                            class="btn-action btn-back"
+                            onclick="goToStep(5)">
+
+                            <i class="fas fa-arrow-left"></i>
+                            Back
+
+                        </button>
+
+                        <button
+                            type="submit"
+                            name="action"
+                            value="save"
+                            class="btn-action btn-draft">
+
+                            <i class="fas fa-floppy-disk"></i>
+                            Save Draft
+
+                        </button>
+
+                        <button
+                            type="submit"
+                            name="action"
+                            value="submit"
+                            class="btn-action btn-submit">
+
+                            <i class="fas fa-paper-plane"></i>
+                            Submit Application
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </form>
+
+    </main>
+
+</div>
+
+
+<!-- ================================================================
+     MOBILE NAV
+     ================================================================ -->
+
+<nav class="mobile-bottom-nav">
+
+    <a href="/">
+        <i class="fas fa-house"></i>
+        <span>Home</span>
+    </a>
+
+    <a href="/dashboard">
+        <i class="fas fa-th-large"></i>
+        <span>Dashboard</span>
+    </a>
+
+    <a href="/education/" class="active">
+        <i class="fas fa-graduation-cap"></i>
+        <span>Education</span>
+    </a>
+
+    <a href="/api/education/my-applications/">
+        <i class="fas fa-file-lines"></i>
+        <span>Apps</span>
+    </a>
+
+    <a href="/profile/">
+        <i class="fas fa-user"></i>
+        <span>Profile</span>
+    </a>
+
+</nav>
+
+
+<!-- ================================================================
+     TOAST
+     ================================================================ -->
+
+<div
+    class="toast-container"
+    id="toastContainer"></div>
+
+
+<!-- ================================================================
+     BOOTSTRAP
+     ================================================================ -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<script>
+    /* ============================================================
+       PROFILE DROPDOWN
+       ============================================================ */
+
+    function toggleProfileDropdown() {
+
+        const menu = document.getElementById("profileMenu");
+
+        if (!menu) return;
+
+        menu.classList.toggle("show");
+    }
+
+
+    document.addEventListener("click", function(event) {
+
+        const menu = document.getElementById("profileMenu");
+        const avatar = document.getElementById("profileAvatar");
+
+        if (
+            menu &&
+            avatar &&
+            !menu.contains(event.target) &&
+            !avatar.contains(event.target)
+        ) {
+            menu.classList.remove("show");
+        }
+
+    });
+
+
+    /* ============================================================
+       APPLICATION STEPS
+       ============================================================ */
+
+    let currentStep = 1;
+
+    const totalSteps = 6;
+
+
+    function goToStep(step) {
+
+        if (step < 1 || step > totalSteps) {
+            return;
+        }
+
+        if (step > currentStep) {
+
+            if (!validateStep(currentStep)) {
+
+                showToast(
+                    "Please complete the required fields before continuing.",
+                    "warning"
+                );
+
+                return;
+            }
+        }
+
+        currentStep = step;
+
+        updateSteps();
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+    }
+
+
+    function updateSteps() {
+
+        document
+            .querySelectorAll(".form-card")
+            .forEach(card => {
+
+                const cardStep = parseInt(
+                    card.dataset.step,
+                    10
+                );
+
+                card.classList.toggle(
+                    "active",
+                    cardStep === currentStep
+                );
+
+            });
+
+
+        document
+            .querySelectorAll(".step-item")
+            .forEach(item => {
+
+                const step = parseInt(
+                    item.dataset.step,
+                    10
+                );
+
+                item.classList.remove(
+                    "active",
+                    "completed"
+                );
+
+                if (step === currentStep) {
+
+                    item.classList.add("active");
+
+                } else if (step < currentStep) {
+
+                    item.classList.add("completed");
+
+                }
+
+            });
+
+
+        document
+            .querySelectorAll(".step-line")
+            .forEach(line => {
+
+                const index = parseInt(
+                    line.id.replace("line", ""),
+                    10
+                );
+
+                line.classList.remove(
+                    "active",
+                    "completed"
+                );
+
+                if (index < currentStep) {
+
+                    line.classList.add("completed");
+
+                } else if (index === currentStep) {
+
+                    line.classList.add("active");
+
+                }
+
+            });
+
+
+        const counter =
+            document.getElementById("progressCounter");
+
+        if (counter) {
+
+            counter.textContent =
+                `STEP ${currentStep} / ${totalSteps}`;
+
+        }
+
+
+        const fill =
+            document.getElementById("progressFill");
+
+        if (fill) {
+
+            fill.style.width =
+                `${(currentStep / totalSteps) * 100}%`;
+
+        }
+
+    }
+
+
+    /* ============================================================
+       VALIDATION
+       ============================================================ */
+
+    function validateStep(step) {
+
+        const card = document.querySelector(
+            `.form-card[data-step="${step}"]`
+        );
+
+        if (!card) {
+            return true;
+        }
+
+
+        const requiredFields =
+            card.querySelectorAll("[required]");
+
+
+        let isValid = true;
+
+
+        requiredFields.forEach(field => {
+
+            let valid = true;
+
+
+            if (
+                field.type === "file"
+            ) {
+
+                valid =
+                    field.files &&
+                    field.files.length > 0;
+
+            } else {
+
+                valid =
+                    String(field.value || "").trim() !== "";
+
+            }
+
+
+            if (!valid) {
+
+                field.classList.add("is-invalid");
+
+                isValid = false;
+
+            } else {
+
+                field.classList.remove("is-invalid");
+
+            }
+
+        });
+
+
+        return isValid;
+    }
+
+
+    /* ============================================================
+       CLEAR INVALID STATE WHILE TYPING
+       ============================================================ */
+
+    document.addEventListener(
+        "input",
+        function(event) {
+
+            if (
+                event.target.matches(
+                    "input, textarea, select"
+                )
+            ) {
+
+                if (
+                    String(
+                        event.target.value || ""
+                    ).trim() !== ""
+                ) {
+
+                    event.target.classList.remove(
+                        "is-invalid"
+                    );
+
+                }
+
+            }
+
+
+            if (
+                event.target.closest(".form-card")
+            ) {
+
+                updatePreview();
+
+            }
+
+        }
+    );
+
+
+    document.addEventListener(
+        "change",
+        function(event) {
+
+            if (
+                event.target.matches(
+                    "input, textarea, select"
+                )
+            ) {
+
+                if (
+                    event.target.value
+                ) {
+
+                    event.target.classList.remove(
+                        "is-invalid"
+                    );
+
+                }
+
+            }
+
+        }
+    );
+
+
+    /* ============================================================
+       QUICK FILL PARSER
+       ============================================================ */
+
+    function parseMessage() {
+
+        const input =
+            document.getElementById("messageInput");
+
+
+        if (!input) {
+            return;
+        }
+
+
+        const message =
+            input.value.trim();
+
+
+        if (!message) {
+
+            showToast(
+                "Paste some application information first.",
+                "warning"
+            );
+
+            return;
+        }
+
+
+        const patterns = {
+
+            full_names:
+                /(?:Full[_\s]+Names?|Name[s]?)[\s:]+([^\n]+)/i,
+
+            email:
+                /(?:Email|E-Mail)[\s:]+([^\n@]+@[^\n]+)/i,
+
+            phone:
+                /(?:Phone|Cell|Mobile|Tel)[\s:]+([^\n]+)/i,
+
+            id_number:
+                /(?:ID Number|Identity Number|ID)[\s:]+([^\n]+)/i,
+
+            birth_date:
+                /(?:Birth Date|Date of Birth|DOB)[\s:]+([^\n]+)/i,
+
+            address:
+                /(?:Physical Address|Home Address|Address)[\s:]+([^\n]+)/i,
+
+            province:
+                /(?:Province|Prov)[\s:]+([^\n]+)/i,
+
+            city:
+                /(?:City|Town)[\s:]+([^\n]+)/i,
+
+            postal_code:
+                /(?:Postal Code|Postcode|Pincode)[\s:]+([^\n]+)/i,
+
+            faculty:
+                /(?:Faculty)[\s:]+([^\n]+)/i,
+
+            course:
+                /(?:Course|Program|Programme|Study)[\s:]+([^\n]+)/i,
+
+            first_choice:
+                /(?:First Choice|Choice 1)[\s:]+([^\n]+)/i,
+
+            second_choice:
+                /(?:Second Choice|Choice 2)[\s:]+([^\n]+)/i,
+
+            academic_year:
+                /(?:Academic Year|Year)[\s:]+([^\n]+)/i,
+
+            guardian_full_names:
+                /(?:Guardian Full Names|Guardian|Parent|Next of Kin)[\s:]+([^\n]+)/i,
+
+            guardian_phone:
+                /(?:Guardian Phone|Parent Phone)[\s:]+([^\n]+)/i,
+
+            guardian_relationship:
+                /(?:Guardian Relationship|Relationship)[\s:]+([^\n]+)/i,
+
+            guardian_address:
+                /(?:Guardian Address|Parent Address)[\s:]+([^\n]+)/i,
+
+            guardian_email:
+                /(?:Guardian Email|Parent Email)[\s:]+([^\n@]+@[^\n]+)/i,
+
+            grade_11_final:
+                /(?:Grade 11 Final|Gr11 Final|11 Final)[\s:]+([^\n]+)/i,
+
+            grade_11_june:
+                /(?:Grade 11 June|Gr11 June|11 June)[\s:]+([^\n]+)/i,
+
+            grade_12_midyear:
+                /(?:Grade 12 Midyear|Grade 12 June|Gr12 Midyear|12 Midyear)[\s:]+([^\n]+)/i,
+
+            motivation:
+                /(?:Motivation|Why|Reason)[\s:]+([^\n]+)/i,
+
+            current_institution:
+                /(?:Current School|Current Institution|School)[\s:]+([^\n]+)/i
+
+        };
+
+
+        let filled = 0;
+
+
+        Object.entries(patterns)
+            .forEach(
+                ([field, pattern]) => {
+
+                    const match =
+                        message.match(pattern);
+
+
+                    if (!match) {
+                        return;
+                    }
+
+
+                    const input =
+                        document.querySelector(
+                            `[name="${field}"]`
+                        );
+
+
+                    if (!input) {
+                        return;
+                    }
+
+
+                    input.value =
+                        match[1].trim();
+
+
+                    input.classList.remove(
+                        "is-invalid"
+                    );
+
+
+                    filled++;
+
+                }
+            );
+
+
+        updatePreview();
+
+
+        showToast(
+            `Auto-filled ${filled} field${filled === 1 ? "" : "s"}.`,
+            "success"
+        );
+
+    }
+
+
+    /* ============================================================
+       FILE DISPLAY
+       ============================================================ */
+
+    document.addEventListener(
+        "change",
+        function(event) {
+
+            if (
+                event.target.type !== "file"
+            ) {
+                return;
+            }
+
+
+            const fileInput =
+                event.target;
+
+
+            const listId =
+                fileInput.id.replace(
+                    "_input",
+                    "_list"
+                );
+
+
+            const list =
+                document.getElementById(
+                    listId
+                );
+
+
+            if (!list) {
+                return;
+            }
+
+
+            list.innerHTML = "";
+
+
+            Array.from(
+                fileInput.files || []
+            ).forEach(file => {
+
+                const item =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                item.className =
+                    "file-item";
+
+
+                const size =
+                    file.size >= 1024 * 1024
+
+                        ? `${(
+                            file.size /
+                            1024 /
+                            1024
+                        ).toFixed(1)} MB`
+
+                        : `${(
+                            file.size /
+                            1024
+                        ).toFixed(1)} KB`;
+
+
+                item.innerHTML = `
+                    <i class="fas fa-file"></i>
+
+                    <span>
+                        ${escapeHtml(file.name)}
+                    </span>
+
+                    <span>
+                        ${size}
+                    </span>
+
+                    <span
+                        class="remove-file"
+                        title="Remove">
+
+                        &times;
+
+                    </span>
+                `;
+
+
+                item
+                    .querySelector(".remove-file")
+                    .addEventListener(
+                        "click",
+                        function(event) {
+
+                            event.preventDefault();
+                            event.stopPropagation();
+
+                            /*
+                             * FileList is read-only, so the visual
+                             * item is removed while the selected
+                             * file remains attached to the input.
+                             */
+
+                            item.remove();
+
+                        }
+                    );
+
+
+                list.appendChild(item);
+
+            });
+
+        }
+    );
+
+
+    /* ============================================================
+       HTML ESCAPE
+       ============================================================ */
+
+    function escapeHtml(value) {
+
+        if (!value) {
+            return "";
+        }
+
+
+        const div =
+            document.createElement("div");
+
+
+        div.textContent =
+            String(value);
+
+
+        return div.innerHTML;
+    }
+
+
+    /* ============================================================
+       REVIEW PREVIEW
+       ============================================================ */
+
+    function updatePreview() {
+
+        const fields = {
+
+            personal: [
+
+                ["full_names", "Full Names"],
+
+                ["email", "Email"],
+
+                ["phone", "Phone"],
+
+                ["id_number", "ID Number"],
+
+                ["birth_date", "Date of Birth"],
+
+                ["address", "Address"],
+
+                ["province", "Province"],
+
+                ["city", "City"],
+
+                ["postal_code", "Postal Code"]
+
+            ],
+
+
+            academic: [
+
+                ["faculty", "Faculty"],
+
+                ["course", "Course"],
+
+                ["first_choice", "First Choice"],
+
+                ["second_choice", "Second Choice"],
+
+                ["academic_year", "Academic Year"],
+
+                ["current_institution", "Current Institution"],
+
+                ["grade_11_final", "Grade 11 Final"],
+
+                ["grade_11_june", "Grade 11 June"],
+
+                ["grade_12_midyear", "Grade 12 Midyear"],
+
+                ["motivation", "Motivation"]
+
+            ],
+
+
+            guardian: [
+
+                ["guardian_full_names", "Guardian Full Names"],
+
+                ["guardian_phone", "Guardian Phone"],
+
+                ["guardian_relationship", "Relationship"],
+
+                ["guardian_email", "Guardian Email"],
+
+                ["guardian_address", "Guardian Address"]
+
+            ]
+
+        };
+
+
+        Object.entries(fields)
+            .forEach(
+                ([section, fieldList]) => {
+
+                    const container =
+                        document.getElementById(
+                            `preview${
+                                section.charAt(0).toUpperCase()
+                                + section.slice(1)
+                            }`
+                        );
+
+
+                    if (!container) {
+                        return;
+                    }
+
+
+                    container.innerHTML = "";
+
+
+                    fieldList.forEach(
+                        ([field, label]) => {
+
+                            const input =
+                                document.querySelector(
+                                    `[name="${field}"]`
+                                );
+
+
+                            let value =
+                                input
+                                    ? input.value
+                                    : "";
+
+
+                            if (!value) {
+                                value =
+                                    "Not provided";
+                            }
+
+
+                            const item =
+                                document.createElement(
+                                    "div"
+                                );
+
+
+                            item.className =
+                                "preview-item";
+
+
+                            item.innerHTML = `
+                                <span class="preview-label">
+                                    ${escapeHtml(label)}
+                                </span>
+
+                                <span class="preview-value">
+                                    ${escapeHtml(value)}
+                                </span>
+                            `;
+
+
+                            container.appendChild(
+                                item
+                            );
+
+                        }
+                    );
+
+                }
+            );
+
+    }
+
+
+    /* ============================================================
+       TOASTS
+       ============================================================ */
+
+    function showToast(
+        message,
+        type = "success"
+    ) {
+
+        const container =
+            document.getElementById(
+                "toastContainer"
+            );
+
+
+        if (!container) {
+            return;
+        }
+
+
+        const icons = {
+
+            success:
+                "fa-circle-check",
+
+            error:
+                "fa-circle-exclamation",
+
+            info:
+                "fa-circle-info",
+
+            warning:
+                "fa-triangle-exclamation"
+
+        };
+
+
+        const toast =
+            document.createElement(
+                "div"
+            );
+
+
+        toast.className =
+            `toast-item ${type}`;
+
+
+        toast.innerHTML = `
+
+            <i class="fas ${
+                icons[type] || icons.info
+            }"></i>
+
+            <span>
+                ${escapeHtml(message)}
+            </span>
+
+            <button
+                type="button"
+                class="close-toast"
+                aria-label="Close notification">
+
+                &times;
+
+            </button>
+
+        `;
+
+
+        toast
+            .querySelector(".close-toast")
+            .addEventListener(
+                "click",
+                () => toast.remove()
+            );
+
+
+        container.appendChild(
+            toast
+        );
+
+
+        setTimeout(
+            () => {
+
+                if (
+                    toast.parentElement
+                ) {
+                    toast.remove();
+                }
+
+            },
+            5000
+        );
+
+    }
+
+
+    /* ============================================================
+       KEYBOARD NAVIGATION
+       ============================================================ */
+
+    document.addEventListener(
+        "keydown",
+        function(event) {
+
+            if (
+                event.ctrlKey &&
+                event.key === "ArrowRight"
+            ) {
+
+                event.preventDefault();
+
+                goToStep(
+                    currentStep + 1
+                );
+
+            }
+
+
+            if (
+                event.ctrlKey &&
+                event.key === "ArrowLeft"
+            ) {
+
+                event.preventDefault();
+
+                goToStep(
+                    currentStep - 1
+                );
+
+            }
+
+
+            if (
+                event.key === "Escape"
+            ) {
+
+                const menu =
+                    document.getElementById(
+                        "profileMenu"
+                    );
+
+
+                if (menu) {
+                    menu.classList.remove(
+                        "show"
+                    );
+                }
+
+            }
+
+        }
+    );
+
+
+    /* ============================================================
+       INITIALISE
+       ============================================================ */
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function() {
+
+            updateSteps();
+
+            updatePreview();
+
+        }
+    );
+
+</script>
+
+
+  <script src="/static/hiring/js/notifications-global.js" defer></script>
+</body>
+</html>

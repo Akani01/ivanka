@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="en-ZA"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ title }}</title><meta name="description" content="{{ description }}"><link rel="canonical" href="{{ canonical }}">
+<meta property="og:title" content="{{ title }}"><meta property="og:description" content="{{ description }}"><meta property="og:url" content="{{ canonical }}"><meta property="og:type" content="{% block og_type %}website{% endblock %}">
+<meta name="google-adsense-account" content="ca-pub-5924073395226525">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f6f7f5;color:#16241f;font:17px/1.8 system-ui,sans-serif}a{color:#165a48;text-underline-offset:3px}a:focus-visible,button:focus-visible{outline:3px solid #bd561a;outline-offset:4px}header,main,footer{max-width:880px;margin:auto;padding:24px}header{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-bottom:1px solid #dbe2dd}h1{font:600 clamp(28px,5vw,42px)/1.2 Georgia,serif;letter-spacing:-.02em}h2{font:600 25px/1.35 Georgia,serif;margin-top:36px}h3{font:600 22px/1.35 Georgia,serif}p{margin:16px 0}.lead{font-size:20px;color:#4e6257}.meta{font-size:14px;color:#56685c}.guide-card{background:white;border:1px solid #dde5df;border-radius:18px;padding:22px;margin:18px 0}.sources{font-size:15px}nav a,footer a{display:inline-block;margin:4px 16px 4px 0}footer{border-top:1px solid #dbe2dd;padding-bottom:140px}button{font:inherit;padding:8px 16px;cursor:pointer;border-radius:10px;border:1px solid #b7c6bc;background:#fff;color:#16241f}.skip{position:absolute;top:-80px;left:12px;background:white;padding:12px}.skip:focus{top:8px}
+</style>{% block extra_head %}{% endblock %}</head><body><a class="skip" href="#content">Skip to content</a>
+<header><a href="/">OppoGlobe</a><nav aria-label="Main"><a href="{% url 'oppo_seo:guides' %}">Education guides</a><a href="{{ contact_url }}">Contact</a></nav></header>
+<main id="content">{% block content %}{% endblock %}</main>
+<footer><nav aria-label="Footer"><a href="/">Home</a><a href="{% url 'oppo_seo:editorial' %}">About these guides</a><a href="{{ privacy_url }}">Privacy policy</a><a href="{% url 'oppo_seo:cookies' %}">Cookies</a><button type="button" onclick="window.ogOpenCookiePreferences()">Cookie preferences</button></nav><p class="meta">Independent practical guidance. Confirm application rules and decisions with the official provider.</p></footer>
+{% include 'oppo_seo/consent.html' %}</body></html>

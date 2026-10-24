@@ -1,0 +1,2091 @@
+```html
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Bulk Apply – Bursaries | OppoGlobe</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap"
+          rel="stylesheet">
+
+
+    <style>
+
+        :root {
+            --primary: #e8458a;
+            --primary-light: #fce4ec;
+            --primary-dark: #c62878;
+            --dark: #1a1a2e;
+            --gray: #6c757d;
+            --light-gray: #f5f6fa;
+            --border: #e9ecef;
+            --shadow: 0 2px 12px rgba(0,0,0,0.06);
+            --radius: 14px;
+            --radius-sm: 8px;
+            --transition: all 0.3s ease;
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f0f2f5;
+            font-family: var(--font-body);
+            padding-top: 70px;
+            padding-bottom: 80px;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        .header-area {
+            background: #ffffff;
+            border-bottom: 1px solid var(--border);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            height: 64px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        }
+
+        .main-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+            padding: 0 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        @media (min-width: 768px) {
+            .main-nav {
+                padding: 0 32px;
+            }
+        }
+
+        .logo-text {
+            font-family: var(--font-display);
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .logo-text span {
+            color: var(--primary);
+        }
+
+        .nav-icons {
+            display: flex;
+            list-style: none;
+            gap: 4px;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-icons a {
+            font-size: 17px;
+            color: #555;
+            transition: var(--transition);
+            padding: 6px 8px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 36px;
+            height: 36px;
+        }
+
+        .nav-icons a:hover {
+            color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .profile-avatar-small {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(
+                135deg,
+                var(--primary),
+                var(--primary-dark)
+            );
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .profile-dropdown {
+            position: relative;
+        }
+
+        .profile-menu {
+            position: absolute;
+            top: 42px;
+            right: 0;
+            width: 220px;
+            background: white;
+            border-radius: var(--radius-sm);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+            padding: 6px 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: var(--transition);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+
+        .profile-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .profile-menu a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            color: #444;
+            font-size: 13px;
+        }
+
+        .profile-menu a:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .profile-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 4px 12px;
+        }
+
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .bulk-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px 16px 40px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .page-header h1 {
+            font-family: var(--font-display);
+            font-size: 26px;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .page-header h1 i {
+            color: var(--primary);
+        }
+
+
+        /* =========================
+           CARD
+        ========================= */
+
+        .card {
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            background: white;
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: var(--light-gray);
+            padding: 14px 20px;
+            font-weight: 600;
+            font-size: 16px;
+            border-bottom: 1px solid var(--border);
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+
+        /* =========================
+           BURSARY SEARCH
+        ========================= */
+
+        .bursary-search {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .bursary-search i {
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        .bursary-search input {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            padding: 10px 12px 10px 38px;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .bursary-search input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(232,69,138,.12);
+        }
+
+
+        /* =========================
+           SELECTION BAR
+        ========================= */
+
+        .selection-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .selection-buttons {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .selection-count {
+            background: var(--primary);
+            color: white;
+            border-radius: 20px;
+            padding: 5px 11px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .selection-buttons button {
+            border: 1px solid var(--border);
+            background: white;
+            color: var(--dark);
+            border-radius: 7px;
+            padding: 6px 10px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .selection-buttons button:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--primary-light);
+        }
+
+
+        /* =========================
+           BURSARY LIST
+        ========================= */
+
+        .bursary-checkbox-list {
+            max-height: 350px;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+        }
+
+        .bursary-option {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: var(--transition);
+            margin: 0;
+        }
+
+        .bursary-option:last-child {
+            border-bottom: none;
+        }
+
+        .bursary-option:hover {
+            background: #fff8fb;
+        }
+
+        .bursary-option.selected {
+            background: var(--primary-light);
+        }
+
+        .bursary-option input {
+            width: 19px;
+            height: 19px;
+            margin-top: 2px;
+            flex-shrink: 0;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .bursary-information {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .bursary-title {
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--dark);
+            margin-bottom: 4px;
+        }
+
+        .bursary-meta {
+            display: block;
+            color: var(--gray);
+            font-size: 11px;
+        }
+
+        .bursary-meta i {
+            color: var(--primary);
+        }
+
+        .closing-soon {
+            background: #fff3cd;
+            color: #856404;
+            border-radius: 5px;
+            padding: 2px 6px;
+            font-size: 10px;
+            margin-left: 5px;
+            font-weight: 600;
+        }
+
+
+        /* =========================
+           SELECTED SUMMARY
+        ========================= */
+
+        .selected-summary {
+            display: none;
+            margin-top: 12px;
+            background: var(--primary-light);
+            border: 1px solid #f8bbd0;
+            border-radius: 9px;
+            padding: 11px 13px;
+            font-size: 12px;
+            color: var(--primary-dark);
+        }
+
+        .selected-summary.show {
+            display: block;
+        }
+
+
+        /* =========================
+           FORM
+        ========================= */
+
+        .form-label {
+            font-weight: 500;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            padding: 8px 12px;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(232,69,138,0.15);
+        }
+
+
+        /* =========================
+           BUTTONS
+        ========================= */
+
+        .btn-primary {
+            background: var(--primary);
+            border: none;
+            padding: 10px 28px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            transition: var(--transition);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:disabled {
+            opacity: .5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: var(--dark);
+            border: none;
+            padding: 10px 28px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            transition: var(--transition);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #2d2d4a;
+            transform: translateY(-2px);
+        }
+
+
+        /* =========================
+           EMPTY
+        ========================= */
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray);
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            color: #ccc;
+            margin-bottom: 12px;
+        }
+
+        .empty-state h4 {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+
+        /* =========================
+           TOAST
+        ========================= */
+
+        .toast-container {
+            position: fixed;
+            top: 80px;
+            right: 16px;
+            z-index: 9999;
+            max-width: calc(100vw - 32px);
+        }
+
+        .toast-item {
+            padding: 10px 16px;
+            border-radius: var(--radius-sm);
+            color: white;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .toast-item.success {
+            background: #28a745;
+        }
+
+        .toast-item.error {
+            background: #dc3545;
+        }
+
+        .toast-item.info {
+            background: #17a2b8;
+        }
+
+
+        /* =========================
+           MOBILE NAV
+        ========================= */
+
+        .mobile-bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 56px;
+            background: white;
+            border-top: 1px solid var(--border);
+            justify-content: space-around;
+            align-items: center;
+            z-index: 999;
+        }
+
+        @media (max-width: 991px) {
+
+            .mobile-bottom-nav {
+                display: flex !important;
+            }
+
+            body {
+                padding-bottom: 66px;
+            }
+        }
+
+        .mobile-bottom-nav a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1px;
+            font-size: 9px;
+            color: var(--gray);
+            padding: 4px 6px;
+            flex: 1;
+            text-align: center;
+        }
+
+        .mobile-bottom-nav a i {
+            font-size: 17px;
+            display: block;
+        }
+
+        .mobile-bottom-nav a.active {
+            color: var(--primary);
+        }
+
+
+        @media (max-width: 576px) {
+
+            .card-body {
+                padding: 16px;
+            }
+
+            .page-header h1 {
+                font-size: 20px;
+            }
+
+            .selection-bar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .selection-count {
+                align-self: flex-start;
+            }
+
+            .page-header .btn {
+                width: 100%;
+            }
+
+            .submit-actions {
+                flex-direction: column !important;
+            }
+
+            .submit-actions > * {
+                width: 100%;
+            }
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header class="header-area">
+
+    <div class="main-nav">
+
+        <a href="/" class="logo">
+
+            <span class="logo-text">
+                Oppo<span>Globe</span>
+            </span>
+
+        </a>
+
+
+        <ul class="nav-icons">
+
+            <li>
+                <a href="/" title="Home">
+                    <i class="fas fa-home"></i>
+                </a>
+            </li>
+
+            <li>
+                <a href="/api/education/" title="Education Hub">
+                    <i class="fas fa-graduation-cap"></i>
+                </a>
+            </li>
+
+
+            {% if user.is_authenticated %}
+
+            <li class="profile-dropdown">
+
+                <div class="profile-avatar-small"
+                     onclick="toggleProfileDropdown()">
+
+                    {{ user.username|first|upper }}
+
+                </div>
+
+
+                <div class="profile-menu" id="profileMenu">
+
+                    <a href="/profile/">
+                        <i class="fas fa-user"></i>
+                        Profile
+                    </a>
+
+                    <a href="/api/education/apply/">
+                        <i class="fas fa-pen"></i>
+                        Apply
+                    </a>
+
+                    <div class="profile-divider"></div>
+
+                    <a href="/logout/">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </a>
+
+                </div>
+
+            </li>
+
+            {% else %}
+
+            <li>
+                <a href="/login/">
+                    <i class="fas fa-sign-in-alt"></i>
+                </a>
+            </li>
+
+            {% endif %}
+
+        </ul>
+
+    </div>
+
+</header>
+
+
+
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
+<div class="bulk-container">
+
+
+    <div class="page-header">
+
+        <h1>
+            <i class="fas fa-layer-group"></i>
+            Bulk Bursary Application
+        </h1>
+
+
+        <a href="/api/education/my-applications/"
+           class="btn btn-outline-secondary btn-sm">
+
+            <i class="fas fa-arrow-left"></i>
+            My Applications
+
+        </a>
+
+    </div>
+
+
+
+    <form method="post"
+          enctype="multipart/form-data"
+          id="bulkApplicationForm">
+
+        {% csrf_token %}
+
+
+
+        <!-- =================================================
+             STEP 1
+        ================================================= -->
+
+        <div class="card">
+
+            <div class="card-header">
+
+                <span>
+                    <i class="fas fa-check-circle me-2 text-primary"></i>
+
+                    Step 1: Select Bursaries
+                </span>
+
+
+                <span class="badge bg-secondary">
+
+                    {{ bursaries|length }} available
+
+                </span>
+
+            </div>
+
+
+            <div class="card-body">
+
+
+                {% if bursaries %}
+
+
+                <!-- SEARCH -->
+
+                <div class="bursary-search">
+
+                    <i class="fas fa-search"></i>
+
+                    <input
+                        type="text"
+                        id="bursarySearch"
+                        placeholder="Search bursaries or providers..."
+                        autocomplete="off"
+                    >
+
+                </div>
+
+
+
+                <!-- SELECTION CONTROLS -->
+
+                <div class="selection-bar">
+
+                    <div class="selection-buttons">
+
+                        <button type="button"
+                                id="selectAllBtn">
+
+                            <i class="fas fa-check-double"></i>
+                            Select All
+
+                        </button>
+
+
+                        <button type="button"
+                                id="selectVisibleBtn">
+
+                            <i class="fas fa-list-check"></i>
+                            Select Visible
+
+                        </button>
+
+
+                        <button type="button"
+                                id="deselectAllBtn">
+
+                            <i class="fas fa-times"></i>
+                            Clear All
+
+                        </button>
+
+                    </div>
+
+
+                    <div class="selection-count"
+                         id="selectionCount">
+
+                        0 selected
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- BURSARY LIST -->
+
+                <div class="bursary-checkbox-list"
+                     id="bursaryList">
+
+
+                    {% for bursary in bursaries %}
+
+                    <label class="bursary-option"
+                           data-search="
+                               {{ bursary.title|lower }}
+                               {{ bursary.provider|lower }}
+                           ">
+
+
+                        <input
+                            class="bursary-checkbox"
+                            type="checkbox"
+                            name="selected_bursaries"
+                            value="{{ bursary.id }}"
+                            id="bursary_{{ bursary.id }}"
+
+                            {% if selected_ids and bursary.id|stringformat:"s" in selected_ids %}
+                                checked
+                            {% endif %}
+                        >
+
+
+                        <div class="bursary-information">
+
+                            <div class="bursary-title">
+
+                                {{ bursary.title }}
+
+                            </div>
+
+
+                            <span class="bursary-meta">
+
+                                {% if bursary.provider %}
+
+                                <i class="fas fa-building"></i>
+
+                                {{ bursary.provider }}
+
+                                {% endif %}
+
+
+                                {% if bursary.closing_date %}
+
+                                &nbsp; · &nbsp;
+
+                                <i class="fas fa-calendar-alt"></i>
+
+                                Closes
+                                {{ bursary.closing_date|date:"M d, Y" }}
+
+                                {% endif %}
+
+
+                                {% if bursary.days_until_closing <= 7 and bursary.days_until_closing >= 0 %}
+
+                                <span class="closing-soon">
+                                    Closing Soon
+                                </span>
+
+                                {% endif %}
+
+                            </span>
+
+                        </div>
+
+                    </label>
+
+                    {% endfor %}
+
+
+                    <!-- NO SEARCH RESULTS -->
+
+                    <div id="noSearchResults"
+                         style="
+                            display:none;
+                            text-align:center;
+                            padding:30px;
+                            color:#6c757d;
+                         ">
+
+                        <i class="fas fa-search"
+                           style="font-size:30px;margin-bottom:10px;">
+                        </i>
+
+                        <div>
+                            No bursaries found.
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- SELECTED SUMMARY -->
+
+                <div class="selected-summary"
+                     id="selectedSummary">
+
+                    <i class="fas fa-check-circle"></i>
+
+                    You have selected
+                    <strong id="selectedSummaryNumber">0</strong>
+                    bursaries.
+
+                    The same applicant information and documents
+                    will be used for each selected bursary.
+
+                </div>
+
+
+                {% else %}
+
+
+                <!-- EMPTY -->
+
+                <div class="empty-state">
+
+                    <i class="fas fa-check-circle"></i>
+
+                    <h4>
+                        All Caught Up!
+                    </h4>
+
+                    <p>
+                        You have already applied to all available
+                        bursaries. Check back later for new
+                        opportunities.
+                    </p>
+
+                </div>
+
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+
+        {% if bursaries %}
+
+
+        <!-- =================================================
+             STEP 2
+        ================================================= -->
+
+        <div class="card">
+
+            <div class="card-header">
+
+                <span>
+
+                    <i class="fas fa-user me-2 text-primary"></i>
+
+                    Step 2: Your Information
+
+                </span>
+
+            </div>
+
+
+            <div class="card-body">
+
+                <div class="row g-3">
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+
+                            Full Name
+                            <span class="text-danger">*</span>
+
+                        </label>
+
+                        <input
+                            type="text"
+                            name="full_name"
+                            class="form-control"
+                            value="{{ draft_data.full_name|default:'' }}"
+                            required
+                        >
+
+                    </div>
+
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+
+                            Email
+                            <span class="text-danger">*</span>
+
+                        </label>
+
+                        <input
+                            type="email"
+                            name="email"
+                            class="form-control"
+                            value="{{ draft_data.email|default:'' }}"
+                            required
+                        >
+
+                    </div>
+
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+
+                            Phone
+                            <span class="text-danger">*</span>
+
+                        </label>
+
+                        <input
+                            type="text"
+                            name="phone"
+                            class="form-control"
+                            value="{{ draft_data.phone|default:'' }}"
+                            required
+                        >
+
+                    </div>
+
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+
+                            ID Number
+
+                        </label>
+
+                        <input
+                            type="text"
+                            name="id_number"
+                            class="form-control"
+                            value="{{ draft_data.id_number|default:'' }}"
+                        >
+
+                    </div>
+
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+
+                            Date of Birth
+                            <span class="text-danger">*</span>
+
+                        </label>
+
+                        <input
+                            type="date"
+                            name="date_of_birth"
+                            class="form-control"
+                            value="{{ draft_data.date_of_birth|default:'' }}"
+                            required
+                        >
+
+                    </div>
+
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+
+                            Current Institution
+
+                        </label>
+
+                        <input
+                            type="text"
+                            name="current_institution"
+                            class="form-control"
+                            value="{{ draft_data.current_institution|default:'' }}"
+                            placeholder="e.g. University of Johannesburg"
+                        >
+
+                    </div>
+
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+
+                            Institution Type
+
+                        </label>
+
+                        <select
+                            name="current_institution_type"
+                            class="form-select"
+                        >
+
+                            <option value="school"
+                                {% if draft_data.current_institution_type == "school" %}
+                                    selected
+                                {% endif %}
+                            >
+                                School
+                            </option>
+
+
+                            <option value="university"
+                                {% if draft_data.current_institution_type == "university" %}
+                                    selected
+                                {% endif %}
+                            >
+                                University
+                            </option>
+
+
+                            <option value="college"
+                                {% if draft_data.current_institution_type == "college" %}
+                                    selected
+                                {% endif %}
+                            >
+                                College
+                            </option>
+
+
+                            <option value="other"
+                                {% if draft_data.current_institution_type == "other" or not draft_data.current_institution_type %}
+                                    selected
+                                {% endif %}
+                            >
+                                Other
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+
+                            Academic Average / Subjects
+
+                        </label>
+
+                        <input
+                            type="text"
+                            name="academic_average"
+                            class="form-control"
+                            value="{{ draft_data.academic_average|default:'' }}"
+                            placeholder="e.g. 75.5"
+                        >
+
+                    </div>
+
+
+
+                    <div class="col-12">
+
+                        <label class="form-label">
+
+                            Motivation
+
+                        </label>
+
+                        <textarea
+                            name="motivation"
+                            rows="4"
+                            class="form-control"
+                            placeholder="Enter your motivation..."
+                        >{{ draft_data.motivation|default:'' }}</textarea>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             STEP 3
+        ================================================= -->
+
+        <div class="card">
+
+            <div class="card-header">
+
+                <span>
+
+                    <i class="fas fa-file-upload me-2 text-primary"></i>
+
+                    Step 3: Upload Documents
+                    <small class="text-muted">
+                        (optional)
+                    </small>
+
+                </span>
+
+            </div>
+
+
+            <div class="card-body">
+
+                <div class="row g-3">
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            CV / Resume
+                        </label>
+
+                        <input
+                            type="file"
+                            name="cv"
+                            class="form-control"
+                            accept=".pdf,.doc,.docx"
+                        >
+
+                    </div>
+
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Academic Transcript
+                        </label>
+
+                        <input
+                            type="file"
+                            name="academic_transcript"
+                            class="form-control"
+                            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                        >
+
+                    </div>
+
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            ID Document
+                        </label>
+
+                        <input
+                            type="file"
+                            name="id_document"
+                            class="form-control"
+                            accept=".pdf,.jpg,.jpeg,.png"
+                        >
+
+                    </div>
+
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Other Documents
+                        </label>
+
+                        <input
+                            type="file"
+                            name="other_documents"
+                            class="form-control"
+                        >
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             BUTTONS
+        ================================================= -->
+
+        <div class="d-flex gap-2 justify-content-end mt-3 submit-actions">
+
+            <a
+                href="/api/education/my-applications/"
+                class="btn btn-secondary"
+            >
+
+                <i class="fas fa-times"></i>
+
+                Cancel
+
+            </a>
+
+
+            <button
+                type="submit"
+                name="action"
+                value="save"
+                class="btn btn-secondary"
+                id="saveButton"
+                disabled
+            >
+
+                <i class="fas fa-save"></i>
+
+                Save as Draft
+
+            </button>
+
+
+            <button
+                type="submit"
+                name="action"
+                value="submit"
+                class="btn btn-primary"
+                id="submitButton"
+                disabled
+            >
+
+                <i class="fas fa-paper-plane"></i>
+
+                Submit Selected
+
+            </button>
+
+        </div>
+
+
+        {% endif %}
+
+    </form>
+
+</div>
+
+
+
+<!-- =========================================================
+     MOBILE NAV
+========================================================= -->
+
+<div class="mobile-bottom-nav">
+
+    <a href="/">
+        <i class="fas fa-home"></i>
+        Home
+    </a>
+
+    <a href="/dashboard">
+        <i class="fas fa-tachometer-alt"></i>
+        Dashboard
+    </a>
+
+    <a href="/api/education/" class="active">
+        <i class="fas fa-graduation-cap"></i>
+        Edu
+    </a>
+
+    <a href="/profile/">
+        <i class="fas fa-user"></i>
+        Profile
+    </a>
+
+</div>
+
+
+
+<!-- =========================================================
+     TOAST
+========================================================= -->
+
+<div class="toast-container"
+     id="toastContainer">
+</div>
+
+
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
+
+<script>
+
+
+/* =========================================================
+   PROFILE DROPDOWN
+========================================================= */
+
+function toggleProfileDropdown() {
+
+    const menu =
+        document.getElementById("profileMenu");
+
+    if (menu) {
+        menu.classList.toggle("show");
+    }
+
+}
+
+
+document.addEventListener("click", function(event) {
+
+    const menu =
+        document.getElementById("profileMenu");
+
+    const avatar =
+        document.querySelector(".profile-avatar-small");
+
+    if (
+        menu &&
+        avatar &&
+        !avatar.contains(event.target) &&
+        !menu.contains(event.target)
+    ) {
+
+        menu.classList.remove("show");
+
+    }
+
+});
+
+
+
+/* =========================================================
+   BURSARY SELECTION
+========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+
+        const checkboxes =
+            Array.from(
+                document.querySelectorAll(
+                    'input[name="selected_bursaries"]'
+                )
+            );
+
+
+        const selectAllBtn =
+            document.getElementById(
+                "selectAllBtn"
+            );
+
+
+        const selectVisibleBtn =
+            document.getElementById(
+                "selectVisibleBtn"
+            );
+
+
+        const deselectAllBtn =
+            document.getElementById(
+                "deselectAllBtn"
+            );
+
+
+        const selectionCount =
+            document.getElementById(
+                "selectionCount"
+            );
+
+
+        const selectedSummary =
+            document.getElementById(
+                "selectedSummary"
+            );
+
+
+        const selectedSummaryNumber =
+            document.getElementById(
+                "selectedSummaryNumber"
+            );
+
+
+        const searchInput =
+            document.getElementById(
+                "bursarySearch"
+            );
+
+
+        const noSearchResults =
+            document.getElementById(
+                "noSearchResults"
+            );
+
+
+        const form =
+            document.getElementById(
+                "bulkApplicationForm"
+            );
+
+
+        const submitButton =
+            document.getElementById(
+                "submitButton"
+            );
+
+
+        const saveButton =
+            document.getElementById(
+                "saveButton"
+            );
+
+
+
+        /* =====================================================
+           UPDATE SELECTION
+        ===================================================== */
+
+        function updateSelection() {
+
+            const selected =
+                checkboxes.filter(
+                    function(cb) {
+                        return cb.checked;
+                    }
+                );
+
+
+            const count =
+                selected.length;
+
+
+            /* Counter */
+
+            if (selectionCount) {
+
+                selectionCount.textContent =
+                    count + (
+                        count === 1
+                            ? " selected"
+                            : " selected"
+                    );
+
+            }
+
+
+            /* Summary */
+
+            if (selectedSummaryNumber) {
+
+                selectedSummaryNumber.textContent =
+                    count;
+
+            }
+
+
+            if (selectedSummary) {
+
+                if (count > 0) {
+
+                    selectedSummary.classList.add(
+                        "show"
+                    );
+
+                } else {
+
+                    selectedSummary.classList.remove(
+                        "show"
+                    );
+
+                }
+
+            }
+
+
+            /* Row styling */
+
+            checkboxes.forEach(
+                function(checkbox) {
+
+                    const row =
+                        checkbox.closest(
+                            ".bursary-option"
+                        );
+
+                    if (!row) return;
+
+
+                    if (checkbox.checked) {
+
+                        row.classList.add(
+                            "selected"
+                        );
+
+                    } else {
+
+                        row.classList.remove(
+                            "selected"
+                        );
+
+                    }
+
+                }
+            );
+
+
+            /* Enable / disable buttons */
+
+            if (submitButton) {
+
+                submitButton.disabled =
+                    count === 0;
+
+            }
+
+
+            if (saveButton) {
+
+                saveButton.disabled =
+                    count === 0;
+
+            }
+
+        }
+
+
+
+        /* =====================================================
+           INDIVIDUAL CHECKBOX
+        ===================================================== */
+
+        checkboxes.forEach(
+            function(checkbox) {
+
+                checkbox.addEventListener(
+                    "change",
+                    updateSelection
+                );
+
+            }
+        );
+
+
+
+        /* =====================================================
+           SELECT ALL
+        ===================================================== */
+
+        if (selectAllBtn) {
+
+            selectAllBtn.addEventListener(
+                "click",
+                function() {
+
+                    checkboxes.forEach(
+                        function(checkbox) {
+
+                            checkbox.checked = true;
+
+                        }
+                    );
+
+                    updateSelection();
+
+                }
+            );
+
+        }
+
+
+
+        /* =====================================================
+           CLEAR ALL
+        ===================================================== */
+
+        if (deselectAllBtn) {
+
+            deselectAllBtn.addEventListener(
+                "click",
+                function() {
+
+                    checkboxes.forEach(
+                        function(checkbox) {
+
+                            checkbox.checked = false;
+
+                        }
+                    );
+
+                    updateSelection();
+
+                }
+            );
+
+        }
+
+
+
+        /* =====================================================
+           SELECT VISIBLE
+        ===================================================== */
+
+        if (selectVisibleBtn) {
+
+            selectVisibleBtn.addEventListener(
+                "click",
+                function() {
+
+                    document
+                        .querySelectorAll(
+                            ".bursary-option"
+                        )
+                        .forEach(
+                            function(row) {
+
+                                if (
+                                    row.style.display ===
+                                    "none"
+                                ) {
+                                    return;
+                                }
+
+
+                                const checkbox =
+                                    row.querySelector(
+                                        ".bursary-checkbox"
+                                    );
+
+
+                                if (checkbox) {
+
+                                    checkbox.checked =
+                                        true;
+
+                                }
+
+                            }
+                        );
+
+
+                    updateSelection();
+
+                }
+            );
+
+        }
+
+
+
+        /* =====================================================
+           SEARCH
+        ===================================================== */
+
+        if (searchInput) {
+
+            searchInput.addEventListener(
+                "input",
+                function() {
+
+                    const search =
+                        this.value
+                            .toLowerCase()
+                            .trim();
+
+
+                    let visible =
+                        0;
+
+
+                    document
+                        .querySelectorAll(
+                            ".bursary-option"
+                        )
+                        .forEach(
+                            function(row) {
+
+                                const searchable =
+                                    (
+                                        row.dataset.search ||
+                                        ""
+                                    )
+                                    .toLowerCase();
+
+
+                                if (
+                                    !search ||
+                                    searchable.includes(
+                                        search
+                                    )
+                                ) {
+
+                                    row.style.display =
+                                        "flex";
+
+                                    visible++;
+
+                                } else {
+
+                                    row.style.display =
+                                        "none";
+
+                                }
+
+                            }
+                        );
+
+
+                    if (noSearchResults) {
+
+                        noSearchResults.style.display =
+                            visible === 0
+                                ? "block"
+                                : "none";
+
+                    }
+
+                }
+            );
+
+        }
+
+
+
+        /* =====================================================
+           FORM VALIDATION
+        ===================================================== */
+
+        if (form) {
+
+            form.addEventListener(
+                "submit",
+                function(event) {
+
+                    const selected =
+                        checkboxes.filter(
+                            function(cb) {
+                                return cb.checked;
+                            }
+                        );
+
+
+                    if (selected.length === 0) {
+
+                        event.preventDefault();
+
+                        alert(
+                            "Please select at least one bursary."
+                        );
+
+                        return false;
+
+                    }
+
+
+                    const submitter =
+                        event.submitter;
+
+
+                    /* Confirm actual submission */
+
+                    if (
+                        submitter &&
+                        submitter.value === "submit"
+                    ) {
+
+                        const confirmed =
+                            confirm(
+                                "You are about to submit " +
+                                selected.length +
+                                " bursary application" +
+                                (
+                                    selected.length === 1
+                                        ? ""
+                                        : "s"
+                                ) +
+                                ". Continue?"
+                            );
+
+
+                        if (!confirmed) {
+
+                            event.preventDefault();
+
+                            return false;
+
+                        }
+
+                    }
+
+                }
+            );
+
+        }
+
+
+
+        /* =====================================================
+           INITIAL STATE
+        ===================================================== */
+
+        updateSelection();
+
+    }
+);
+
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+function showToast(message, type) {
+
+    const container =
+        document.getElementById(
+            "toastContainer"
+        );
+
+
+    if (!container) {
+        return;
+    }
+
+
+    const toast =
+        document.createElement(
+            "div"
+        );
+
+
+    toast.className =
+        "toast-item " +
+        (type || "info");
+
+
+    const iconMap = {
+
+        success:
+            "fa-check-circle",
+
+        error:
+            "fa-exclamation-circle",
+
+        info:
+            "fa-info-circle"
+
+    };
+
+
+    const icon =
+        iconMap[type] ||
+        iconMap.info;
+
+
+    toast.innerHTML =
+        '<i class="fas ' +
+        icon +
+        '"></i>' +
+        '<span>' +
+        message +
+        '</span>' +
+        '<button onclick="this.parentElement.remove()" ' +
+        'style="margin-left:auto;background:none;border:none;color:white;font-size:18px;">' +
+        '&times;' +
+        '</button>';
+
+
+    container.appendChild(
+        toast
+    );
+
+
+    setTimeout(
+        function() {
+
+            if (toast) {
+                toast.remove();
+            }
+
+        },
+        5000
+    );
+
+}
+
+
+{% if messages %}
+
+    {% for message in messages %}
+
+        showToast(
+            '{{ message|escapejs }}',
+            '{% if message.tags %}{{ message.tags|escapejs }}{% else %}info{% endif %}'
+        );
+
+    {% endfor %}
+
+{% endif %}
+
+</script>
+
+
+
+  <script src="/static/hiring/js/notifications-global.js" defer></script>
+</body>
+</html>
+```

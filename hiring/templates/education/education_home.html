@@ -1,0 +1,756 @@
+<!-- education/templates/education/education_home.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Education Hub - OppoGlobe</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+<style>
+/* ============================================================
+   TOKENS (same palette as home/profile, used with more restraint)
+   ============================================================ */
+:root{
+  --ink:#16241F; --ink-soft:#56635C; --ink-faint:#8A948E;
+  --paper:#F5F4EF; --surface:#FFFFFF; --line:#E3E2DA; --line-soft:#EEEDE6;
+  --jade:#1F6F5C; --jade-deep:#154F41; --jade-wash:#E6F0EB;
+  --coral:#FF6B4A; --coral-deep:#E24E2F;
+  --gold:#C98A1B; --sky:#2E78A8; --plum:#7A5AA3; --danger:#C93C3C; --success:#2C9A5B;
+  /* one hue per content type, used only as a small accent */
+  --t-bursary:#C98A1B; --t-university:#2E78A8; --t-school:#1F6F5C; --t-paper:#E24E2F; --t-news:#7A5AA3;
+  --radius-xs:8px; --radius-sm:12px; --radius-md:16px; --radius-pill:999px;
+  --shadow-sm:0 1px 2px rgba(22,36,31,.05);
+  --shadow-md:0 10px 28px rgba(22,36,31,.09);
+  --shadow-lg:0 20px 48px rgba(22,36,31,.16);
+  --font-display:'Fraunces', Georgia, serif;
+  --font-body:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --header-h:64px; --bottom-nav-h:64px; --safe-b:env(safe-area-inset-bottom, 0px);
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth; -webkit-text-size-adjust:100%; overflow-x:hidden; width:100%;}
+body{margin:0; background:var(--paper); color:var(--ink); font-family:var(--font-body); font-size:15px; line-height:1.5; padding-top:var(--header-h); min-height:100vh; overflow-x:hidden; width:100%;}
+a{color:inherit; text-decoration:none;}
+img{max-width:100%; display:block;}
+button{font-family:inherit; cursor:pointer;}
+:focus-visible{outline:2.5px solid var(--jade); outline-offset:2px; border-radius:6px;}
+h1,h2,h3,h4{font-family:var(--font-display); margin:0; letter-spacing:-.01em;}
+.hidden{display:none !important;}
+
+/* ============================================================
+   HEADER (unchanged behaviour)
+   ============================================================ */
+.header-area{position:fixed; inset:0 0 auto 0; height:var(--header-h); background:var(--surface); border-bottom:1px solid var(--line); z-index:3000; display:flex; align-items:center;}
+.header-inner{width:100%; max-width:1400px; margin:0 auto; min-width:0; padding:0 clamp(10px,3vw,24px); display:flex; align-items:center; justify-content:space-between; gap:clamp(4px,1.5vw,10px); position:relative;}
+.brand{display:flex; align-items:center; gap:9px; flex-shrink:0; min-width:0;}
+.brand-mark{width:34px; height:34px; border-radius:10px; background:var(--jade); display:flex; align-items:center; justify-content:center; color:#fff; font-family:var(--font-display); font-weight:700; font-size:17px;}
+.brand-word{font-family:var(--font-display); font-weight:600; font-size:clamp(15px,4vw,20px); white-space:nowrap;}
+.nav-icons{display:flex; align-items:center; gap:clamp(1px,1vw,4px); list-style:none; margin:0; padding:0; min-width:0;}
+.nav-icons > li{flex-shrink:0;}
+.icon-btn{width:40px; height:40px; border-radius:var(--radius-pill); display:flex; align-items:center; justify-content:center; color:var(--ink-soft); font-size:17px; transition:background .15s,color .15s; border:none; background:transparent;}
+.icon-btn:hover{background:var(--jade-wash); color:var(--jade-deep);}
+.role-chip{font-size:11px; font-weight:600; padding:4px 11px; border-radius:var(--radius-pill); background:var(--jade-wash); color:var(--jade-deep); white-space:nowrap;}
+.role-chip.biz{background:#F1EBF9; color:var(--plum);}
+.avatar-btn{width:36px; height:36px; border-radius:50%; border:none; position:relative; background:var(--ink); color:#fff; font-weight:600; font-size:14px; display:flex; align-items:center; justify-content:center;}
+.status-dot{position:absolute; bottom:-1px; right:-1px; width:10px; height:10px; border-radius:50%; background:var(--success); border:2px solid var(--surface);}
+.dropdown-panel{position:absolute; top:calc(100% + 10px); right:0; width:220px; max-width:calc(100vw - 20px); background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-md); box-shadow:var(--shadow-lg); padding:6px; opacity:0; visibility:hidden; transform:translateY(6px); transition:opacity .15s, transform .15s, visibility .15s; pointer-events:none; z-index:9999;}
+.dropdown-panel.show{opacity:1; visibility:visible; pointer-events:auto; transform:none;}
+.dropdown-panel a{display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:var(--radius-sm); font-size:13.5px;}
+.dropdown-panel a:hover{background:var(--paper);}
+.dropdown-panel i{width:18px; color:var(--ink-faint); text-align:center;}
+.dropdown-divider{height:1px; background:var(--line-soft); margin:5px 6px;}
+.rel{position:relative;}
+.btn-pill{padding:9px 18px; border-radius:var(--radius-pill); border:1px solid transparent; font-weight:600; font-size:13px; transition:transform .12s, background .15s, border-color .15s; display:inline-flex; align-items:center; justify-content:center; gap:7px; white-space:nowrap;}
+.btn-pill:active{transform:scale(.97);}
+.btn-ink{background:var(--ink); color:#fff;} .btn-ink:hover{background:#26382f;}
+.btn-jade{background:var(--jade); color:#fff;} .btn-jade:hover{background:var(--jade-deep);}
+.btn-coral{background:var(--coral); color:#fff;} .btn-coral:hover{background:var(--coral-deep);}
+.btn-outline{background:transparent; border-color:var(--line); color:var(--ink);} .btn-outline:hover{border-color:var(--ink);}
+@media (max-width:560px){ .role-chip{display:none;} .icon-btn{width:34px; height:34px; font-size:14.5px;} .avatar-btn{width:30px; height:30px; font-size:12px;} }
+@media (max-width:420px){ .brand-word{display:none;} .nav-icons{gap:0;} .icon-btn{width:32px; height:32px;} }
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+.shell{max-width:1280px; margin:0 auto; padding:20px clamp(12px,2.5vw,24px) calc(var(--bottom-nav-h) + 32px); display:grid; grid-template-columns:1fr; gap:24px;}
+@media (min-width:960px){ .shell{grid-template-columns:208px minmax(0,1fr); gap:36px; padding-bottom:48px;} }
+.main{min-width:0;}
+
+/* Sidebar: plain text list, no card */
+.rail-toggle{display:flex; align-items:center; gap:8px; width:100%; padding:11px 14px; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-sm); font-weight:600; font-size:13.5px; color:var(--ink);}
+@media (min-width:960px){ .rail-toggle{display:none;} }
+.rail-overlay{position:fixed; inset:0; background:rgba(22,36,31,.4); z-index:1400; display:none;}
+.rail-overlay.active{display:block;}
+.rail-body{display:flex; flex-direction:column; gap:2px;}
+@media (min-width:960px){ .rail-body{position:sticky; top:calc(var(--header-h) + 24px);} }
+@media (max-width:959px){
+  .rail-body{position:fixed; top:0; left:-300px; width:min(272px,84vw); height:100vh; z-index:1500; background:var(--surface); padding:20px 14px; overflow-y:auto; transition:left .25s ease; box-shadow:6px 0 40px rgba(0,0,0,.15);}
+  .rail-body.open{left:0;}
+}
+.rail-label{font-size:11px; font-weight:600; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.08em; padding:14px 10px 6px;}
+.rail-label:first-child{padding-top:0;}
+.rail-link{display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:var(--radius-xs); color:var(--ink-soft); font-weight:500; font-size:13.5px; transition:background .15s,color .15s;}
+.rail-link:hover{background:var(--line-soft); color:var(--ink);}
+.rail-link.active{color:var(--jade-deep); background:var(--jade-wash); font-weight:600;}
+.rail-link i{width:16px; text-align:center; font-size:13px;}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero{display:flex; flex-direction:column; gap:20px; padding:4px 0 22px; border-bottom:1px solid var(--line);}
+.hero-top{display:flex; flex-direction:column; gap:14px;}
+@media (min-width:760px){ .hero-top{flex-direction:row; align-items:flex-end; justify-content:space-between;} }
+.eyebrow{font-size:12px; font-weight:600; color:var(--jade); letter-spacing:.08em; text-transform:uppercase; margin-bottom:6px;}
+.hero h1{font-size:clamp(28px,4.4vw,40px); font-weight:600; line-height:1.1;}
+.hero p{margin:8px 0 0; color:var(--ink-soft); max-width:520px; font-size:15px;}
+.hero-actions{display:flex; gap:8px; flex-wrap:wrap;}
+
+.search-row{display:flex; gap:8px; align-items:center;}
+.search-box{flex:1; position:relative; min-width:0;}
+.search-box i{position:absolute; left:16px; top:50%; transform:translateY(-50%); color:var(--ink-faint); font-size:14px; pointer-events:none;}
+.search-box input{width:100%; height:50px; padding:0 16px 0 42px; border:1px solid var(--line); border-radius:var(--radius-pill); background:var(--surface); font:inherit; font-size:15px; color:var(--ink); transition:border-color .15s, box-shadow .15s;}
+.search-box input:focus{outline:none; border-color:var(--jade); box-shadow:0 0 0 4px var(--jade-wash);}
+.filter-toggle{height:50px; padding:0 18px; border-radius:var(--radius-pill); background:var(--surface); border:1px solid var(--line); font-weight:600; font-size:13.5px; color:var(--ink); display:inline-flex; align-items:center; gap:8px; flex-shrink:0;}
+.filter-toggle:hover, .filter-toggle[aria-expanded="true"]{border-color:var(--ink);}
+.filters{display:none; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-top:-6px;}
+.filters.open{display:grid;}
+.filters label{display:block; font-size:11px; font-weight:600; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.06em; margin-bottom:5px;}
+.filters select{width:100%; height:42px; padding:0 12px; border:1px solid var(--line); border-radius:var(--radius-sm); background:var(--surface); font:inherit; font-size:14px; color:var(--ink);}
+.filters select:focus{outline:none; border-color:var(--jade);}
+.filters .reset{align-self:end; height:42px; border:none; background:none; color:var(--ink-soft); font-weight:600; font-size:13px; text-align:left; text-decoration:underline; text-underline-offset:3px;}
+
+/* ============================================================
+   TABS
+   ============================================================ */
+.tabs{display:flex; gap:4px; overflow-x:auto; padding:14px 0 0; scrollbar-width:none; -webkit-overflow-scrolling:touch;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{flex-shrink:0; border:none; background:transparent; padding:9px 14px; border-radius:var(--radius-pill); font-weight:600; font-size:14px; color:var(--ink-soft); display:inline-flex; align-items:center; gap:8px; transition:background .15s,color .15s;}
+.tab:hover{background:var(--line-soft); color:var(--ink);}
+.tab[aria-selected="true"]{background:var(--ink); color:#fff;}
+.tab .count{font-size:12px; font-weight:600; opacity:.55;}
+.result-line{font-size:13px; color:var(--ink-faint); margin:16px 0 14px;}
+
+/* ============================================================
+   CARDS
+   ============================================================ */
+.edu-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(290px,1fr)); gap:14px;}
+@media (max-width:520px){ .edu-grid{grid-template-columns:1fr;} }
+
+.item{position:relative; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-md); padding:18px; display:flex; flex-direction:column; gap:12px; transition:border-color .15s, box-shadow .2s, transform .2s;}
+.item:hover{border-color:var(--ink); box-shadow:var(--shadow-md); transform:translateY(-2px);}
+.item::before{content:''; position:absolute; left:18px; top:0; width:28px; height:3px; border-radius:0 0 3px 3px; background:var(--accent, var(--ink));}
+.item[data-type="bursary"]{--accent:var(--t-bursary);}
+.item[data-type="university"]{--accent:var(--t-university);}
+.item[data-type="school"]{--accent:var(--t-school);}
+.item[data-type="paper"]{--accent:var(--t-paper);}
+.item[data-type="news"]{--accent:var(--t-news);}
+
+.item-head{display:flex; align-items:center; gap:12px;}
+.mark{width:44px; height:44px; border-radius:12px; flex-shrink:0; overflow:hidden; display:flex; align-items:center; justify-content:center; background:var(--line-soft); color:var(--accent); font-family:var(--font-display); font-weight:700; font-size:18px; border:1px solid var(--line-soft);}
+.mark img{width:100%; height:100%; object-fit:cover;}
+.mark.icon{font-size:17px;}
+.kind{font-size:11.5px; font-weight:600; color:var(--accent); text-transform:uppercase; letter-spacing:.07em;}
+.sub{font-size:13px; color:var(--ink-soft); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.item-id{min-width:0; flex:1;}
+.share-btn{position:relative; z-index:2; width:34px; height:34px; border-radius:50%; border:none; background:transparent; color:var(--ink-faint); font-size:14px; flex-shrink:0;}
+.share-btn:hover{background:var(--line-soft); color:var(--ink);}
+
+.item h3{font-size:17px; font-weight:600; line-height:1.3; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;}
+/* whole card is the link, without nesting buttons inside an <a> */
+.item h3 a::after{content:''; position:absolute; inset:0; border-radius:inherit; z-index:1;}
+.item-cover{margin:-18px -18px 0; height:150px; overflow:hidden; border-radius:var(--radius-md) var(--radius-md) 0 0; background:var(--line-soft);}
+.item-cover img{width:100%; height:100%; object-fit:cover;}
+.item-cover + .item-head{margin-top:2px;}
+.desc{font-size:13.5px; color:var(--ink-soft); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; margin:0;}
+.facts{display:flex; flex-wrap:wrap; gap:6px;}
+.fact{font-size:12px; font-weight:500; color:var(--ink-soft); background:var(--paper); border-radius:6px; padding:3px 9px;}
+.item-foot{margin-top:auto; padding-top:12px; border-top:1px solid var(--line-soft); display:flex; align-items:center; justify-content:space-between; gap:10px; font-size:13px;}
+.deadline{color:var(--ink-soft); display:inline-flex; align-items:center; gap:6px;}
+.deadline.soon{color:var(--danger); font-weight:600;}
+.amount{font-weight:700; color:var(--ink);}
+.go{color:var(--ink); font-weight:600; display:inline-flex; align-items:center; gap:6px;}
+.go i{font-size:11px; transition:transform .15s;}
+.item:hover .go i{transform:translateX(3px);}
+
+.empty-state{text-align:center; padding:56px 18px; border:1px dashed var(--line); border-radius:var(--radius-md); background:var(--surface);}
+.empty-state i{font-size:26px; color:var(--ink-faint); margin-bottom:10px;}
+.empty-state h3{font-size:17px;}
+.empty-state p{font-size:13.5px; color:var(--ink-soft); margin:4px 0 0;}
+
+.biz-strip{margin-top:28px; background:var(--ink); color:#fff; border-radius:var(--radius-md); padding:20px clamp(16px,3vw,26px); display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:14px;}
+.biz-strip h4{font-size:17px; font-weight:600;}
+.biz-strip p{font-size:13px; color:rgba(255,255,255,.7); margin:3px 0 0;}
+.biz-strip .acts{display:flex; gap:8px; flex-wrap:wrap;}
+.biz-strip .acts a{border:1px solid rgba(255,255,255,.3); color:#fff; padding:8px 16px; border-radius:99px; font-weight:600; font-size:13px;}
+.biz-strip .acts a:hover{background:rgba(255,255,255,.12);}
+
+/* share popover */
+.share-menu{position:fixed; z-index:6000; min-width:176px; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-sm); box-shadow:var(--shadow-lg); padding:6px; display:none;}
+.share-menu.show{display:block;}
+.share-menu a{display:flex; align-items:center; gap:10px; padding:9px 12px; border-radius:var(--radius-xs); font-size:13.5px;}
+.share-menu a:hover{background:var(--paper);}
+.share-menu i{width:16px; text-align:center;}
+
+/* ============================================================
+   MODAL
+   ============================================================ */
+.modal-veil{position:fixed; inset:0; background:rgba(22,36,31,.5); display:none; align-items:center; justify-content:center; z-index:4000; padding:16px; backdrop-filter:blur(3px);}
+.modal-veil.show{display:flex;}
+.modal-box{background:var(--surface); border-radius:var(--radius-md); width:100%; max-width:620px; max-height:88vh; display:flex; flex-direction:column; box-shadow:var(--shadow-lg); overflow:hidden;}
+.modal-box form{display:flex; flex-direction:column; flex:1; min-height:0;}
+.modal-head{padding:16px 20px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; gap:10px;}
+.modal-head h4{font-size:18px; font-weight:600;}
+.x-close{background:none; border:none; font-size:22px; color:var(--ink-faint); line-height:1;}
+.modal-body{flex:1; min-height:0; overflow-y:auto; overscroll-behavior:contain; padding:20px;}
+.modal-foot{padding:12px 20px; border-top:1px solid var(--line); display:flex; justify-content:flex-end; gap:8px; background:var(--surface);}
+.form-grid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px;}
+.form-grid .field.wide{grid-column:1 / -1;}
+.field label{display:block; font-size:12px; font-weight:600; color:var(--ink-soft); margin-bottom:6px;}
+.field input, .field select, .field textarea{width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:var(--radius-xs); font:inherit; font-size:14px; background:var(--surface); color:var(--ink);}
+.field input:focus, .field select:focus, .field textarea:focus{outline:none; border-color:var(--jade);}
+.field textarea{resize:vertical; min-height:72px;}
+@media (max-width:640px){
+  .modal-veil{padding:0; align-items:flex-end;}
+  .modal-box{max-height:94vh; border-radius:var(--radius-md) var(--radius-md) 0 0;}
+  .form-grid{grid-template-columns:1fr;}
+  .modal-foot .btn-pill{flex:1;}
+}
+
+.toast-stack{position:fixed; top:calc(var(--header-h) + 8px); right:12px; z-index:5000; max-width:calc(100vw - 24px); display:flex; flex-direction:column; gap:6px;}
+.toast-item{min-width:220px; max-width:340px; padding:11px 13px; border-radius:var(--radius-sm); box-shadow:var(--shadow-lg); color:#fff; font-size:13px; display:flex; align-items:center; gap:9px; animation:slidein .2s ease;}
+@keyframes slidein{from{transform:translateX(24px); opacity:0;} to{transform:none; opacity:1;}}
+.toast-item button{background:none; border:none; color:rgba(255,255,255,.8); margin-left:auto;}
+
+/* ============================================================
+   MOBILE BOTTOM NAV
+   ============================================================ */
+.bottom-nav{position:fixed; left:0; right:0; bottom:0; height:calc(var(--bottom-nav-h) + var(--safe-b)); padding-bottom:var(--safe-b); z-index:1300; background:rgba(255,255,255,.96); backdrop-filter:blur(14px); border-top:1px solid var(--line); display:grid; grid-template-columns:repeat(4,1fr);}
+@media (min-width:960px){ .bottom-nav{display:none;} }
+.bn-item{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; color:var(--ink-faint); font-size:10.5px; font-weight:600;}
+.bn-item i{font-size:18px;}
+.bn-item.active{color:var(--jade-deep);}
+
+.spin{display:inline-block; width:12px; height:12px; border:2px solid rgba(255,255,255,.4); border-top-color:#fff; border-radius:50%; animation:sp .7s linear infinite;} @keyframes sp{to{transform:rotate(360deg);}}
+@media (prefers-reduced-motion:reduce){ *{animation:none !important; transition:none !important;} }
+</style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="header-area">
+  <div class="header-inner">
+    <a href="/" class="brand"><span class="brand-mark">O</span><span class="brand-word">OppoGlobe</span></a>
+    <ul class="nav-icons">
+      <li><a href="/" class="icon-btn" aria-label="Home"><i class="fas fa-house"></i></a></li>
+      <li><a href="/#job-listings" class="icon-btn" aria-label="Search jobs"><i class="fas fa-magnifying-glass"></i></a></li>
+      {% if user.is_authenticated %}
+        {% if user.user_type == 'admin' or user.is_superuser %}
+          <li><span class="role-chip biz"><i class="fas fa-building me-1"></i>Business</span></li>
+        {% else %}
+          <li><span class="role-chip"><i class="fas fa-user me-1"></i>You</span></li>
+        {% endif %}
+        <li><a href="/dashboard" class="icon-btn" aria-label="Dashboard"><i class="fas fa-table-cells-large"></i></a></li>
+        <li><a href="/messaging/" class="icon-btn" aria-label="Messages"><i class="fas fa-comment-dots"></i></a></li>
+        <li class="rel">
+          <button class="avatar-btn" aria-label="Account menu" onclick="toggleDropdown('profileMenu')">{{ user.username|first|upper }}<span class="status-dot"></span></button>
+          <div class="dropdown-panel" id="profileMenu">
+            <a href="/profile/"><i class="fas fa-user"></i> Profile</a>
+            {% if user.user_type == 'applicant' %}
+              <a href="/applications/"><i class="fas fa-file-lines"></i> Applications</a>
+              <a href="/profile/education/"><i class="fas fa-graduation-cap"></i> Education</a>
+            {% else %}
+              <a href="/admin-portal/jobs/"><i class="fas fa-briefcase"></i> Manage jobs</a>
+              <a href="/admin-portal/applications/"><i class="fas fa-users"></i> Applications</a>
+            {% endif %}
+            <div class="dropdown-divider"></div>
+            <a href="/api/alerts/"><i class="fas fa-bell"></i> Alerts</a>
+            <a href="/preferences/"><i class="fas fa-gear"></i> Preferences</a>
+            <div class="dropdown-divider"></div>
+            <a href="/logout/"><i class="fas fa-arrow-right-from-bracket"></i> Log out</a>
+          </div>
+        </li>
+        <li class="rel">
+          <button class="icon-btn" aria-label="More" onclick="toggleDropdown('threeDotMenu')"><i class="fas fa-ellipsis-vertical"></i></button>
+          <div class="dropdown-panel" id="threeDotMenu">
+            {% if user.user_type == 'applicant' %}
+              <a href="/profile/skills/"><i class="fas fa-gears"></i> Skills</a>
+              <a href="/profile/employment/"><i class="fas fa-briefcase"></i> Employment</a>
+              <a href="/profile/education/"><i class="fas fa-graduation-cap"></i> Education</a>
+              <a href="/profile/documents/"><i class="fas fa-file-arrow-up"></i> Documents</a>
+            {% else %}
+              <a href="/admin-portal/jobs/"><i class="fas fa-briefcase"></i> Jobs</a>
+              <a href="/admin-portal/applications/"><i class="fas fa-users"></i> Applications</a>
+              <a href="/admin-portal/analytics/"><i class="fas fa-chart-column"></i> Analytics</a>
+            {% endif %}
+          </div>
+        </li>
+      {% else %}
+        <li><button class="btn-pill btn-outline" onclick="showLogin()">Sign in</button></li>
+        <li><button class="btn-pill btn-jade" onclick="showSignup()">Join free</button></li>
+      {% endif %}
+    </ul>
+  </div>
+</header>
+
+<div class="rail-overlay" id="railOverlay" onclick="closeRail()"></div>
+
+<div class="shell">
+  <!-- ===== LEFT RAIL ===== -->
+  <aside class="rail-left">
+    <button class="rail-toggle" onclick="toggleRail()"><i class="fas fa-bars"></i> Menu</button>
+    <nav class="rail-body" id="railBody" aria-label="Education navigation">
+      <div class="rail-label">Education</div>
+      <a href="#" class="rail-link active"><i class="fas fa-graduation-cap"></i>Education hub</a>
+      <a href="/profile/education/" class="rail-link"><i class="fas fa-user-graduate"></i>My education</a>
+      <a href="/api/education/my-applications/" class="rail-link"><i class="fas fa-file-lines"></i>My applications</a>
+
+      {% if user.is_authenticated %}{% if user.user_type == 'admin' or user.is_superuser %}
+      <div class="rail-label">Business</div>
+      <a href="{% url 'education_business_applications' %}" class="rail-link"><i class="fas fa-users"></i>All applications</a>
+      <a href="{% url 'education_business_applications' %}?type=bursary" class="rail-link"><i class="fas fa-hand-holding-heart"></i>Bursary apps</a>
+      <a href="{% url 'education_business_applications' %}?type=university" class="rail-link"><i class="fas fa-building-columns"></i>University apps</a>
+      <a href="{% url 'education_business_applications' %}?type=school" class="rail-link"><i class="fas fa-school"></i>School apps</a>
+      {% endif %}{% endif %}
+
+      <div class="rail-label">Profile</div>
+      <a href="/profile/" class="rail-link"><i class="fas fa-user"></i>My profile</a>
+      <a href="/profile/skills/" class="rail-link"><i class="fas fa-gears"></i>Skills</a>
+      <a href="/profile/employment/" class="rail-link"><i class="fas fa-briefcase"></i>Employment</a>
+      <a href="/profile/documents/" class="rail-link"><i class="fas fa-file-arrow-up"></i>Documents</a>
+    </nav>
+  </aside>
+
+  <!-- ===== MAIN ===== -->
+  <main class="main">
+    <section class="hero">
+      <div class="hero-top">
+        <div>
+          <div class="eyebrow">Education hub</div>
+          <h1>Find your next step in learning.</h1>
+          <p>Bursaries, universities, schools, past papers and education news, all in one place.</p>
+        </div>
+        <div class="hero-actions">
+          <a href="/api/education/apply/" class="btn-pill btn-coral"><i class="fas fa-pen"></i>Apply now</a>
+          {% if user.is_authenticated %}{% if user.user_type == 'admin' or user.is_superuser %}
+          <button type="button" class="btn-pill btn-ink" onclick="openContentModal(currentTab === 'all' ? 'bursary' : currentTab)"><i class="fas fa-plus"></i>Add content</button>
+          {% endif %}{% endif %}
+        </div>
+      </div>
+
+      <div class="search-row">
+        <div class="search-box">
+          <i class="fas fa-magnifying-glass"></i>
+          <input type="search" id="eduSearch" placeholder="Search bursaries, universities, schools, papers…" autocomplete="off" aria-label="Search education content">
+        </div>
+        <button type="button" class="filter-toggle" id="filterToggle" aria-expanded="false" aria-controls="filters"><i class="fas fa-sliders"></i><span>Filters</span></button>
+      </div>
+
+      <div class="filters" id="filters">
+        <div><label for="eduGradeFilter">Grade (papers)</label>
+          <select id="eduGradeFilter"><option value="">All grades</option>{% for grade in grades %}<option value="{{ grade.id }}">{{ grade.name }}</option>{% endfor %}</select>
+        </div>
+        <div><label for="eduFieldFilter">Field</label>
+          <select id="eduFieldFilter"><option value="">All fields</option>{% for field in available_fields %}<option value="{{ field }}">{{ field }}</option>{% endfor %}</select>
+        </div>
+        <div><label for="eduLevelFilter">Level</label>
+          <select id="eduLevelFilter"><option value="">All levels</option>{% for level in available_levels %}<option value="{{ level }}">{{ level }}</option>{% endfor %}</select>
+        </div>
+        <button type="button" class="reset" id="resetFilters">Clear all</button>
+      </div>
+    </section>
+
+    <!-- Tabs double as the stats -->
+    <div class="tabs" role="tablist" aria-label="Content type">
+      <button class="tab" role="tab" aria-selected="true" data-tab="all">All</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="bursary">Bursaries <span class="count">{{ bursaries|length }}</span></button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="university">Universities <span class="count">{{ universities|length }}</span></button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="school">Schools <span class="count">{{ schools|length }}</span></button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="paper">Papers <span class="count">{{ papers|length }}</span></button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="news">News <span class="count">{{ news|length }}</span></button>
+    </div>
+    <div class="result-line" id="resultLine" aria-live="polite"></div>
+
+    <!-- Grid -->
+    <div class="edu-grid" id="gridAll">
+
+      <!-- ===== BURSARIES ===== -->
+      {% for bursary in bursaries %}
+      <article class="item" data-type="bursary" data-title="{{ bursary.title|lower }} {{ bursary.provider|lower }}" data-field="{{ bursary.field_of_study }}" data-level="{{ bursary.level }}">
+        {% if bursary.provider_logo and bursary.is_featured %}
+        <div class="item-cover"><img src="{{ bursary.provider_logo.url }}" alt="" loading="lazy"></div>
+        {% endif %}
+        <div class="item-head">
+          <span class="mark">{% if bursary.provider_logo and not bursary.is_featured %}<img src="{{ bursary.provider_logo.url }}" alt="" loading="lazy">{% else %}{{ bursary.provider|first|upper }}{% endif %}</span>
+          <div class="item-id"><div class="kind">Bursary{% if bursary.is_featured %} · Featured{% endif %}</div><div class="sub">{{ bursary.provider }}</div></div>
+          <button type="button" class="share-btn" aria-label="Share {{ bursary.title }}" data-share-type="bursary" data-share-id="{{ bursary.id }}" data-share-title="{{ bursary.title|escapejs }}"><i class="fas fa-share-nodes"></i></button>
+        </div>
+        <h3><a href="/api/education/bursary/{{ bursary.id }}/">{{ bursary.title }}</a></h3>
+        {% if bursary.description %}<p class="desc">{{ bursary.description|truncatewords:22 }}</p>{% endif %}
+        <div class="facts">
+          <span class="fact">{{ bursary.get_field_of_study_display }}</span>
+          <span class="fact">{{ bursary.get_level_display }}</span>
+          {% if bursary.amount %}<span class="fact amount">R{{ bursary.amount|floatformat:0 }}</span>{% endif %}
+        </div>
+        <div class="item-foot">
+          {% if bursary.days_until_closing is not None and bursary.days_until_closing < 0 %}
+            <span class="deadline"><i class="far fa-calendar-xmark"></i>Closed</span>
+          {% elif bursary.days_until_closing is not None and bursary.days_until_closing < 14 %}
+            <span class="deadline soon"><i class="far fa-clock"></i>Closes in {{ bursary.days_until_closing }} day{{ bursary.days_until_closing|pluralize }}</span>
+          {% else %}
+            <span class="deadline"><i class="far fa-calendar"></i>Closes {{ bursary.closing_date|date:"j M Y" }}</span>
+          {% endif %}
+          <span class="go">View <i class="fas fa-arrow-right"></i></span>
+        </div>
+      </article>
+      {% endfor %}
+
+      <!-- ===== UNIVERSITIES ===== -->
+      {% for uni in universities %}
+      <article class="item" data-type="university" data-title="{{ uni.name|lower }} {{ uni.city|lower }}" data-field="{{ uni.province }}">
+        <div class="item-head">
+          <span class="mark">{% if uni.logo %}<img src="{{ uni.logo.url }}" alt="" loading="lazy">{% else %}{{ uni.name|first|upper }}{% endif %}</span>
+          <div class="item-id"><div class="kind">University</div><div class="sub">{{ uni.city }}, {{ uni.province }}</div></div>
+          <button type="button" class="share-btn" aria-label="Share {{ uni.name }}" data-share-type="university" data-share-id="{{ uni.id }}" data-share-title="{{ uni.name|escapejs }}"><i class="fas fa-share-nodes"></i></button>
+        </div>
+        <h3><a href="/api/education/university/{{ uni.id }}/">{{ uni.name }}</a></h3>
+        {% if uni.description %}<p class="desc">{{ uni.description|truncatewords:22 }}</p>{% endif %}
+        <div class="item-foot">
+          <span class="fact">{{ uni.province }}</span>
+          <span class="go">View <i class="fas fa-arrow-right"></i></span>
+        </div>
+      </article>
+      {% endfor %}
+
+      <!-- ===== SCHOOLS ===== -->
+      {% for school in schools %}
+      <article class="item" data-type="school" data-title="{{ school.name|lower }} {{ school.city|lower }}" data-field="{{ school.province }}">
+        <div class="item-head">
+          <span class="mark">{% if school.logo %}<img src="{{ school.logo.url }}" alt="" loading="lazy">{% else %}{{ school.name|first|upper }}{% endif %}</span>
+          <div class="item-id"><div class="kind">School</div><div class="sub">{{ school.city }}, {{ school.province }}</div></div>
+          <button type="button" class="share-btn" aria-label="Share {{ school.name }}" data-share-type="school" data-share-id="{{ school.id }}" data-share-title="{{ school.name|escapejs }}"><i class="fas fa-share-nodes"></i></button>
+        </div>
+        <h3><a href="/api/education/school/{{ school.id }}/">{{ school.name }}</a></h3>
+        {% if school.description %}<p class="desc">{{ school.description|truncatewords:22 }}</p>{% endif %}
+        <div class="facts">
+          <span class="fact">{{ school.get_school_type_display }}</span>
+          {% if school.emis_number %}<span class="fact">EMIS {{ school.emis_number }}</span>{% endif %}
+        </div>
+        <div class="item-foot">
+          <span class="fact">{{ school.province }}</span>
+          <span class="go">View <i class="fas fa-arrow-right"></i></span>
+        </div>
+      </article>
+      {% endfor %}
+
+      <!-- ===== PAPERS ===== -->
+      {% for paper in papers %}
+      <article class="item" data-type="paper" data-title="{{ paper.title|lower }} {{ paper.subject.name|lower }}" data-grade="{{ paper.grade.id }}">
+        <div class="item-head">
+          <span class="mark icon"><i class="fas fa-file-pdf"></i></span>
+          <div class="item-id"><div class="kind">Past paper</div><div class="sub">{{ paper.subject.name }} · {{ paper.grade.name }}</div></div>
+          <button type="button" class="share-btn" aria-label="Share {{ paper.title }}" data-share-type="paper" data-share-id="{{ paper.id }}" data-share-title="{{ paper.title|escapejs }}"><i class="fas fa-share-nodes"></i></button>
+        </div>
+        <h3><a href="/api/education/paper/{{ paper.id }}/">{{ paper.title }}</a></h3>
+        <div class="facts">
+          <span class="fact">{{ paper.year }}</span>
+          {% if paper.term %}<span class="fact">{{ paper.term }}</span>{% endif %}
+          {% if paper.paper_number %}<span class="fact">Paper {{ paper.paper_number }}</span>{% endif %}
+        </div>
+        <div class="item-foot">
+          <span class="deadline"><i class="fas fa-download"></i>{{ paper.download_count }} download{{ paper.download_count|pluralize }}</span>
+          <span class="go">{% if paper.file %}Download{% else %}View{% endif %} <i class="fas fa-arrow-right"></i></span>
+        </div>
+      </article>
+      {% endfor %}
+
+      <!-- ===== NEWS ===== -->
+      {% for item in news %}
+      <article class="item" data-type="news" data-title="{{ item.title|lower }}">
+        {% if item.image %}<div class="item-cover"><img src="{{ item.image.url }}" alt="" loading="lazy"></div>{% endif %}
+        <div class="item-head">
+          <span class="mark icon"><i class="fas fa-newspaper"></i></span>
+          <div class="item-id"><div class="kind">News</div><div class="sub">{{ item.author.username|default:"Admin" }} · {{ item.published_at|date:"j M Y" }}</div></div>
+          <button type="button" class="share-btn" aria-label="Share {{ item.title }}" data-share-type="news" data-share-id="{{ item.id }}" data-share-title="{{ item.title|escapejs }}"><i class="fas fa-share-nodes"></i></button>
+        </div>
+        <h3><a href="/api/education/news/{{ item.id }}/">{{ item.title }}</a></h3>
+        <p class="desc">{{ item.summary|default:item.content|truncatewords:26 }}</p>
+        <div class="item-foot">
+          <span class="deadline">{{ item.published_at|date:"Y" }}</span>
+          <span class="go">Read <i class="fas fa-arrow-right"></i></span>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+
+    <div class="empty-state hidden" id="emptyState">
+      <i class="fas fa-magnifying-glass"></i>
+      <h3>Nothing matches yet</h3>
+      <p>Try a different search, clear the filters, or check another tab.</p>
+    </div>
+
+    {% if user.is_authenticated %}{% if user.user_type == 'admin' or user.is_superuser %}
+    <div class="biz-strip">
+      <div>
+        <h4>Business dashboard</h4>
+        <p>Review submissions and update applicant statuses.</p>
+      </div>
+      <div class="acts">
+        <a href="{% url 'education_business_applications' %}">All applications</a>
+        <a href="{% url 'education_business_applications' %}?status=submitted">Pending review</a>
+        <a href="{% url 'education_business_applications' %}?status=shortlisted">Shortlisted</a>
+      </div>
+    </div>
+    {% endif %}{% endif %}
+  </main>
+</div>
+
+<!-- ===== MOBILE BOTTOM NAV ===== -->
+<nav class="bottom-nav" aria-label="Primary">
+  <a href="/" class="bn-item"><i class="fas fa-house"></i><span>Home</span></a>
+  <a href="/dashboard" class="bn-item"><i class="fas fa-gauge"></i><span>Dashboard</span></a>
+  <a href="#" class="bn-item active"><i class="fas fa-graduation-cap"></i><span>Education</span></a>
+  <a href="/profile/" class="bn-item"><i class="fas fa-user"></i><span>Profile</span></a>
+</nav>
+
+<!-- share popover (one shared instance) -->
+<div class="share-menu" id="shareMenu" role="menu">
+  <a href="#" data-platform="whatsapp"><i class="fab fa-whatsapp" style="color:#25D366;"></i>WhatsApp</a>
+  <a href="#" data-platform="facebook"><i class="fab fa-facebook" style="color:#1877F2;"></i>Facebook</a>
+  <a href="#" data-platform="twitter"><i class="fab fa-x-twitter"></i>X / Twitter</a>
+  <a href="#" data-platform="copy"><i class="fas fa-link"></i>Copy link</a>
+</div>
+
+<div class="toast-stack" id="toastStack"></div>
+
+<!-- ===== ADD CONTENT MODAL (business only) ===== -->
+<div class="modal-veil" id="eduModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h4 id="modalTitle">Add content</h4>
+      <button type="button" class="x-close" aria-label="Close" onclick="closeModal('eduModal')">&times;</button>
+    </div>
+    <form id="eduForm" enctype="multipart/form-data">
+      <div class="modal-body">
+        <div class="field" style="margin-bottom:14px;"><label for="modalTypeSel">Content type</label>
+          <select id="modalTypeSel" onchange="openContentModal(this.value)">
+            <option value="bursary">Bursary</option><option value="university">University</option><option value="school">School</option><option value="paper">Question paper</option><option value="news">News</option>
+          </select>
+        </div>
+        <div class="form-grid" id="modalBody"></div>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="btn-pill btn-outline" onclick="closeModal('eduModal')">Cancel</button>
+        <button type="submit" class="btn-pill btn-jade" id="modalSubmitBtn">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   CORE UTILITIES
+   ============================================================ */
+function getCSRFToken(){
+  for (let c of document.cookie.split(';')){ const [n, v] = c.trim().split('='); if (n === 'csrftoken') return decodeURIComponent(v); }
+  return '';
+}
+function escapeHtml(s){ if (!s) return ''; const d = document.createElement('div'); d.textContent = String(s); return d.innerHTML; }
+const TOAST_COLORS = { success:'#1F6F5C', error:'#C93C3C', info:'#2E78A8', warning:'#C98A1B' };
+const TOAST_ICONS = { success:'fa-circle-check', error:'fa-circle-exclamation', info:'fa-circle-info', warning:'fa-triangle-exclamation' };
+function showToast(msg, type='success'){
+  const stack = document.getElementById('toastStack'); if (!stack) return;
+  const el = document.createElement('div'); el.className = 'toast-item'; el.style.background = TOAST_COLORS[type] || TOAST_COLORS.info;
+  el.innerHTML = `<i class="fas ${TOAST_ICONS[type]||TOAST_ICONS.info}"></i><span>${escapeHtml(msg)}</span><button onclick="this.parentElement.remove()" aria-label="Dismiss"><i class="fas fa-times"></i></button>`;
+  stack.appendChild(el); setTimeout(()=>el.remove(), 4500);
+}
+function openModal(id){ document.getElementById(id)?.classList.add('show'); document.body.style.overflow='hidden'; }
+function closeModal(id){ document.getElementById(id)?.classList.remove('show'); document.body.style.overflow=''; }
+document.querySelectorAll('.modal-veil').forEach(v=>v.addEventListener('click', e=>{ if (e.target===v) closeModal(v.id); }));
+document.addEventListener('keydown', e=>{ if (e.key==='Escape'){ document.querySelectorAll('.modal-veil.show').forEach(v=>closeModal(v.id)); hideShareMenu(); } });
+
+function toggleDropdown(id){
+  const m = document.getElementById(id); if (!m) return;
+  const open = !m.classList.contains('show');
+  document.querySelectorAll('.dropdown-panel').forEach(x=>x.classList.remove('show'));
+  if (open) m.classList.add('show');
+}
+document.addEventListener('click', e=>{ if (!e.target.closest('.rel')) document.querySelectorAll('.dropdown-panel').forEach(m=>m.classList.remove('show')); });
+function toggleRail(){ document.getElementById('railBody').classList.toggle('open'); document.getElementById('railOverlay').classList.toggle('active'); }
+function closeRail(){ document.getElementById('railBody').classList.remove('open'); document.getElementById('railOverlay').classList.remove('active'); }
+function showLogin(){ window.location.href = '/login/'; }
+function showSignup(){ window.location.href = '/signup/'; }
+
+/* ============================================================
+   SHARE (one popover; native share sheet where available)
+   ============================================================ */
+const shareMenu = document.getElementById('shareMenu');
+let shareCtx = null;
+function hideShareMenu(){ shareMenu.classList.remove('show'); shareCtx = null; }
+document.addEventListener('click', function(e){
+  const btn = e.target.closest('.share-btn');
+  if (btn){
+    e.preventDefault(); e.stopPropagation();
+    const ctx = { type:btn.dataset.shareType, id:btn.dataset.shareId, title:btn.dataset.shareTitle };
+    const url = `${location.origin}/api/education/${ctx.type}/${ctx.id}/`;
+    if (navigator.share && window.matchMedia('(max-width:959px)').matches){
+      navigator.share({ title:ctx.title, url }).catch(()=>{});
+      return;
+    }
+    if (shareCtx && shareCtx.id === ctx.id && shareCtx.type === ctx.type){ hideShareMenu(); return; }
+    shareCtx = ctx;
+    const r = btn.getBoundingClientRect();
+    shareMenu.classList.add('show');
+    const w = shareMenu.offsetWidth, h = shareMenu.offsetHeight;
+    shareMenu.style.left = Math.max(8, Math.min(r.right - w, innerWidth - w - 8)) + 'px';
+    shareMenu.style.top = (r.bottom + h + 12 > innerHeight ? r.top - h - 6 : r.bottom + 6) + 'px';
+    return;
+  }
+  const opt = e.target.closest('#shareMenu a');
+  if (opt && shareCtx){ e.preventDefault(); runShare(shareCtx, opt.dataset.platform); hideShareMenu(); return; }
+  if (!e.target.closest('#shareMenu')) hideShareMenu();
+});
+window.addEventListener('scroll', hideShareMenu, { passive:true });
+function runShare(ctx, platform){
+  const url = `${location.origin}/api/education/${ctx.type}/${ctx.id}/`;
+  const text = `${ctx.title} - ${url}`;
+  if (platform === 'copy'){
+    if (navigator.clipboard) navigator.clipboard.writeText(text).then(()=>showToast('Link copied')).catch(()=>fallbackCopy(text));
+    else fallbackCopy(text);
+    return;
+  }
+  const map = {
+    whatsapp:`https://wa.me/?text=${encodeURIComponent(text)}`,
+    facebook:`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+    twitter:`https://twitter.com/intent/tweet?text=${encodeURIComponent(ctx.title)}&url=${encodeURIComponent(url)}`
+  };
+  if (map[platform]) window.open(map[platform], '_blank', 'noopener');
+}
+function fallbackCopy(text){
+  const i = document.createElement('input'); i.value = text; document.body.appendChild(i); i.select();
+  document.execCommand('copy'); document.body.removeChild(i); showToast('Link copied');
+}
+
+/* ============================================================
+   TABS + SEARCH + FILTERS
+   ============================================================ */
+let currentTab = 'all';
+const cards = Array.from(document.querySelectorAll('#gridAll .item'));
+const els = {
+  search: document.getElementById('eduSearch'),
+  grade: document.getElementById('eduGradeFilter'),
+  field: document.getElementById('eduFieldFilter'),
+  level: document.getElementById('eduLevelFilter'),
+  empty: document.getElementById('emptyState'),
+  line: document.getElementById('resultLine'),
+  filters: document.getElementById('filters'),
+  toggle: document.getElementById('filterToggle')
+};
+const LABELS = { all:'result', bursary:'bursary', university:'university', school:'school', paper:'paper', news:'news item' };
+
+function applyFilters(){
+  const q = els.search.value.trim().toLowerCase();
+  const grade = els.grade.value, field = els.field.value, level = els.level.value;
+  let shown = 0;
+  cards.forEach(card=>{
+    const d = card.dataset;
+    let ok = currentTab === 'all' || d.type === currentTab;
+    if (ok && q && !(d.title || '').includes(q)) ok = false;
+    if (ok && grade && d.type === 'paper' && d.grade !== grade) ok = false;
+    if (ok && grade && d.type !== 'paper') ok = false;           // grade only applies to papers
+    if (ok && field && (d.field || '') !== field) ok = false;
+    if (ok && level && (d.level || '') !== level) ok = false;
+    card.classList.toggle('hidden', !ok);
+    if (ok) shown++;
+  });
+  els.empty.classList.toggle('hidden', shown !== 0);
+  const noun = LABELS[currentTab] + (shown === 1 ? '' : (currentTab === 'all' ? 's' : 's'));
+  els.line.textContent = shown ? `Showing ${shown} ${noun}` : '';
+}
+document.querySelectorAll('.tab').forEach(tab=>tab.addEventListener('click', ()=>{
+  currentTab = tab.dataset.tab;
+  document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected', t === tab ? 'true' : 'false'));
+  applyFilters();
+}));
+let t; els.search.addEventListener('input', ()=>{ clearTimeout(t); t = setTimeout(applyFilters, 120); });
+[els.grade, els.field, els.level].forEach(s=>s.addEventListener('change', applyFilters));
+document.getElementById('resetFilters').addEventListener('click', ()=>{ els.grade.value = els.field.value = els.level.value = ''; els.search.value = ''; applyFilters(); });
+els.toggle.addEventListener('click', ()=>{
+  const open = els.filters.classList.toggle('open');
+  els.toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+});
+
+/* ============================================================
+   ADD CONTENT MODAL (business)
+   ============================================================ */
+let modalType = '';
+function openContentModal(type){
+  modalType = type;
+  const titles = { bursary:'Add bursary', university:'Add university', school:'Add school', paper:'Upload question paper', news:'Add news' };
+  document.getElementById('modalTitle').textContent = titles[type] || 'Add content';
+  document.getElementById('modalTypeSel').value = type;
+  const body = document.getElementById('modalBody');
+  let html = '';
+  if (type === 'bursary') html = `
+    <div class="field wide"><label>Title *</label><input type="text" name="title" required placeholder="Bursary title"></div>
+    <div class="field wide"><label>Provider *</label><input type="text" name="provider" required placeholder="Organization name"></div>
+    <div class="field wide"><label>Description</label><textarea name="description" rows="2" placeholder="Describe the bursary"></textarea></div>
+    <div class="field"><label>Field of study</label>
+      <select name="field_of_study"><option value="engineering">Engineering</option><option value="medicine">Medicine</option><option value="business">Business</option><option value="arts">Arts</option><option value="science">Science</option><option value="education">Education</option><option value="law">Law</option><option value="technology">Technology</option><option value="agriculture">Agriculture</option><option value="health">Health sciences</option><option value="other">Other</option></select></div>
+    <div class="field"><label>Level</label>
+      <select name="level"><option value="undergraduate">Undergraduate</option><option value="postgraduate">Postgraduate</option><option value="phd">PhD</option><option value="diploma">Diploma</option><option value="certificate">Certificate</option></select></div>
+    <div class="field"><label>Amount (R)</label><input type="number" name="amount" placeholder="e.g. 50000"></div>
+    <div class="field"><label>Closing date *</label><input type="date" name="closing_date" required></div>
+    <div class="field wide"><label>Requirements</label><textarea name="requirements" rows="2" placeholder="Eligibility requirements"></textarea></div>
+    <div class="field wide"><label>Provider logo</label><input type="file" name="provider_logo" accept="image/*"></div>`;
+  else if (type === 'university') html = `
+    <div class="field wide"><label>University name *</label><input type="text" name="name" required></div>
+    <div class="field"><label>Province</label><input type="text" name="province"></div>
+    <div class="field"><label>City</label><input type="text" name="city"></div>
+    <div class="field wide"><label>Description</label><textarea name="description" rows="2"></textarea></div>
+    <div class="field wide"><label>Website</label><input type="url" name="website" placeholder="https://university.ac.za"></div>
+    <div class="field wide"><label>Logo</label><input type="file" name="logo" accept="image/*"></div>`;
+  else if (type === 'school') html = `
+    <div class="field wide"><label>School name *</label><input type="text" name="name" required></div>
+    <div class="field wide"><label>EMIS number</label><input type="text" name="emis_number"></div>
+    <div class="field"><label>Province</label><input type="text" name="province"></div>
+    <div class="field"><label>City</label><input type="text" name="city"></div>
+    <div class="field wide"><label>School type</label>
+      <select name="school_type"><option value="primary">Primary school</option><option value="secondary" selected>Secondary school</option><option value="combined">Combined school</option><option value="special">Special needs school</option><option value="early_childhood">Early childhood</option><option value="other">Other</option></select></div>`;
+  else if (type === 'paper') html = `
+    <div class="field wide"><label>Paper title *</label><input type="text" name="title" required></div>
+    <div class="field"><label>Grade *</label><select name="grade_id" required><option value="">Select grade</option>{% for grade in grades %}<option value="{{ grade.id }}">{{ grade.name }}</option>{% endfor %}</select></div>
+    <div class="field"><label>Subject *</label><select name="subject_id" required><option value="">Select subject</option>{% for subject in subjects %}<option value="{{ subject.id }}">{{ subject.name }}</option>{% endfor %}</select></div>
+    <div class="field"><label>Year *</label><input type="number" name="year" required min="2000" max="2026" value="2026"></div>
+    <div class="field"><label>PDF file *</label><input type="file" name="file" accept=".pdf" required></div>`;
+  else if (type === 'news') html = `
+    <div class="field wide"><label>Title *</label><input type="text" name="title" required></div>
+    <div class="field wide"><label>Content *</label><textarea name="content" rows="3" required></textarea></div>
+    <div class="field"><label>Category</label><select name="category"><option value="general">General</option><option value="bursary">Bursary news</option><option value="university">University news</option><option value="school">School news</option><option value="exam">Exam updates</option></select></div>
+    <div class="field"><label>Image</label><input type="file" name="image" accept="image/*"></div>`;
+  body.innerHTML = html;
+  openModal('eduModal');
+}
+document.getElementById('eduForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  const fd = new FormData(this);
+  const btn = document.getElementById('modalSubmitBtn'); const original = btn.innerHTML;
+  btn.innerHTML = '<span class="spin"></span> Saving…'; btn.disabled = true;
+  const endpoints = { bursary:'/api/education/bursaries/', university:'/api/education/universities/', school:'/api/education/schools/', paper:'/api/education/papers/', news:'/api/education/news/' };
+  const endpoint = endpoints[modalType];
+  if (!endpoint){ showToast('Invalid type','error'); btn.innerHTML = original; btn.disabled = false; return; }
+  fetch(endpoint, { method:'POST', headers:{'X-CSRFToken':getCSRFToken()}, body:fd })
+    .then(r=>r.json()).then(data=>{
+      btn.innerHTML = original; btn.disabled = false;
+      if (data.id || data.success){ closeModal('eduModal'); showToast('Saved'); setTimeout(()=>location.reload(), 1000); }
+      else showToast('Error: ' + (data.error || 'Unknown error'), 'error');
+    }).catch(()=>{ btn.innerHTML = original; btn.disabled = false; showToast('Network error, please try again','error'); });
+});
+
+document.addEventListener('DOMContentLoaded', applyFilters);
+</script>
+
+<script src="/static/hiring/js/notifications-global.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,1270 @@
+<!-- education/templates/education/bursary_detail.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ bursary.title }} - Education Hub | OppoGlobe</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #dbeafe;
+            --secondary: #667eea;
+            --gold: #ffd700;
+            --dark: #1a1a2e;
+            --gray: #6c757d;
+            --light-gray: #f8f9fa;
+            --border: #e9ecef;
+            --shadow: 0 4px 20px rgba(0,0,0,0.06);
+            --shadow-hover: 0 8px 30px rgba(0,0,0,0.12);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #f0f2f5;
+            font-family: var(--font-body);
+            padding-top: 70px;
+            padding-bottom: 40px;
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        button { cursor: pointer; border: none; background: none; }
+        img { max-width: 100%; }
+
+        /* ===== TOP NAVBAR - CLEAN & PROFESSIONAL ===== */
+        .header-area {
+            background: #ffffff;
+            border-bottom: 1px solid var(--border);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            height: 64px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        }
+
+        .main-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+            padding: 0 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        @media (min-width: 768px) {
+            .main-nav { padding: 0 32px; }
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .logo img {
+            max-height: 36px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .logo-text {
+            font-family: var(--font-display);
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-left: 8px;
+        }
+
+        .logo-text span {
+            color: var(--primary);
+        }
+
+        .nav-icons {
+            display: flex;
+            list-style: none;
+            gap: 4px;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        @media (min-width: 576px) {
+            .nav-icons { gap: 8px; }
+        }
+
+        .nav-icons a {
+            font-size: 17px;
+            color: #555;
+            transition: var(--transition);
+            padding: 6px 8px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 36px;
+            height: 36px;
+            text-decoration: none;
+        }
+
+        @media (min-width: 576px) {
+            .nav-icons a {
+                min-width: 40px;
+                height: 40px;
+                font-size: 19px;
+                padding: 6px 10px;
+            }
+        }
+
+        .nav-icons a:hover {
+            color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        /* ===== PROFILE DROPDOWN ===== */
+        .profile-dropdown {
+            position: relative;
+        }
+
+        .profile-avatar-small {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+
+        @media (min-width: 576px) {
+            .profile-avatar-small {
+                width: 36px;
+                height: 36px;
+                font-size: 14px;
+            }
+        }
+
+        .profile-avatar-small:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .profile-menu {
+            position: absolute;
+            top: 42px;
+            right: 0;
+            width: 220px;
+            background: white;
+            border-radius: var(--radius-sm);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+            padding: 6px 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px) scale(0.98);
+            transition: var(--transition);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+
+        .profile-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+        .profile-menu a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            color: #444;
+            font-size: 13px;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .profile-menu a:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .profile-menu a i {
+            width: 18px;
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        .profile-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 4px 12px;
+        }
+
+        /* ===== THREE DOT MENU ===== */
+        .three-dot-menu {
+            position: relative;
+        }
+
+        .three-dot-menu .dot-btn {
+            font-size: 20px;
+            color: #555;
+            padding: 6px 8px;
+            border-radius: 8px;
+            transition: var(--transition);
+            background: none;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 36px;
+            height: 36px;
+        }
+
+        @media (min-width: 576px) {
+            .three-dot-menu .dot-btn {
+                min-width: 40px;
+                height: 40px;
+                font-size: 22px;
+                padding: 6px 10px;
+            }
+        }
+
+        .three-dot-menu .dot-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .menu-content {
+            position: absolute;
+            right: 0;
+            top: 42px;
+            background: #fff;
+            width: 200px;
+            padding: 6px 0;
+            border-radius: var(--radius-sm);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px) scale(0.98);
+            transition: var(--transition);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+
+        .menu-content.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+        .menu-content a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            color: #444;
+            font-size: 13px;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .menu-content a:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .menu-content a i {
+            width: 18px;
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        /* ===== MAIN CONTAINER ===== */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        @media (min-width: 768px) {
+            .main-container { padding: 0 24px; }
+        }
+
+        /* ===== BACK LINK ===== */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            margin-bottom: 20px;
+            padding: 8px 16px;
+            background: white;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid var(--border);
+        }
+
+        .back-link:hover {
+            transform: translateX(-4px);
+            box-shadow: var(--shadow-hover);
+            color: var(--primary);
+        }
+
+        .back-link i {
+            transition: var(--transition);
+        }
+
+        .back-link:hover i {
+            transform: translateX(-4px);
+        }
+
+        /* ===== DETAIL CARD ===== */
+        .detail-card {
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .detail-header {
+            padding: 24px 28px 20px;
+            border-bottom: 1px solid var(--border);
+            background: #fafbfc;
+        }
+
+        @media (max-width: 576px) {
+            .detail-header { padding: 16px 18px; }
+        }
+
+        .detail-header .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .detail-header h1 {
+            font-family: var(--font-display);
+            font-size: 26px;
+            font-weight: 700;
+            margin: 0;
+            color: var(--dark);
+        }
+
+        @media (max-width: 576px) {
+            .detail-header h1 { font-size: 20px; }
+        }
+
+        .detail-header .provider {
+            font-size: 15px;
+            color: var(--gray);
+            margin-top: 2px;
+        }
+
+        .detail-header .provider i {
+            color: var(--primary);
+            margin-right: 4px;
+        }
+
+        .badges {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
+        .badge-custom {
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .badge-featured {
+            background: var(--gold);
+            color: var(--dark);
+        }
+
+        .badge-closing {
+            background: #e74c3c;
+            color: #fff;
+            animation: pulseBadge 2s infinite;
+        }
+
+        @keyframes pulseBadge {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .badge-info {
+            background: #3498db;
+            color: #fff;
+        }
+
+        /* ===== DETAIL BODY ===== */
+        .detail-body {
+            padding: 28px;
+        }
+
+        @media (max-width: 576px) {
+            .detail-body { padding: 16px; }
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 992px) {
+            .detail-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+        }
+
+        /* ===== LEFT COLUMN ===== */
+        .detail-section {
+            margin-bottom: 24px;
+        }
+
+        .detail-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .detail-section h3 {
+            font-family: var(--font-display);
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .detail-section h3 i {
+            color: var(--primary);
+        }
+
+        .detail-section p {
+            color: #555;
+            line-height: 1.8;
+            font-size: 14px;
+        }
+
+        .detail-section .meta-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        @media (max-width: 576px) {
+            .detail-section .meta-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .meta-item {
+            background: var(--light-gray);
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+        }
+
+        .meta-item .label {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: var(--gray);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .meta-item .value {
+            font-size: 14px;
+            font-weight: 500;
+            margin-top: 2px;
+            color: var(--dark);
+        }
+
+        /* ===== SIMILAR SECTION ===== */
+        .similar-section {
+            margin-top: 28px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .similar-section h3 {
+            font-family: var(--font-display);
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .similar-section h3 i {
+            color: var(--primary);
+        }
+
+        .similar-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        @media (max-width: 576px) {
+            .similar-grid { grid-template-columns: 1fr; }
+        }
+
+        .similar-item {
+            padding: 12px 16px;
+            background: var(--light-gray);
+            border-radius: var(--radius-sm);
+            text-decoration: none;
+            color: var(--dark);
+            transition: var(--transition);
+            border: 1px solid var(--border);
+            display: block;
+        }
+
+        .similar-item:hover {
+            background: white;
+            transform: translateX(4px);
+            box-shadow: var(--shadow);
+            border-color: var(--primary);
+        }
+
+        .similar-item h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .similar-item p {
+            font-size: 12px;
+            color: var(--gray);
+            margin: 2px 0 0;
+        }
+
+        /* ===== RIGHT COLUMN (SIDEBAR) ===== */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .sidebar-card {
+            background: var(--light-gray);
+            border-radius: var(--radius-sm);
+            padding: 18px 20px;
+            border: 1px solid var(--border);
+        }
+
+        .sidebar-card h4 {
+            font-family: var(--font-display);
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sidebar-card h4 i {
+            color: var(--primary);
+        }
+
+        .sidebar-card .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.04);
+            font-size: 13px;
+        }
+
+        .sidebar-card .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .sidebar-card .info-row .label-text {
+            color: var(--gray);
+        }
+
+        .sidebar-card .info-row .value-text {
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .sidebar-card .info-row .value-text.highlight {
+            color: #e74c3c;
+            font-weight: 700;
+        }
+
+        .sidebar-card .info-row a {
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .sidebar-card .info-row a:hover {
+            text-decoration: underline;
+        }
+
+        /* ===== ACTION BUTTONS ===== */
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .btn-custom {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 13px;
+            text-decoration: none;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            min-height: 44px;
+            width: 100%;
+        }
+
+        .btn-custom:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-primary-custom {
+            background: var(--dark);
+            color: #fff;
+        }
+
+        .btn-primary-custom:hover {
+            background: #2d2d4a;
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(26,26,46,0.25);
+        }
+
+        .btn-success-custom {
+            background: #16a34a;
+            color: #fff;
+        }
+
+        .btn-success-custom:hover {
+            background: #15803d;
+            box-shadow: 0 4px 16px rgba(22, 163, 74, 0.3);
+            color: #fff;
+        }
+
+        .btn-outline-custom {
+            background: transparent;
+            color: var(--dark);
+            border: 2px solid var(--border);
+        }
+
+        .btn-outline-custom:hover {
+            border-color: var(--dark);
+            background: var(--light-gray);
+        }
+
+        /* ===== SHARE BUTTONS ===== */
+        .share-buttons {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .share-btn {
+            padding: 5px 12px;
+            border-radius: 6px;
+            border: none;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            color: #fff;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            flex: 1;
+            justify-content: center;
+            min-height: 32px;
+        }
+
+        .share-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .share-btn.whatsapp { background: #25D366; }
+        .share-btn.whatsapp:hover { background: #1da851; }
+
+        .share-btn.facebook { background: #1877F2; }
+        .share-btn.facebook:hover { background: #0d65d9; }
+
+        .share-btn.twitter { background: #000; }
+        .share-btn.twitter:hover { background: #1a1a1a; }
+
+        .share-btn.linkedin { background: #0A66C2; }
+        .share-btn.linkedin:hover { background: #0853a0; }
+
+        .share-btn.copy { background: var(--gray); }
+        .share-btn.copy:hover { background: #5a6268; }
+
+        @media (max-width: 576px) {
+            .share-btn {
+                font-size: 10px;
+                padding: 4px 8px;
+                min-height: 28px;
+            }
+            .share-btn i { font-size: 12px; }
+        }
+
+        /* ===== TOAST ===== */
+        .toast-container {
+            position: fixed;
+            top: 80px;
+            right: 16px;
+            z-index: 9999;
+            max-width: calc(100vw - 32px);
+        }
+
+        @media (min-width: 576px) {
+            .toast-container { max-width: 400px; }
+        }
+
+        .toast-item {
+            padding: 10px 16px;
+            border-radius: var(--radius-sm);
+            color: white;
+            font-size: 13px;
+            animation: slideIn 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .toast-item.success { background: #28a745; }
+        .toast-item.error { background: #dc3545; }
+        .toast-item.info { background: #17a2b8; }
+        .toast-item.warning { background: #ffc107; color: var(--dark); }
+
+        .toast-item .close-toast {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.7);
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .toast-item .close-toast:hover { color: white; }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(60px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 480px) {
+            .detail-header .header-top {
+                flex-direction: column;
+            }
+            .badges {
+                margin-top: 4px;
+            }
+            .badge-custom {
+                font-size: 9px;
+                padding: 2px 10px;
+            }
+        }
+
+        /* ===== MOBILE BOTTOM NAV ===== */
+        .mobile-bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 56px;
+            background: white;
+            border-top: 1px solid var(--border);
+            justify-content: space-around;
+            align-items: center;
+            z-index: 999;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        @media (max-width: 991px) {
+            .mobile-bottom-nav {
+                display: flex !important;
+            }
+            body { padding-bottom: 66px; }
+        }
+
+        .mobile-bottom-nav a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1px;
+            font-size: 9px;
+            color: var(--gray);
+            padding: 4px 6px;
+            transition: var(--transition);
+            text-decoration: none;
+            flex: 1;
+            text-align: center;
+        }
+
+        .mobile-bottom-nav a i {
+            font-size: 17px;
+            display: block;
+        }
+
+        .mobile-bottom-nav a.active {
+            color: var(--primary);
+        }
+
+        .mobile-bottom-nav a:hover {
+            color: var(--primary);
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: var(--light-gray); }
+        ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #aaa; }
+    </style>
+</head>
+<body>
+
+    <!-- ===== TOP NAVBAR - CLEAN ===== -->
+    <header class="header-area">
+        <div class="main-nav">
+            <a href="/" class="logo">
+                <img src="/static/images/logo.png" alt="OppoGlobe" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\'logo-text\'>Oppo<span>Globe</span></span>'">
+            </a>
+
+            <ul class="nav-icons">
+                <li><a href="/" title="Home"><i class="fas fa-home"></i></a></li>
+                <li><a href="/education/" title="Education Hub"><i class="fas fa-graduation-cap"></i></a></li>
+
+                {% if user.is_authenticated %}
+                <li><a href="/dashboard" title="Dashboard"><i class="fas fa-th-large"></i></a></li>
+                <li><a href="/messaging/" title="Messages"><i class="fas fa-comment-dots"></i></a></li>
+
+                <li class="profile-dropdown">
+                    <div class="profile-avatar-small" onclick="toggleProfileDropdown()">
+                        {{ user.username|first|upper }}
+                    </div>
+                    <div class="profile-menu" id="profileMenu">
+                        <a href="/profile/"><i class="fas fa-user"></i> Profile</a>
+                        <a href="/applications/"><i class="fas fa-file-alt"></i> Applications</a>
+                        <a href="/profile/education/"><i class="fas fa-graduation-cap"></i> Education</a>
+                        <div class="profile-divider"></div>
+                        <a href="/api/alerts/"><i class="fas fa-bell"></i> Alerts</a>
+                        <a href="/preferences/"><i class="fas fa-cog"></i> Preferences</a>
+                        <div class="profile-divider"></div>
+                        <a href="/logout/"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                </li>
+
+                <li class="three-dot-menu">
+                    <button class="dot-btn" onclick="toggleThreeDotMenu()">
+                        <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+                    <div class="menu-content" id="threeDotMenu">
+                        <a href="/profile/skills/"><i class="fas fa-cogs"></i> Skills</a>
+                        <a href="/profile/employment/"><i class="fas fa-briefcase"></i> Employment</a>
+                        <a href="/profile/education/"><i class="fas fa-graduation-cap"></i> Education</a>
+                        <a href="/profile/documents/"><i class="fas fa-file-upload"></i> Documents</a>
+                    </div>
+                </li>
+
+                {% else %}
+                <li><a href="#" onclick="showLogin()" title="Login"><i class="fas fa-sign-in-alt"></i></a></li>
+                <li><a href="#" onclick="showSignup()" title="Sign Up"><i class="fas fa-user-plus"></i></a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </header>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="main-container">
+
+        <!-- Back Link -->
+        <a href="/education/" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to Education Hub
+        </a>
+
+        <!-- Detail Card -->
+        <div class="detail-card">
+            <!-- Header -->
+            <div class="detail-header">
+                <div class="header-top">
+                    <div>
+                        <h1>{{ bursary.title }}</h1>
+                        <div class="provider">
+                            <i class="fas fa-building"></i> {{ bursary.provider }}
+                        </div>
+                        <div class="badges">
+                            {% if bursary.is_featured %}
+                            <span class="badge-custom badge-featured">⭐ Featured</span>
+                            {% endif %}
+                            {% if days_left and days_left < 14 %}
+                            <span class="badge-custom badge-closing">🔥 {{ days_left }} days left</span>
+                            {% endif %}
+                            {% if bursary.amount %}
+                            <span class="badge-custom badge-info">R{{ bursary.amount|floatformat:0 }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Body -->
+            <div class="detail-body">
+                <div class="detail-grid">
+                    <!-- LEFT COLUMN -->
+                    <div>
+
+                        <!-- Description -->
+                        <div class="detail-section">
+                            <h3><i class="fas fa-align-left"></i> Description</h3>
+                            <p>{{ bursary.description|default:"No description provided."|linebreaks }}</p>
+                        </div>
+
+                        <!-- Requirements -->
+                        {% if bursary.requirements %}
+                        <div class="detail-section">
+                            <h3><i class="fas fa-check-circle"></i> Requirements</h3>
+                            <p>{{ bursary.requirements|linebreaks }}</p>
+                        </div>
+                        {% endif %}
+
+                        <!-- Required Documents -->
+                        {% if bursary.required_documents %}
+                        <div class="detail-section">
+                            <h3><i class="fas fa-file-alt"></i> Required Documents</h3>
+                            <p>{{ bursary.required_documents|linebreaks }}</p>
+                        </div>
+                        {% endif %}
+
+                        <!-- Eligibility -->
+                        <div class="detail-section">
+                            <h3><i class="fas fa-users"></i> Eligibility</h3>
+                            <div class="meta-grid">
+                                <div class="meta-item">
+                                    <div class="label">Field of Study</div>
+                                    <div class="value">{{ bursary.get_field_of_study_display }}</div>
+                                </div>
+                                <div class="meta-item">
+                                    <div class="label">Level</div>
+                                    <div class="value">{{ bursary.get_level_display }}</div>
+                                </div>
+                                {% if grades %}
+                                <div class="meta-item">
+                                    <div class="label">Grades</div>
+                                    <div class="value">{{ grades|join:", " }}</div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Similar Bursaries -->
+                        {% if similar %}
+                        <div class="similar-section">
+                            <h3><i class="fas fa-lightbulb"></i> Similar Bursaries</h3>
+                            <div class="similar-grid">
+                                {% for s in similar %}
+                                <a href="{% url 'education_bursary_detail' s.id %}" class="similar-item">
+                                    <h4>{{ s.title }}</h4>
+                                    <p>{{ s.provider }} • {{ s.closing_date|date:"M d, Y" }}</p>
+                                </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                    </div>
+
+                    <!-- RIGHT COLUMN (SIDEBAR) -->
+                    <div class="sidebar">
+
+                        <!-- Details Card -->
+                        <div class="sidebar-card">
+                            <h4><i class="fas fa-info-circle"></i> Details</h4>
+                            <div class="info-row">
+                                <span class="label-text">Field</span>
+                                <span class="value-text">{{ bursary.get_field_of_study_display }}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label-text">Level</span>
+                                <span class="value-text">{{ bursary.get_level_display }}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label-text">Closing Date</span>
+                                <span class="value-text">{{ bursary.closing_date|date:"M d, Y" }}</span>
+                            </div>
+                            {% if days_left %}
+                            <div class="info-row">
+                                <span class="label-text">Days Left</span>
+                                <span class="value-text highlight">{{ days_left }}</span>
+                            </div>
+                            {% endif %}
+                            <div class="info-row">
+                                <span class="label-text">Amount</span>
+                                <span class="value-text">{% if bursary.amount %}R{{ bursary.amount|floatformat:2 }}{% else %}Varies{% endif %}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label-text">Application Fee</span>
+                                <span class="value-text">R{{ bursary.application_fee|floatformat:2|default:"0.00" }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Contact Card -->
+                        {% if bursary.contact_email or bursary.contact_phone or bursary.provider_website %}
+                        <div class="sidebar-card">
+                            <h4><i class="fas fa-address-card"></i> Contact</h4>
+                            {% if bursary.contact_email %}
+                            <div class="info-row">
+                                <span class="label-text">Email</span>
+                                <span class="value-text"><a href="mailto:{{ bursary.contact_email }}">{{ bursary.contact_email }}</a></span>
+                            </div>
+                            {% endif %}
+                            {% if bursary.contact_phone %}
+                            <div class="info-row">
+                                <span class="label-text">Phone</span>
+                                <span class="value-text">{{ bursary.contact_phone }}</span>
+                            </div>
+                            {% endif %}
+                            {% if bursary.provider_website %}
+                            <div class="info-row">
+                                <span class="label-text">Website</span>
+                                <span class="value-text"><a href="{{ bursary.provider_website }}" target="_blank">Visit Website <i class="fas fa-external-link-alt" style="font-size:10px;"></i></a></span>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+
+                        <!-- ===== UPDATED ACTION BUTTONS ===== -->
+                        <div class="action-buttons">
+                            {% if user.is_authenticated %}
+                                {% if bursary %}
+                                <a href="{% url 'education_apply_bursary_with_id' bursary.id %}" class="btn-custom btn-success-custom">
+                                    <i class="fas fa-paper-plane"></i> Apply Now
+                                </a>
+                                {% else %}
+                                <a href="{% url 'education_apply_bursary' %}" class="btn-custom btn-success-custom">
+                                    <i class="fas fa-paper-plane"></i> Apply Now
+                                </a>
+                                {% endif %}
+                            {% else %}
+                            <a href="/login/?next={{ request.path }}" class="btn-custom btn-primary-custom">
+                                <i class="fas fa-sign-in-alt"></i> Login to Apply
+                            </a>
+                            {% endif %}
+                            <a href="/education/" class="btn-custom btn-outline-custom">
+                                <i class="fas fa-arrow-left"></i> Back to All
+                            </a>
+                        </div>
+
+                        <!-- Share Card -->
+                        <div class="sidebar-card">
+                            <h4><i class="fas fa-share-alt"></i> Share</h4>
+                            <div class="share-buttons">
+                                <button class="share-btn whatsapp" onclick="shareContent('whatsapp')">
+                                    <i class="fab fa-whatsapp"></i> WhatsApp
+                                </button>
+                                <button class="share-btn facebook" onclick="shareContent('facebook')">
+                                    <i class="fab fa-facebook-f"></i> Facebook
+                                </button>
+                                <button class="share-btn twitter" onclick="shareContent('twitter')">
+                                    <i class="fab fa-twitter"></i> Twitter
+                                </button>
+                                <button class="share-btn linkedin" onclick="shareContent('linkedin')">
+                                    <i class="fab fa-linkedin-in"></i> LinkedIn
+                                </button>
+                                <button class="share-btn copy" onclick="copyLink()">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ===== MOBILE BOTTOM NAV ===== -->
+    <div class="mobile-bottom-nav">
+        <a href="/"><i class="fas fa-home"></i>Home</a>
+        <a href="/dashboard"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
+        <a href="/education/" class="active"><i class="fas fa-graduation-cap"></i>Edu</a>
+        <a href="/profile/"><i class="fas fa-user"></i>Profile</a>
+    </div>
+
+    <!-- ===== TOAST CONTAINER ===== -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ============================================================
+        // TOGGLE FUNCTIONS
+        // ============================================================
+        function toggleProfileDropdown() {
+            document.getElementById("profileMenu").classList.toggle("show");
+        }
+
+        function toggleThreeDotMenu() {
+            document.getElementById("threeDotMenu").classList.toggle("show");
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener("click", function(e) {
+            const profileMenu = document.getElementById("profileMenu");
+            const avatar = document.querySelector(".profile-avatar-small");
+            if (avatar && profileMenu && !avatar.contains(e.target) && !profileMenu.contains(e.target)) {
+                profileMenu.classList.remove("show");
+            }
+
+            const threeDotMenu = document.getElementById("threeDotMenu");
+            const dotBtn = document.querySelector(".three-dot-menu .dot-btn");
+            if (dotBtn && threeDotMenu && !dotBtn.contains(e.target) && !threeDotMenu.contains(e.target)) {
+                threeDotMenu.classList.remove("show");
+            }
+        });
+
+        // ============================================================
+        // SHARE FUNCTIONS
+        // ============================================================
+        function shareContent(platform) {
+            const url = window.location.href;
+            const title = encodeURIComponent("{{ bursary.title }} - Bursary | OppoGlobe");
+            let shareUrl = '';
+
+            if (platform === 'whatsapp') {
+                shareUrl = `https://wa.me/?text=${title}%20${encodeURIComponent(url)}`;
+            } else if (platform === 'facebook') {
+                shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+            } else if (platform === 'twitter') {
+                shareUrl = `https://twitter.com/intent/tweet?text=${title}&url=${encodeURIComponent(url)}`;
+            } else if (platform === 'linkedin') {
+                shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+            }
+
+            if (shareUrl) {
+                window.open(shareUrl, '_blank');
+                showToast('📤 Shared successfully!', 'success');
+            }
+        }
+
+        function copyLink() {
+            const url = window.location.href;
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(url).then(() => {
+                    showToast('✅ Link copied to clipboard!', 'success');
+                }).catch(() => {
+                    fallbackCopy(url);
+                });
+            } else {
+                fallbackCopy(url);
+            }
+        }
+
+        function fallbackCopy(text) {
+            const input = document.createElement('input');
+            input.value = text;
+            document.body.appendChild(input);
+            input.select();
+            document.execCommand('copy');
+            document.body.removeChild(input);
+            showToast('✅ Link copied to clipboard!', 'success');
+        }
+
+        // ============================================================
+        // TOAST
+        // ============================================================
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast-item ${type}`;
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                info: 'fa-info-circle',
+                warning: 'fa-exclamation-triangle'
+            };
+            toast.innerHTML = `
+                <i class="fas ${icons[type] || icons.info}"></i>
+                ${message}
+                <button class="close-toast" onclick="this.parentElement.remove()">&times;</button>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 5000);
+        }
+
+        // ============================================================
+        // LOGIN/SIGNUP FUNCTIONS
+        // ============================================================
+        function showLogin() {
+            showToast('Please login to continue', 'info');
+            window.location.href = '/login/';
+        }
+
+        function showSignup() {
+            showToast('Create an account to get started', 'info');
+            window.location.href = '/signup/';
+        }
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Bursary detail page loaded');
+        });
+    </script>
+
+  <script src="/static/hiring/js/notifications-global.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!-- First-party preferences only. This is NOT a Google-certified CMP. Optional ad/analytics scripts are not loaded by this package. -->
+<style>
+#ogCookiePanel{position:fixed;z-index:2147483000;bottom:calc(84px + env(safe-area-inset-bottom,0px));left:12px;right:12px;max-width:620px;margin:auto;padding:18px;background:#fff;color:#16241f;border:1px solid #bbcfc2;border-radius:16px;box-shadow:0 8px 40px #0003;font:14px/1.55 system-ui,sans-serif;max-height:55dvh;overflow:auto}#ogCookiePanel[hidden]{display:none!important}#ogCookiePanel p{margin:8px 0}#ogCookiePanel a{color:#165a48;text-decoration:underline}#ogCookiePanel .og-cookie-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}#ogCookiePanel button{font:600 14px/1.4 system-ui,sans-serif;border:1px solid #1f6f5c;border-radius:10px;background:#fff;color:#154f41;padding:10px 14px;cursor:pointer;min-height:44px}#ogCookiePanel button:focus-visible{outline:3px solid #c15e20;outline-offset:3px}
+</style>
+<section id="ogCookiePanel" role="region" aria-label="Cookie preferences" hidden tabindex="-1"><strong>Privacy choices</strong><p>Essential features stay available. Choose whether to allow optional advertising and analytics services if they are enabled. You can change this choice using Cookie preferences in the footer.</p><p><a href="/site-cookies/">Read about cookies</a> · <a href="/privacy/">Privacy policy</a></p><div class="og-cookie-actions"><button type="button" data-og-choice="essential">Essential only</button><button type="button" data-og-choice="optional">Allow optional services</button></div></section>
+<script>
+(function(){
+ 'use strict';
+ if(window.ogOpenCookiePreferences)return;
+ var key='og_optional_services_v1', panel=document.getElementById('ogCookiePanel'), previousFocus=null;
+ var choice=null;
+ try{var saved=JSON.parse(localStorage.getItem(key)||'null');if(saved&&saved.version===1&&(saved.choice==='essential'||saved.choice==='optional')&&Date.now()-saved.at<180*86400000&&saved.at<=Date.now())choice=saved.choice;}catch(e){}
+ window.ogOptionalServicesAllowed=function(){return choice==='optional';};
+ window.ogOpenCookiePreferences=function(){previousFocus=document.activeElement;panel.hidden=false;panel.focus();};
+ function select(value){choice=value;try{localStorage.setItem(key,JSON.stringify({version:1,choice:value,at:Date.now()}));}catch(e){}panel.hidden=true;window.dispatchEvent(new CustomEvent('og:privacy-choice',{detail:{optional:value==='optional'}}));if(previousFocus&&previousFocus.isConnected)previousFocus.focus();}
+ panel.querySelectorAll('[data-og-choice]').forEach(function(button){button.addEventListener('click',function(){select(button.dataset.ogChoice);});});
+ // Integrators must separately gate every optional service, including scripts in base templates.
+ window.addEventListener('storage',function(e){if(e.key===key)window.location.reload();});
+ if(!choice)panel.hidden=false;
+})();
+</script>

@@ -1,0 +1,173 @@
+{
+  "id": "/?source=pwa",
+  "name": "OppoGlobe - Find Your Dream Property",
+  "short_name": "OppoGlobe",
+  "description": "Property rental, sales, and job platform",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#c62828",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["real estate", "jobs", "property"],
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "icons": [
+    {
+      "src": "/static/hiring/icons/icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/hiring/icons/icon-72-maskable.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/static/hiring/icons/icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/hiring/icons/icon-96-maskable.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/static/hiring/icons/icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/hiring/icons/icon-128-maskable.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/static/hiring/icons/icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/hiring/icons/icon-144-maskable.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/static/hiring/icons/icon-152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/hiring/icons/icon-152-maskable.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/static/hiring/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/hiring/icons/icon-192-maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/static/hiring/icons/icon-384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/hiring/icons/icon-384-maskable.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/static/hiring/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/hiring/icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/static/hiring/screenshots/desktop.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "platform": "wide",
+      "label": "Browse properties on desktop"
+    },
+    {
+      "src": "/static/hiring/screenshots/mobile.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "platform": "narrow",
+      "label": "Search rentals and jobs on mobile"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Properties",
+      "short_name": "Properties",
+      "description": "View available properties",
+      "url": "/?tab=properties",
+      "icons": [
+        {
+          "src": "/static/hiring/icons/shortcut-properties.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Jobs",
+      "short_name": "Jobs",
+      "description": "Browse job listings",
+      "url": "/?tab=jobs",
+      "icons": [
+        {
+          "src": "/static/hiring/icons/shortcut-jobs.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Maintenance",
+      "short_name": "Maintenance",
+      "description": "Submit maintenance requests",
+      "url": "/?tab=maintenance",
+      "icons": [
+        {
+          "src": "/static/hiring/icons/shortcut-maintenance.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+PROPER VAPID KEYS (Raw Format)
+==================================================
+PUBLIC_KEY=BIjjInkrJDe2K25CEj7xrttX-QoNt1rHcHZOJ77qraJtuoLp-QdU_McyIjXC2KbHtDfr4W_u2kz5OxmhBGEd1rw
+PRIVATE_KEY=z8Bx5Vs2Tv_DRxO694iND99KLMOnPXT6MM9YoYg2YvM
+==================================================
