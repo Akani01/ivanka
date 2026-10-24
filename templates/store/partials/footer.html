@@ -1,0 +1,12 @@
+{% load static %}
+<footer class="iv-footer">
+  <div class="iv-footer-wrap">
+    <div><a href="{% url 'store_home' %}"><img class="iv-footer-logo" src="{% static 'store/images/logo.png' %}" alt="Ivanka &amp; Stell Closet"></a><p>Apparel, activewear, swimwear, resort wear, fashion accessories and Fairy Natural Beauty +1. Johannesburg, Kinshasa and worldwide enquiries.</p>
+<p class="contact-meta"><a href="https://wa.me/27673254662" target="_blank" rel="noopener noreferrer">WhatsApp +27 67 325 4662</a><br><a href="tel:+243835599139">DRC +243 835 599 139</a></p></div>
+    <div><h6>Company</h6><ul><li><a href="{% url 'store_about' %}">About us</a></li><li><a href="{% url 'store_contact' %}">Contact</a></li><li><a href="{% url 'store_careers' %}">Careers</a></li><li><a href="{{ platform_home_url|default:'/' }}">Ivanka&amp;Stellar</a></li></ul></div>
+    <div><h6>Support</h6><ul><li><a href="{% url 'store_help' %}">Help centre</a></li><li><a href="{% url 'store_faq' %}">FAQ</a></li><li><a href="{% url 'store_privacy' %}">Privacy policy</a></li><li><a href="{% url 'store_terms' %}">Terms of service</a></li></ul></div>
+    <div><h6>Stay in the loop</h6><p style="font-size:12.5px">Ask about collections, products and opportunities.</p><form class="iv-nl" id="newsletterForm"><input type="email" placeholder="Your email" required aria-label="Email"><button type="submit">Subscribe</button></form></div>
+  </div>
+  <section class="iv-trust" aria-label="Payments"><div><h6><i class="fas fa-shield-halved"></i> Secure payments, powered by Yoco</h6><p>Card details are entered on Yoco's hosted checkout and never stored by Ivanka. Cash on delivery is available where the seller offers it.</p></div><div class="iv-brands"><span>yoco</span><span>Visa</span><span>Mastercard</span></div></section>
+  <div class="iv-footer-bottom"><span>© {% now "Y" %} Ivanka &amp; Stell Closet · Ivanka&amp;Stellar. All rights reserved.</span><div><a href="{% url 'store_privacy' %}">Privacy</a> · <a href="{% url 'store_terms' %}">Terms</a> · <a href="{% url 'store_cookies' %}">Cookies</a></div></div>
+</footer>

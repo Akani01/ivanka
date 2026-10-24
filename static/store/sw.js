@@ -1,33 +1,15 @@
-// Cache only the public offline page. Never cache user APIs, checkout, admin or media.
-const CACHE = "ivanka-offline-v1";
-self.addEventListener("install", (e) => {
-  e.waitUntil(
-    caches.open(CACHE).then((c) => c.add("/static/store/offline.html")),
-  );
-  self.skipWaiting();
+/* Cache only a generic offline document, never accounts, APIs or checkout. */
+const OFFLINE_URL = __OFFLINE_URL__;
+const CACHE_NAME = 'ivanka-store-offline-v1-' + self.registration.scope;
+self.addEventListener('install', event => {
+ event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.add(OFFLINE_URL)));
 });
-self.addEventListener("activate", (e) => {
-  e.waitUntil(
-    caches
-      .keys()
-      .then((keys) =>
-        Promise.all(
-          keys
-            .filter((k) => k.startsWith("ivanka-") && k !== CACHE)
-            .map((k) => caches.delete(k)),
-        ),
-      ),
-  );
-  self.clients.claim();
+self.addEventListener('activate', event => {
+ event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key.startsWith('ivanka-store-offline-') && key !== CACHE_NAME).map(key => caches.delete(key)))).then(() => self.clients.claim()));
 });
-self.addEventListener("fetch", (e) => {
-  if (
-    e.request.mode === "navigate" &&
-    e.request.method === "GET" &&
-    new URL(e.request.url).pathname === "/"
-  ) {
-    e.respondWith(
-      fetch(e.request).catch(() => caches.match("/static/store/offline.html")),
-    );
-  }
+self.addEventListener('fetch', event => {
+ if(event.request.method !== 'GET' || event.request.mode !== 'navigate')return;
+ const url = new URL(event.request.url);
+ if(url.origin !== self.location.origin)return;
+ event.respondWith(fetch(event.request).catch(() => caches.open(CACHE_NAME).then(cache => cache.match(OFFLINE_URL)).then(response => response || Response.error())));
 });

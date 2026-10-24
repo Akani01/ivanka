@@ -1,0 +1,26 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>{{ page_title }} · {{ brand.name }}</title>
+<meta name="description" content="{{ page_description }}"><meta name="theme-color" content="#0A0A0A">
+<link rel="manifest" href="{% url 'store_manifest' %}"><link rel="icon" type="image/png" href="{% static 'store/icon-192.png' %}"><link rel="apple-touch-icon" href="{% static 'store/icon-192.png' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'store/css/store.css' %}"><link rel="stylesheet" href="{% static 'store/css/pages.css' %}">
+</head>
+<body class="iv-info-page" data-contact-url="{% url 'store_contact' %}" data-store-home="{% url 'store_home' %}" data-sw-url="{% if store_worker_enabled %}{% url 'store_service_worker' %}{% endif %}" data-newsletter-api="{{ newsletter_api_url }}">
+<a class="iv-skip" href="#pageContent">Skip to content</a>
+<header class="iv-header"><div class="iv-header-inner">
+<a class="iv-brand" href="{% url 'store_home' %}" aria-label="Ivanka and Stell Closet home"><img class="iv-brand-logo" src="{% static 'store/images/logo.png' %}" alt="{{ brand.name }}"></a>
+<form class="iv-search" role="search" action="{% url 'store_home' %}" method="get"><i class="fas fa-magnifying-glass" aria-hidden="true"></i><input type="search" name="q" placeholder="Search products…" aria-label="Search products"></form>
+<nav class="iv-nav" aria-label="Main"><a class="iv-icon hide-sm" href="{% url 'store_home' %}" title="Home" aria-label="Home"><i class="fas fa-house" aria-hidden="true"></i></a><a class="iv-icon hide-sm" href="{% url 'store_home' %}#shop" title="Shop" aria-label="Shop"><i class="fas fa-bag-shopping" aria-hidden="true"></i></a><a class="iv-icon hide-sm" href="{% url 'store_home' %}#cart" title="Cart" aria-label="Cart"><i class="fas fa-cart-shopping" aria-hidden="true"></i></a>
+{% if user.is_authenticated %}<details class="iv-rel iv-page-account"><summary class="iv-avatar" aria-label="Account menu">{{ user.username|first|upper }}</summary><div class="iv-account-links"><strong>{{ user.username }}</strong><a href="{% url 'store_home' %}#orders">My orders</a><a href="{% url 'store_home' %}#wishlist">Wishlist</a><a href="{% url 'store_home' %}#wallet">Wallet</a><a href="{% url 'store_home' %}#seller">Seller hub</a><a href="{% url 'store_home' %}#courier">Courier jobs</a><a href="/profile/">Profile</a><a href="/messaging/">Messages</a><a href="/logout/">Log out</a></div></details>{% else %}<a class="iv-auth ghost" href="{% url 'store_home' %}#login">Sign in</a>{% endif %}</nav>
+</div></header>
+<main class="iv-main iv-public-main" id="pageContent"><nav class="iv-page-nav" aria-label="Company and Support"><a href="{% url 'store_home' %}">Shop</a><a href="{% url 'store_about' %}" {% if page_slug == 'about' %}aria-current="page"{% endif %}>About</a><a href="{% url 'store_contact' %}" {% if page_slug == 'contact' %}aria-current="page"{% endif %}>Contact</a><a href="{% url 'store_careers' %}" {% if page_slug == 'careers' %}aria-current="page"{% endif %}>Careers</a><a href="{% url 'store_help' %}" {% if page_slug == 'help' %}aria-current="page"{% endif %}>Help</a><a href="{% url 'store_faq' %}" {% if page_slug == 'faq' %}aria-current="page"{% endif %}>FAQ</a></nav>
+{% block content %}{% endblock %}</main>
+{% include 'store/partials/footer.html' %}
+<nav class="iv-dock" aria-label="Primary"><a class="iv-dock-btn" href="{% url 'store_home' %}"><i class="fas fa-house" aria-hidden="true"></i><span class="lbl">Home</span></a><a class="iv-dock-btn" href="{% url 'store_home' %}#shop"><i class="fas fa-bag-shopping" aria-hidden="true"></i><span class="lbl">Shop</span></a><a class="iv-dock-btn" href="{% url 'store_home' %}#orders"><i class="fas fa-receipt" aria-hidden="true"></i><span class="lbl">Orders</span></a><a class="iv-dock-btn" href="{% url 'store_careers' %}"><i class="fas fa-briefcase" aria-hidden="true"></i><span class="lbl">Jobs</span></a><a class="iv-dock-btn" href="{% url 'store_home' %}{% if user.is_authenticated %}#orders{% else %}#login{% endif %}"><i class="fas fa-user" aria-hidden="true"></i><span class="lbl">Me</span></a><a class="iv-dock-btn hero" href="{% url 'store_home' %}#cart"><i class="fas fa-cart-shopping" aria-hidden="true"></i><span class="lbl">Cart</span></a></nav>
+<script src="{% static 'store/js/site.js' %}" defer></script>
+</body></html>

@@ -5,7 +5,10 @@ from django.conf import settings
 from django.db import transaction
 from django.db.models import Q, Sum
 from django.shortcuts import render, get_object_or_404
-from django.http import JsonResponse, FileResponse, Http404
+from django.http import JsonResponse, FileResponse, Http404, HttpResponse
+from django.urls import reverse
+from django.templatetags.static import static
+from .public_pages import site_context
 from django.utils import timezone
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from rest_framework import viewsets, status
@@ -33,28 +36,30 @@ from .payments.registry import initialize_payment, verify_signature
 
 @ensure_csrf_cookie
 def home(request):
-    return render(request, "store.html", {"maps_key": settings.GOOGLE_MAPS_BROWSER_KEY})
+    context = site_context()
+    context["maps_key"] = getattr(settings, "GOOGLE_MAPS_BROWSER_KEY", "")
+    return render(request, "store.html", context)
 
 
 def manifest(request):
     return JsonResponse(
         {
-            "id": "/",
-            "name": "Ivanka Marketplace",
+            "id": reverse("store_home"),
+            "name": "Ivanka & Stell Closet",
             "short_name": "Ivanka",
-            "start_url": "/",
-            "scope": "/",
+            "start_url": reverse("store_home"),
+            "scope": reverse("store_home"),
             "display": "standalone",
-            "background_color": "#faf9f6",
-            "theme_color": "#101413",
+            "background_color": "#F5F5F5",
+            "theme_color": "#0A0A0A",
             "icons": [
                 {
-                    "src": "/static/store/icon-192.png",
+                    "src": static("store/icon-192.png"),
                     "sizes": "192x192",
                     "type": "image/png",
                 },
                 {
-                    "src": "/static/store/icon-512.png",
+                    "src": static("store/icon-512.png"),
                     "sizes": "512x512",
                     "type": "image/png",
                 },
@@ -64,14 +69,16 @@ def manifest(request):
 
 
 def service_worker(request):
-    from django.views.decorators.cache import never_cache
-
-    response = FileResponse(
-        open(settings.BASE_DIR / "static/store/sw.js", "rb"),
-        content_type="application/javascript",
-    )
+    from django.contrib.staticfiles import finders
+    worker = finders.find("store/sw.js")
+    if not worker:
+        raise Http404("Store service worker not found.")
+    from pathlib import Path
+    script = Path(worker).read_text(encoding="utf-8")
+    script = script.replace("__OFFLINE_URL__", json.dumps(reverse("store_offline")))
+    response = HttpResponse(script, content_type="application/javascript")
     response["Cache-Control"] = "no-cache"
-    response["Service-Worker-Allowed"] = "/"
+    response["Service-Worker-Allowed"] = reverse("store_home")
     return response
 
 
@@ -236,6 +243,7 @@ class ProductViewSet(viewsets.ModelViewSet):
 
 
 class AddressViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     serializer_class = AddressSerializer
 
     def get_queryset(self):
@@ -248,6 +256,7 @@ class AddressViewSet(viewsets.ModelViewSet):
 
 
 class CartView(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, r):
         code, rate = currency(r.query_params.get("currency", settings.CATALOG_CURRENCY))
         cart, _ = StoreCart.objects.get_or_create(user=r.user)
@@ -312,6 +321,7 @@ class CartView(APIView):
 
 
 class CheckoutView(APIView):
+    permission_classes = [IsAuthenticated]
     def post(self, r):
         s = CheckoutSerializer(data=r.data)
         s.is_valid(raise_exception=True)
@@ -331,6 +341,7 @@ class CheckoutView(APIView):
 
 
 class OrderViewSet(viewsets.ReadOnlyModelViewSet):
+    permission_classes = [IsAuthenticated]
     serializer_class = OrderSerializer
 
     def get_queryset(self):
@@ -404,6 +415,7 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class SellerView(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, r):
         s = Store.objects.filter(owner=r.user).first()
         return Response(StoreSerializer(s).data if s else None)
@@ -417,6 +429,7 @@ class SellerView(APIView):
 
 
 class WishlistView(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, r):
         ids = StoreWishlist.objects.filter(user=r.user).values_list(
             "product_id", flat=True
@@ -448,6 +461,7 @@ class WishlistView(APIView):
 
 
 class ReviewReturnView(APIView):
+    permission_classes = [IsAuthenticated]
     def post(self, r, kind):
         item = get_object_or_404(
             StoreOrderItem,
@@ -483,6 +497,7 @@ class ReviewReturnView(APIView):
 
 
 class WalletView(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, r):
         entries = StoreLedgerEntry.objects.filter(wallet__user=r.user)
         return Response(
@@ -501,6 +516,7 @@ class WalletView(APIView):
 
 
 class NotificationsView(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, r):
         return Response(
             list(
@@ -593,8 +609,3 @@ def courier_page(request):
 
 def delivery_page(request, pk):
     return render(request, "store/delivery.html", {"delivery_id": pk})
-
-# store/views.py — unchanged
-@ensure_csrf_cookie
-def home(request):
-    return render(request, "store.html", {"maps_key": settings.GOOGLE_MAPS_API_KEY})

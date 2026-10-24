@@ -1,4 +1,3 @@
-# store/urls.py
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from . import views
@@ -8,15 +7,15 @@ from .delivery import (
 )
 
 router = DefaultRouter()
-router.register("products",  views.ProductViewSet,  basename="product")
-router.register("addresses", views.AddressViewSet,  basename="address")
-router.register("orders",    views.OrderViewSet,    basename="order")
+router.register("products", views.ProductViewSet, basename="product")
+router.register("addresses", views.AddressViewSet, basename="address")
+router.register("orders", views.OrderViewSet, basename="order")
 
 urlpatterns = [
-    # ---- the single page ----
     path("", views.home, name="store_home"),
-
-    # ---- API ----
+    path("", include("store.public_urls")),
+    path("store-manifest.json", views.manifest, name="store_manifest"),
+    path("store-service-worker.js", views.service_worker, name="store_service_worker"),
     path("api/", include(router.urls)),
     path("api/config/", views.ConfigView.as_view(), name="api_config"),
     path("api/cart/", views.CartView.as_view(), name="api_cart"),
