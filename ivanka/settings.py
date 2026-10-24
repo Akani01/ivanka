@@ -416,7 +416,7 @@ LOGIN_REDIRECT_URL = '/'
 
 
 
-ACCOUNT_ADAPTER = 'hiring.adapters.OppoGlobeAccountAdapter'
+ACCOUNT_ADAPTER = 'hiring.adapters.IvankaAccountAdapter'
 
 
 
@@ -478,9 +478,9 @@ SOCIALACCOUNT_PROVIDERS = {
 
 
 
-PWA_APP_NAME = 'OppoGlobe - Find Your Dream Property'
+PWA_APP_NAME = 'Ivanka - Find Your Dream Property'
 
-PWA_APP_SHORT_NAME = 'OppoGlobe'
+PWA_APP_SHORT_NAME = 'Ivanka'
 
 PWA_APP_DESCRIPTION = 'Property rental, sales, and job platform'
 
@@ -891,6 +891,10 @@ STATICFILES_DIRS = [
 
     os.path.join(BASE_DIR, 'hiring', 'static'),
 
+    os.path.join(BASE_DIR, 'store', 'static'), 
+
+
+
 ]
 
 
@@ -1061,7 +1065,7 @@ FRONTEND_URL = config(
 
     'FRONTEND_URL',
 
-    default='https://www.oppoglobe.co.za'
+    default='https://www.Ivanka.co.za'
 
 )
 
@@ -1097,7 +1101,7 @@ DEFAULT_FROM_EMAIL = config(
 
     'DEFAULT_FROM_EMAIL',
 
-    default='OppoGlobe <ivinakani@gmail.com>'
+    default='Ivanka <ivinakani@gmail.com>'
 
 )
 
